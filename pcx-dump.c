@@ -1,4 +1,5 @@
 #include <sys/stat.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -80,64 +81,75 @@ static unsigned char *read_pcx(const char *file) {
 }
 
 static int estimate(int size) {
-    return 2 * size;
+    return 2 * size + 128;
 }
 
-static int compress(unsigned char *dst, unsigned char *src, int size) {
-    int max = estimate(size);
-    unsigned char work[max];
-    int best[max];
+static int min(int a, int b) {
+    return a < b ? a : b;
+}
 
-    for (int i = 0; i < max; i++) {
-	best[i] = max;
+struct Node {
+    int weight;
+    int length;
+    int offset;
+};
+
+static int update(struct Node *next, int estimate, int i, int j) {
+    if (next->weight > estimate) {
+	next->weight = estimate;
+	next->length = i;
+	next->offset = j;
     }
+}
 
-    void finalize(int len) {
-	work[len++] = 0;
-	if (len <= max) {
-	    memcpy(dst, work, len);
-	    max = len;
+static int encode(void *dst, void *src, struct Node *nodes, int i) {
+    int total = nodes[i].weight + 1;
+    memset(dst, 0, total);
+
+    while (i > 0) {
+	unsigned char *ptr = dst;
+	struct Node *next = nodes + i;
+	if (next->offset < 1) {
+	    ptr += next->weight - next->length;
+	    memcpy(ptr, src - next->offset, next->length);
+	    ptr[-1] = next->length;
 	}
+	else {
+	    ptr += next->weight - 2;
+	    ptr[0] = 0x80 | next->length;
+	    ptr[1] = next->offset;
+	}
+	i -= next->length;
     }
 
-    bool match(unsigned char *ptr, int offset, int amount) {
-	return amount <= offset
-	    && ptr - src >= offset
-	    && !memcmp(ptr - offset, ptr, amount);
+    return total;
+}
+
+static int compress(void *dst, void *src, int size) {
+    int max = estimate(size);
+    struct Node nodes[max];
+
+    nodes[0].weight = 0;
+    for (int i = 1; i < max; i++) {
+	nodes[i].weight = max;
     }
 
-    void find_best(int pos, int len) {
-	if (best[pos] > len) {
-	    for (int i = 0; i <= pos; i++) {
-		if (best[i] > len) best[i] = len;
-	    }
-
-	    if (pos >= size) {
-		finalize(len);
-	    }
-	    else {
-		unsigned char *ptr = src + pos;
-		for (int amount = 127; amount > 0; amount--) {
-		    if (amount <= size - pos) {
-			work[len] = amount;
-			memcpy(work + len + 1, ptr, amount);
-			find_best(pos + amount, len + amount + 1);
-		    }
-
-		    for (int offset = 1; offset < 256; offset++) {
-			if (match(ptr, offset, amount)) {
-			    work[len + 0] = 0x80 | amount;
-			    work[len + 1] = offset;
-			    find_best(pos + amount, len + 2);
-			}
-		    }
+    for (int pos = 0; pos <= size; pos++) {
+	unsigned char *ptr = src + pos;
+	struct Node *current = nodes + pos;
+	for (int i = 1; i < min(128, size - pos + 1); i++) {
+	    struct Node *next = current + i;
+	    if (next->weight <= current->weight) break;
+	    update(next, current->weight + i + 1, i, -pos);
+	    for (int j = 1; j < min(256, pos + 1); j++) {
+		if (i <= j && memcmp(ptr - j, ptr, i) == 0) {
+		    update(next, current->weight + 2, i, j);
 		}
 	    }
 	}
     }
 
-    find_best(0, 0);
-    return max;
+    return encode(dst, src, nodes, size);
 }
 
 int main(int argc, char **argv) {
