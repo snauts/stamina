@@ -142,7 +142,7 @@ static int compress(void *dst, void *src, int size) {
 	    if (next->weight <= current->weight) break;
 	    update(next, current->weight + i + 1, i, -pos);
 	    for (int j = 1; j < min(256, pos + 1); j++) {
-		if (i <= j && memcmp(ptr - j, ptr, i) == 0) {
+		if (memcmp(ptr - j, ptr, i) == 0) {
 		    update(next, current->weight + 2, i, j);
 		}
 	    }
