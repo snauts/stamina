@@ -14,6 +14,16 @@ struct Header {
     short w, h;
 } header;
 
+void hexdump(unsigned char *buf, int size) {
+    for (int i = 0; i < size; i++) {
+	fprintf(stderr, "%02x ", buf[i]);
+	if ((i & 0xf) == 0xf) {
+	    fprintf(stderr, "\n");
+	}
+    }
+    if ((size & 0xf) != 0x0) fprintf(stderr, "\n");
+}
+
 static unsigned char get_color(unsigned char *color) {
     unsigned char result = 0;
     if (color[0] >= 0x80) result |= 0x02;
@@ -67,6 +77,65 @@ static unsigned char *read_pcx(const char *file) {
 
     free(buf);
     return pixels;
+}
+
+static int estimate(int size) {
+    return 2 * size;
+}
+
+static int compress(unsigned char *dst, unsigned char *src, int size) {
+    int max = estimate(size);
+    unsigned char work[max];
+    int best[max];
+
+    for (int i = 0; i < max; i++) {
+	best[i] = max;
+    }
+
+    void finalize(int len) {
+	work[len++] = 0;
+	if (len <= max) {
+	    memcpy(dst, work, len);
+	    max = len;
+	}
+    }
+
+    bool match(unsigned char *ptr, int offset, int amount) {
+	return amount <= offset
+	    && ptr - src >= offset
+	    && !memcmp(ptr - offset, ptr, amount);
+    }
+
+    void find_best(int pos, int len) {
+	if (best[pos] > len) {
+	    best[pos] = len;
+
+	    if (pos >= size) {
+		finalize(len);
+	    }
+	    else {
+		unsigned char *ptr = src + pos;
+		for (int amount = 1; amount < 128; amount++) {
+		    if (amount <= size - pos) {
+			work[len] = amount;
+			memcpy(work + len + 1, ptr, amount);
+			find_best(pos + amount, len + amount + 1);
+		    }
+
+		    for (int offset = 1; offset < 256; offset++) {
+			if (match(ptr, offset, amount)) {
+			    work[len + 0] = 0x80 | amount;
+			    work[len + 1] = offset;
+			    find_best(pos + amount, len + 2);
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+    find_best(0, 0);
+    return max;
 }
 
 int main(int argc, char **argv) {
