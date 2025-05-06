@@ -108,14 +108,16 @@ static int compress(unsigned char *dst, unsigned char *src, int size) {
 
     void find_best(int pos, int len) {
 	if (best[pos] > len) {
-	    best[pos] = len;
+	    for (int i = 0; i <= pos; i++) {
+		if (best[i] > len) best[i] = len;
+	    }
 
 	    if (pos >= size) {
 		finalize(len);
 	    }
 	    else {
 		unsigned char *ptr = src + pos;
-		for (int amount = 1; amount < 128; amount++) {
+		for (int amount = 127; amount > 0; amount--) {
 		    if (amount <= size - pos) {
 			work[len] = amount;
 			memcpy(work + len + 1, ptr, amount);
