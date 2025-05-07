@@ -53,6 +53,13 @@ static void wait_vblank(void) {
     while (!vblank) { }
 }
 
+static byte in_key(byte a) {
+#ifdef ZXS
+    __asm__("in a, (#0xfe)");
+#endif
+    return a;
+}
+
 static void out_fe(byte data) {
     __asm__("out (#0xfe), a"); data;
 }
@@ -198,12 +205,28 @@ static void show_block(const void *src, byte y, byte n) {
     memcpy(COLOUR(y << 2), ptr, n << 2);
 }
 
+static byte read_1_or_2(void) {
+    return ~in_key(0xf7) & 3;
+}
+
+static void wait_1_or_2(void) {
+    byte prev, next = read_1_or_2();
+    do {
+	prev = next;
+	next = read_1_or_2();
+    } while ((next & (prev ^ next)) == 0);
+}
+
 static void show_title(void) {
-    show_block(title, 8, 40);
-    put_str("Have you", 0, 0);
-    put_str("Stamina?", 192, 48);
+    put_str("Have you", 12, 0);
     memset(COLOUR(0x00), 4, 0x20);
-    memset(COLOUR(0xc0), 4, 0x20);
+    show_block(title, 8, 40);
+    put_str("Stamina?", 192, 48);
+    memset(COLOUR(0xc0), 4, 0x240);
+    put_str("Game by Snauts", 0, 184);
+    put_str("1 - QAOP+Space", 81, 104);
+    put_str("2 - Joystick", 80, 120);
+    wait_1_or_2();
 }
 
 void reset(void) {
@@ -212,5 +235,5 @@ void reset(void) {
     clear_screen();
     precalculate();
     show_title();
-    for (;;) { }
+    start_up();
 }
