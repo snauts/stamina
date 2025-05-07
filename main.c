@@ -199,8 +199,11 @@ static void show_block(const void *src, byte y, byte n) {
 }
 
 static void show_title(void) {
-    show_block(title, 64, 64);
-    center_msg("Stamina", 116);
+    show_block(title, 8, 40);
+    put_str("Have you", 0, 0);
+    put_str("Stamina?", 192, 48);
+    memset(COLOUR(0x00), 4, 0x20);
+    memset(COLOUR(0xc0), 4, 0x20);
 }
 
 void reset(void) {
