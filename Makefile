@@ -13,6 +13,7 @@ msg:
 
 pcx:
 	@gcc $(TYPE) pcx-dump.c -o pcx-dump
+	@./pcx-dump -c title.pcx > data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
@@ -27,4 +28,4 @@ fuse: zxs
 	@fuse --machine 128 --no-confirm-actions stamina.tap >/dev/null
 
 clean:
-	rm -f pcx-dump stamina*
+	rm -f pcx-dump data.h stamina*

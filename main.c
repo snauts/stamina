@@ -8,6 +8,8 @@ typedef signed short int16;
 typedef unsigned char byte;
 typedef unsigned short word;
 
+#include "data.h"
+
 #if defined(ZXS)
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
 #endif
