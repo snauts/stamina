@@ -280,6 +280,9 @@ static void save_bitmap(unsigned char *buf, int size) {
     }
 
     switch (option) {
+    case 't':
+	save_image(pixel, pixel_size);
+	break;
     case 'c':
 	save_image(pixel, pixel_size + color_size);
 	break;
@@ -290,6 +293,7 @@ int main(int argc, char **argv) {
     if (argc < 3) {
 	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx\n");
 	fprintf(stderr, "  -c   dump compressed image\n");
+	fprintf(stderr, "  -t   dump compressed tiles\n");
 	fprintf(stderr, "  -f   dump compressed file\n");
 	return 0;
     }
@@ -299,6 +303,7 @@ int main(int argc, char **argv) {
 
     switch (option) {
     case 'c':
+    case 't':
 	void *buf = read_pcx(header.name);
 	if (buf == NULL) return -ENOENT;
 	save_bitmap(buf, header.w * header.h);

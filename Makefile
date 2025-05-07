@@ -14,6 +14,7 @@ msg:
 pcx:
 	@gcc $(TYPE) pcx-dump.c -o pcx-dump
 	@./pcx-dump -c title.pcx > data.h
+	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -c bar.pcx >> data.h
 
 zxs:
