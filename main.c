@@ -12,6 +12,24 @@ typedef unsigned short word;
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
 #endif
 
+static void decompress(byte *dst, byte *src) {
+    while (*src) {
+        byte n = *src & 0x7f;
+        if (*(src++) & 0x80) {
+	    while (n-- > 0) {
+		*dst = *(dst - *src);
+		dst++;
+	    }
+	    src++;
+        }
+        else {
+	    while (n-- > 0) {
+		*(dst++) = *(src++);
+	    }
+        }
+    }
+}
+
 void reset(void) {
     SETUP_STACK();
     for (;;) { }
