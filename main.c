@@ -229,11 +229,18 @@ static void show_title(void) {
     wait_1_or_2();
 }
 
+static void start_game(void) {
+    show_block(bar, 0, 24);
+    wait_1_or_2();
+}
+
 void reset(void) {
     SETUP_STACK();
     setup_system();
     clear_screen();
     precalculate();
     show_title();
+    clear_screen();
+    start_game();
     start_up();
 }
