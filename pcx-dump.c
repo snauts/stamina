@@ -250,7 +250,7 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
 	}
 	i += w;
     }
-    return pixel == 0 ? 0x1 : pixel;
+    return pixel == 0 ? 0x4 : pixel;
 }
 
 static void save_image(unsigned char *data, int size) {
