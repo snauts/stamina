@@ -228,7 +228,7 @@ static void wait_1_or_2(void) {
 }
 
 static void show_title(void) {
-    put_str("Have you", 12, 0);
+    put_str("Have", 12, 0);
     memset(COLOUR(0x00), 4, 0x20);
     show_block(title, 8, 40);
     put_str("Stamina?", 192, 48);
