@@ -216,12 +216,15 @@ static byte read_1_or_2(void) {
     return ~in_key(0xf7) & 3;
 }
 
+static byte use_joy;
+
 static void wait_1_or_2(void) {
     byte prev, next = read_1_or_2();
     do {
 	prev = next;
 	next = read_1_or_2();
     } while ((next & (prev ^ next)) == 0);
+    use_joy = next & 2;
 }
 
 static void show_title(void) {
@@ -260,7 +263,11 @@ static byte read_QAOP(void) {
     ret |= (in_key(0xfd) & 1);
     ret <<= 2;
     ret |= (in_key(0xdf) & 3);
-    return ret;
+    return ~ret;
+}
+
+static byte read_input(void) {
+    return use_joy ? in_joy(0) : read_QAOP();
 }
 
 static void game_loop(void) {
