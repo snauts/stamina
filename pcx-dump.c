@@ -161,6 +161,12 @@ static int encode(void *dst, void *src, struct Node *nodes, int i) {
     return total;
 }
 
+static int report(int size, int total) {
+    int percent = total * 100 / size;
+    fprintf(stderr, "compress from %d to %d (%d%)\n", size, total, percent);
+    return total;
+}
+
 static int compress(void *dst, void *src, int size) {
     int max = estimate(size);
     struct Node nodes[max];
@@ -185,7 +191,7 @@ static int compress(void *dst, void *src, int size) {
 	}
     }
 
-    return encode(dst, src, nodes, size);
+    return report(size, encode(dst, src, nodes, size));
 }
 
 static void compress_and_save(const char *name, void *buf, int length) {
@@ -201,15 +207,16 @@ static void compress_file(const char *file) {
     unsigned char *buf;
     remove_extension(name, file);
     int length = read_file(file, &buf);
+    fprintf(stderr, "dumping binary file %s\n", file);
     compress_and_save(name, buf, length);
     free(buf);
 }
 
 int main(int argc, char **argv) {
     if (argc < 3) {
-	printf("USAGE: pcx-dump [option] file.pcx\n");
-	printf("  -c   save compressed image\n");
-	printf("  -f   save compressed file\n");
+	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx\n");
+	fprintf(stderr, "  -c   dump compressed image\n");
+	fprintf(stderr, "  -f   dump compressed file\n");
 	return 0;
     }
 

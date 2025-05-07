@@ -12,7 +12,7 @@ typedef unsigned short word;
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
 #endif
 
-static void decompress(byte *dst, byte *src) {
+static void decompress(byte *dst, const byte *src) {
     while (*src) {
         byte n = *src & 0x7f;
         if (*(src++) & 0x80) {
