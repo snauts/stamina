@@ -10,6 +10,14 @@ typedef unsigned short word;
 
 #include "data.h"
 
+#define NULL		((void *) 0)
+#define ADDR(obj)	((word) (obj))
+#define BYTE(addr)	(* (volatile byte *) (addr))
+#define WORD(addr)	(* (volatile word *) (addr))
+#define SIZE(array)	(sizeof(array) / sizeof(*(array)))
+
+static byte *map_y[192];
+
 #if defined(ZXS)
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
 #endif
@@ -28,6 +36,15 @@ static void memset(byte *ptr, byte data, word len) {
 
 static void memcpy(byte *dst, const byte *src, word len) {
     while (len-- > 0) { *dst++ = *src++; }
+}
+
+static void precalculate(void) {
+#if defined(ZXS)
+    for (byte y = 0; y < 192; y++) {
+	byte f = ((y & 7) << 3) | ((y >> 3) & 7) | (y & 0xc0);
+	map_y[y] = (byte *) (0x4000 + (f << 5));
+    }
+#endif
 }
 
 static void clear_screen(void) {
@@ -59,5 +76,6 @@ static void decompress(byte *dst, const byte *src) {
 void reset(void) {
     SETUP_STACK();
     clear_screen();
+    precalculate();
     for (;;) { }
 }
