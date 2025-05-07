@@ -15,7 +15,7 @@ struct Header {
     short w, h;
 } header;
 
-void hexdump(unsigned char *buf, int size) {
+static void __attribute__((unused)) hexdump(unsigned char *buf, int size) {
     for (int i = 0; i < size; i++) {
 	fprintf(stderr, "%02x ", buf[i]);
 	if ((i & 0xf) == 0xf) {
@@ -23,6 +23,35 @@ void hexdump(unsigned char *buf, int size) {
 	}
     }
     if ((size & 0xf) != 0x0) fprintf(stderr, "\n");
+}
+
+static void dump_buffer(void *ptr, int size, int step) {
+    for (int i = 0; i < size; i++) {
+	if (step == 1) {
+	    printf(" 0x%02x,", * (unsigned char *) ptr);
+	}
+	else {
+	    printf(" 0x%04x,", * (unsigned short *) ptr);
+	}
+	if ((i & 7) == 7) printf("\n");
+	ptr += step;
+    }
+    if ((size & 7) != 0) printf("\n");
+}
+
+static char replace_char(char c) {
+    switch (c) {
+    case '/':
+	return '_';
+    case '.':
+	return 0;
+    default:
+	return c;
+    }
+}
+
+static void remove_extension(char *dst, const char *src) {
+    while (*src) { *dst++ = replace_char(*src++); }
 }
 
 static unsigned char get_color(unsigned char *color) {
@@ -39,21 +68,28 @@ static unsigned char get_color(unsigned char *color) {
     return result;
 }
 
-static unsigned char *read_pcx(const char *file) {
+static int read_file(const char *file, unsigned char **buf) {
     struct stat st;
-    int palette_offset = 16;
     if (stat(file, &st) != 0) {
-	fprintf(stderr, "ERROR while opening PCX-file \"%s\"\n", file);
-	return NULL;
+	fprintf(stderr, "ERROR file \"%s\" not found\n", file);
+	exit(-ENOENT);
     }
-    unsigned char *buf = malloc(st.st_size);
+
+    *buf = malloc(st.st_size);
     int in = open(file, O_RDONLY);
-    read(in, buf, st.st_size);
+    read(in, *buf, st.st_size);
     close(in);
 
+    return st.st_size;
+}
+
+static unsigned char *read_pcx(const char *file) {
+    unsigned char *buf;
+    int palette_offset = 16;
+    int length = read_file(file, &buf);
     header.w = (* (unsigned short *) (buf + 0x8)) + 1;
     header.h = (* (unsigned short *) (buf + 0xa)) + 1;
-    if (buf[3] == 8) palette_offset = st.st_size - 768;
+    if (buf[3] == 8) palette_offset = length - 768;
     int unpacked_size = header.w * header.h / (buf[3] == 8 ? 1 : 2);
     unsigned char *pixels = malloc(unpacked_size);
 
@@ -152,19 +188,43 @@ static int compress(void *dst, void *src, int size) {
     return encode(dst, src, nodes, size);
 }
 
+static void compress_and_save(const char *name, void *buf, int length) {
+    unsigned char dst[estimate(length)];
+    int size = compress(dst, buf, length);
+    printf("static const byte %s[] = {\n", name);
+    dump_buffer(dst, size, 1);
+    printf("};\n");
+}
+
+static void compress_file(const char *file) {
+    char name[256];
+    unsigned char *buf;
+    remove_extension(name, file);
+    int length = read_file(file, &buf);
+    compress_and_save(name, buf, length);
+    free(buf);
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
 	printf("USAGE: pcx-dump [option] file.pcx\n");
 	printf("  -c   save compressed image\n");
+	printf("  -f   save compressed file\n");
 	return 0;
     }
 
     option = argv[1][1];
     header.name = argv[2];
 
-    void *buf = read_pcx(header.name);
-    if (buf == NULL) return -ENOENT;
-
-    free(buf);
+    switch (option) {
+    case 'c':
+	void *buf = read_pcx(header.name);
+	if (buf == NULL) return -ENOENT;
+	free(buf);
+	break;
+    case 'f':
+	compress_file(header.name);
+	break;
+    }
     return 0;
 }
