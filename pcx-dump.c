@@ -212,6 +212,80 @@ static void compress_file(const char *file) {
     free(buf);
 }
 
+static int ink_index(int i) {
+    return (i / header.w / 8) * (header.w / 8) + i % header.w / 8;
+}
+
+static unsigned short encode_pixel(unsigned char a, unsigned char b) {
+    return a > b ? (b << 8) | a : (a << 8) | b;
+}
+
+static unsigned char is_bright(unsigned char f, unsigned char b) {
+    return (f > 7 || b > 7) ? 0x40 : 0x00;
+}
+
+static unsigned char encode_ink(unsigned short colors) {
+    unsigned char b = colors >> 8;
+    unsigned char f = colors & 0xff;
+    return is_bright(f, b) | (f & 7) | ((b & 7) << 3);
+}
+
+static unsigned char consume_pixels(unsigned char *buf, unsigned char on) {
+    unsigned char ret = 0;
+    for (int i = 0; i < 8; i++) {
+	ret = ret << 1;
+	ret |= (buf[i] == on || (buf[i] != 0 && option == 'p')) ? 1 : 0;
+    }
+    return ret;
+}
+
+static unsigned short on_pixel(unsigned char *buf, int i, int w) {
+    unsigned char pixel = buf[i];
+    for (int y = 0; y < 8; y++) {
+	for (int x = 0; x < 8; x++) {
+	    unsigned char next = buf[i + x];
+	    if (next != pixel) {
+		return encode_pixel(next, pixel);
+	    }
+	}
+	i += w;
+    }
+    return pixel == 0 ? 0x1 : pixel;
+}
+
+static void save_image(unsigned char *data, int size) {
+    char name[256];
+    remove_extension(name, header.name);
+    fprintf(stderr, "dumping pcx image %s\n", header.name);
+    compress_and_save(name, data, size);
+}
+
+static void save_bitmap(unsigned char *buf, int size) {
+    int j = 0;
+    int pixel_size = size / 8;
+    int color_size = size / 64;
+    unsigned char pixel[pixel_size + color_size];
+    unsigned char *color = pixel + pixel_size;
+    unsigned short on[color_size];
+
+    for (int i = 0; i < size; i += 8) {
+	if (i / header.w % 8 == 0) {
+	    on[j++] = on_pixel(buf, i, header.w);
+	}
+	unsigned char data = on[ink_index(i)] & 0xff;
+	pixel[i / 8] = consume_pixels(buf + i, data);
+    }
+    for (int i = 0; i < color_size; i++) {
+	color[i] = encode_ink(on[i]);
+    }
+
+    switch (option) {
+    case 'c':
+	save_image(pixel, pixel_size + color_size);
+	break;
+    }
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
 	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx\n");
@@ -227,6 +301,7 @@ int main(int argc, char **argv) {
     case 'c':
 	void *buf = read_pcx(header.name);
 	if (buf == NULL) return -ENOENT;
+	save_bitmap(buf, header.w * header.h);
 	free(buf);
 	break;
     case 'f':
