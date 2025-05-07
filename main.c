@@ -244,10 +244,28 @@ static void update_bar(void) {
     }
 }
 
+static byte read_QAOP(void) {
+    byte ret = 0;
+    ret |= (in_key(0x7f) & 1);
+    ret <<= 1;
+    ret |= (in_key(0xfb) & 1);
+    ret <<= 1;
+    ret |= (in_key(0xfd) & 1);
+    ret <<= 2;
+    ret |= (in_key(0xdf) & 3);
+    return ret;
+}
+
+static void game_loop(void) {
+    for (;;) {
+	wait_vblank();
+    }
+}
+
 static void start_game(void) {
     show_block(bar, 0, 24);
     stamina = slider = 48;
-    wait_1_or_2();
+    game_loop();
 }
 
 void reset(void) {
