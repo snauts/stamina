@@ -15,11 +15,15 @@ typedef unsigned short word;
 #define BYTE(addr)	(* (volatile byte *) (addr))
 #define WORD(addr)	(* (volatile word *) (addr))
 #define SIZE(array)	(sizeof(array) / sizeof(*(array)))
+#define PTR(addr)	((void *) (addr))
 
 static byte *map_y[192];
 
 #if defined(ZXS)
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
+#define SCREEN(x)	PTR(0x4000 + (x))
+#define COLOUR(x)	PTR(0x5800 + (x))
+#define STAGING_AREA	COLOUR(0x300)
 #endif
 
 static void out_fe(byte data) {
@@ -42,15 +46,15 @@ static void precalculate(void) {
 #if defined(ZXS)
     for (byte y = 0; y < 192; y++) {
 	byte f = ((y & 7) << 3) | ((y >> 3) & 7) | (y & 0xc0);
-	map_y[y] = (byte *) (0x4000 + (f << 5));
+	map_y[y] = SCREEN(f << 5);
     }
 #endif
 }
 
 static void clear_screen(void) {
 #if defined(ZXS)
-    memset((byte *) 0x5800, 0x00, 0x300);
-    memset((byte *) 0x4000, 0x00, 0x1800);
+    memset(COLOUR(0), 0x00, 0x300);
+    memset(SCREEN(0), 0x00, 0x1800);
     out_fe(0);
 #endif
 }
@@ -73,9 +77,24 @@ static void decompress(byte *dst, const byte *src) {
     }
 }
 
+static void show_block(const void *src, byte y, byte n) {
+    byte *ptr = STAGING_AREA;
+    decompress(ptr, src);
+    for (byte i = 0; i < n; i++) {
+	memcpy(map_y[y + i], ptr, 32);
+	ptr += 32;
+    }
+    memcpy(COLOUR(y << 2), ptr, n << 2);
+}
+
+static void show_title(void) {
+    show_block(title, 64, 64);
+}
+
 void reset(void) {
     SETUP_STACK();
     clear_screen();
     precalculate();
+    show_title();
     for (;;) { }
 }
