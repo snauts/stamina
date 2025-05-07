@@ -60,6 +60,13 @@ static byte in_key(byte a) {
     return a;
 }
 
+static byte in_joy(byte a) {
+#ifdef ZXS
+    __asm__("in a, (#0x1f)"); a;
+#endif
+    return a;
+}
+
 static void out_fe(byte data) {
     __asm__("out (#0xfe), a"); data;
 }
