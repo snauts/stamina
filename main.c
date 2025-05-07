@@ -229,8 +229,24 @@ static void show_title(void) {
     wait_1_or_2();
 }
 
+static byte stamina, slider;
+
+static void stamina_bar_update(byte pos, byte update) {
+    BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
+}
+
+static void update_bar(void) {
+    if (slider < stamina) {
+	stamina_bar_update(slider++, 0x65);
+    }
+    if (slider > stamina) {
+	stamina_bar_update(--slider, 0x00);
+    }
+}
+
 static void start_game(void) {
     show_block(bar, 0, 24);
+    stamina = slider = 48;
     wait_1_or_2();
 }
 
