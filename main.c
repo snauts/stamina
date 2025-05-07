@@ -17,6 +17,7 @@ typedef unsigned short word;
 #define SIZE(array)	(sizeof(array) / sizeof(*(array)))
 #define PTR(addr)	((byte *) (addr))
 
+static volatile byte vblank;
 static byte *map_y[192];
 
 #if defined(ZXS)
@@ -25,7 +26,32 @@ static byte *map_y[192];
 #define COLOUR(x)	PTR(0x5800 + (x))
 #define STAGING_AREA	PTR(0x5b00)
 #define FONT_ADDRESS	PTR(0x3c00)
+#define IRQ_BASE	0xfe00
 #endif
+
+static void interrupt(void) __naked {
+    __asm__("di");
+    __asm__("push af");
+
+    __asm__("ld a, #1");
+    __asm__("ld (_vblank), a");
+
+    __asm__("pop af");
+    __asm__("ei");
+    __asm__("reti");
+}
+
+static void setup_irq(byte base) {
+    __asm__("di");
+    __asm__("ld i, a"); base;
+    __asm__("im 2");
+    __asm__("ei");
+}
+
+static void wait_vblank(void) {
+    vblank = 0;
+    while (!vblank) { }
+}
 
 static void out_fe(byte data) {
     __asm__("out (#0xfe), a"); data;
@@ -41,6 +67,15 @@ static void memset(byte *ptr, byte data, word len) {
 
 static void memcpy(byte *dst, const byte *src, word len) {
     while (len-- > 0) { *dst++ = *src++; }
+}
+
+static void setup_system(void) {
+    byte top = (byte) ((IRQ_BASE >> 8) - 1);
+    word jmp_addr = (top << 8) | top;
+    BYTE(jmp_addr + 0) = 0xc3;
+    WORD(jmp_addr + 1) = ADDR(&interrupt);
+    memset((byte *) IRQ_BASE, top, 0x101);
+    setup_irq(IRQ_BASE >> 8);
 }
 
 static void precalculate(void) {
@@ -170,6 +205,7 @@ static void show_title(void) {
 
 void reset(void) {
     SETUP_STACK();
+    setup_system();
     clear_screen();
     precalculate();
     show_title();
