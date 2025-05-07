@@ -270,6 +270,15 @@ static byte read_input(void) {
     return use_joy ? in_joy(0) : read_QAOP();
 }
 
+static void draw_tile(byte *ptr, int x, int y) {
+    x = x >> 3;
+    for (byte i = 0; i < 16; i++) {
+	byte *where = map_y[y++] + x;
+	where[0] = *ptr++;
+	where[1] = *ptr++;
+    }
+}
+
 static void game_loop(void) {
     for (;;) {
 	wait_vblank();
