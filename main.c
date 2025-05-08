@@ -186,8 +186,12 @@ static byte str_offset(const char *msg, byte from) {
     return from - (str_len(msg) >> 1);
 }
 
-static void center_msg(const char *msg, byte y) {
-    put_str(msg, str_offset(msg, 128), y);
+static void show_msg(const char *msg) {
+    put_str(msg, str_offset(msg, 128), 20);
+}
+
+static void clear_msg(void) {
+    for (byte y = 20; y < 28; y++) memset(map_y[y], 0, 32);
 }
 
 static void decompress(byte *dst, const byte *src) {
@@ -337,6 +341,7 @@ static void game_loop(void) {
 static void start_game(void) {
     show_block(bar, 0, 24);
     last_input = read_input();
+    memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
     game_loop();
 }
