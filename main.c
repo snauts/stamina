@@ -340,13 +340,9 @@ static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
 
 static void roll_richard(int8 dx, int8 dy) {
     if (consume_stamina(6)) {
-	draw_tile(RICHARD(1), richard_pos);
-	game_idle(2);
-	move_tile(RICHARD(2), richard_pos, dx, dy);
-	game_idle(2);
 	move_tile(RICHARD(1), richard_pos, dx, dy);
-	game_idle(2);
-	draw_tile(RICHARD(0), richard_pos);
+	game_idle(8);
+	move_tile(RICHARD(0), richard_pos, dx, dy);
     }
 }
 
