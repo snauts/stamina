@@ -247,6 +247,7 @@ static unsigned char consume_pixels(unsigned char *buf, unsigned char on) {
     return ret;
 }
 
+static int default_color = 5;
 static unsigned short on_pixel(unsigned char *buf, int i, int w) {
     unsigned char pixel = buf[i];
     for (int y = 0; y < 8; y++) {
@@ -258,7 +259,7 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
 	}
 	i += w;
     }
-    return pixel == 0 ? 5 : pixel;
+    return pixel == 0 ? default_color : pixel;
 }
 
 static void serialize_tiles(void *ptr, int size) {
@@ -400,7 +401,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
     unsigned char *ptr;
     ptr = malloc(TILE_SIZE);
     memset(ptr, 0, TILE_SIZE);
-    for (int i = 3; i < argc; i++) {
+    for (int i = 4; i < argc; i++) {
 	unsigned char *buf = load_bitmap(argv[i]);
 	serialize_tiles(buf, pixel_size());
 	count += tile_count();
@@ -423,7 +424,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
 static void save_room_data(int argc, char **argv) {
     char name[256];
     printf("static const void* const room_%s[] = {\n", name);
-    for (int i = 2; i < argc; i++) {
+    for (int i = 3; i < argc; i++) {
 	remove_extension(name, argv[i]);
 	printf(" %s,", name);
     }
@@ -435,7 +436,8 @@ static unsigned char *compress_level(int argc, char **argv) {
     unsigned char *tileset[4];
     build_tileset(tileset, argc, argv);
 
-    unsigned char *level = load_bitmap(argv[2]);
+    const char *file_name = argv[3];
+    unsigned char *level = load_bitmap(file_name);
 
     unsigned char result[color_size() + tile_count()];
     memcpy(result, level + pixel_size(), color_size());
@@ -446,7 +448,7 @@ static unsigned char *compress_level(int argc, char **argv) {
 	result[color_size() + i / 32] = id;
     }
 
-    save_array(argv[2], result, sizeof(result));
+    save_array(file_name, result, sizeof(result));
     save_room_data(argc, argv);
 
     for (int i = 0; i < SIZE(tileset); i++) {
@@ -476,6 +478,7 @@ int main(int argc, char **argv) {
 	compress_file(argv[2]);
 	break;
     case 'l':
+	default_color = atoi(argv[2]);
 	compress_level(argc, argv);
 	break;
     }
