@@ -8,14 +8,14 @@ typedef signed short int16;
 typedef unsigned char byte;
 typedef unsigned short word;
 
-#include "data.h"
-
 #define NULL		((void *) 0)
 #define ADDR(obj)	((word) (obj))
 #define BYTE(addr)	(* (volatile byte *) (addr))
 #define WORD(addr)	(* (volatile word *) (addr))
 #define SIZE(array)	(sizeof(array) / sizeof(*(array)))
 #define PTR(addr)	((byte *) (addr))
+
+#include "data.h"
 
 static volatile byte vblank;
 static byte *map_y[192];
