@@ -206,13 +206,17 @@ static void compress_and_save(const char *name, void *buf, int length) {
     printf("};\n");
 }
 
-static void compress_file(const char *file) {
+static void save_array(const char *file_name, void *data, int size) {
     char name[256];
+    remove_extension(name, file_name);
+    fprintf(stderr, "dumping array %s\n", name);
+    compress_and_save(name, data, size);
+}
+
+static void compress_file(const char *file) {
     unsigned char *buf;
-    remove_extension(name, file);
     int length = read_file(file, &buf);
-    fprintf(stderr, "dumping binary file %s\n", file);
-    compress_and_save(name, buf, length);
+    save_array(file, buf, length);
     free(buf);
 }
 
@@ -255,13 +259,6 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
 	i += w;
     }
     return pixel == 0 ? 5 : pixel;
-}
-
-static void save_image(const char *name, unsigned char *data, int size) {
-    char variable_name[256];
-    remove_extension(variable_name, name);
-    fprintf(stderr, "dumping pcx image %s\n", name);
-    compress_and_save(variable_name, data, size);
 }
 
 static void serialize_tiles(void *ptr, int size) {
@@ -313,10 +310,20 @@ static void *flip_horizontal(void *ptr, int size) {
     return ptr;
 }
 
-static int get_tile_id(void *tile, void *set, int size) {
+static int get_tile_index(void *tile, void *set, int size) {
     for (int offset = 0; offset < size; offset += 32) {
 	if (memcmp(tile, set + offset, 32) == 0) return offset / 32;
     }
+    return -1;
+}
+
+static int get_tileset_id(void *tile, unsigned char **tileset, int size) {
+    for (int index = 0; index < 4; index++) {
+	int id = get_tile_index(tile, tileset[index], size);
+	if (id >= 0) return (id << 2) | index;
+    }
+    fprintf(stderr, "ERROR: tile not found in tileset\n");
+    exit(-EFAULT);
     return -1;
 }
 
@@ -371,10 +378,10 @@ static void save_bitmap(const char *name) {
     switch (option) {
     case 't':
 	serialize_tiles(buf, pixel_size());
-	save_image(name, buf, pixel_size());
+	save_array(name, buf, pixel_size());
 	break;
     case 'c':
-	save_image(name, buf, total_size());
+	save_array(name, buf, total_size());
 	break;
     }
 
@@ -416,9 +423,17 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
 static unsigned char *compress_level(int argc, char **argv) {
     unsigned char *tileset[4];
     build_tileset(tileset, argc, argv);
+
+    unsigned char *level = load_bitmap(argv[2]);
+    serialize_tiles(level, pixel_size());
+    for (int i = 0; i < pixel_size(); i += 32) {
+	int id = get_tileset_id(level + i, tileset, TILE_SIZE);
+    }
+
     for (int i = 0; i < SIZE(tileset); i++) {
 	free(tileset[i]);
     }
+    free(level);
 }
 
 int main(int argc, char **argv) {
