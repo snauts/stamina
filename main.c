@@ -32,13 +32,15 @@ static byte *map_y[192];
 #define FRAME(x)	((x) << 5)
 
 #define EMPTY		(STAGING_AREA + FRAME(0))
-#define RICHARD		(STAGING_AREA + FRAME(1))
+#define RICHARD(x)	(STAGING_AREA + FRAME(1 + (x)))
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
 #define	CTRL_DOWN	0x04
 #define	CTRL_LEFT	0x02
 #define	CTRL_RIGHT	0x01
+
+enum { X = 0, Y = 1 };
 
 static void interrupt(void) __naked {
     __asm__("di");
@@ -262,7 +264,7 @@ static void show_title(void) {
 
 static byte stamina;
 static byte slider;
-static byte px, py;
+static byte richard_pos[2];
 
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
@@ -313,8 +315,9 @@ static byte read_input(void) {
     return use_joy ? in_joy(0) : read_QAOP();
 }
 
-static void draw_tile(byte *ptr, int x, int y) {
-    x = x >> 3;
+static void draw_tile(byte *ptr, const byte *pos) {
+    byte x = pos[X] >> 3;
+    byte y = pos[Y];
     for (byte i = 0; i < 16; i++) {
 	byte *where = map_y[y++] + x;
 	where[0] = *ptr++;
@@ -322,28 +325,28 @@ static void draw_tile(byte *ptr, int x, int y) {
     }
 }
 
-static void clear_tile(int x, int y) {
-    x = x >> 3;
-    for (byte i = 0; i < 16; i++) {
-	byte *where = map_y[y++] + x;
-	where[0] = where[1] = 0;
-    }
-}
-
-static void richard_pos(byte x, byte y) {
-    px = x; py = y;
-}
-
 static void place_richard(byte x, byte y) {
-    draw_tile(RICHARD, x, y);
-    richard_pos(x, y);
+    richard_pos[X] = x;
+    richard_pos[Y] = y;
+    draw_tile(RICHARD(0), richard_pos);
+}
+
+static void move_sprite(byte *ptr, byte *pos, int8 dx, int8 dy) {
+    draw_tile(EMPTY, pos);
+    pos[X] += dx;
+    pos[Y] += dy;
+    draw_tile(ptr, pos);
 }
 
 static void roll_richard(int8 dx, int8 dy) {
     if (consume_stamina(12)) {
-	clear_tile(px, py);
-	richard_pos(px + dx, py + dy);
-	draw_tile(RICHARD, px, py);
+	draw_tile(RICHARD(1), richard_pos);
+	game_idle(2);
+	move_sprite(RICHARD(2), richard_pos, dx, dy);
+	game_idle(2);
+	move_sprite(RICHARD(1), richard_pos, dx, dy);
+	game_idle(2);
+	draw_tile(RICHARD(0), richard_pos);
     }
 }
 
@@ -354,16 +357,16 @@ static void move_richard(void) {
 	replenish_stamina(24);
     }
     else if (change & CTRL_UP) {
-	roll_richard(0, -16);
+	roll_richard(0, -8);
     }
     else if (change & CTRL_DOWN) {
-	roll_richard(0, 16);
+	roll_richard(0, 8);
     }
     else if (change & CTRL_LEFT) {
-	roll_richard(-16, 0);
+	roll_richard(-8, 0);
     }
     else if (change & CTRL_RIGHT) {
-	roll_richard(16, 0);
+	roll_richard(8, 0);
     }
 }
 
@@ -382,7 +385,7 @@ static void start_game(void) {
     stamina = slider = FULL_STAMINA;
 
     memset(COLOUR(0x80), 0x1, 0x280);
-    decompress(RICHARD, richard);
+    decompress(RICHARD(0), richard);
     place_richard(32, 96);
 
     game_loop();
