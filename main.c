@@ -29,6 +29,8 @@ static byte *map_y[192];
 #define IRQ_BASE	0xfe00
 #endif
 
+#define RICHARD		(STAGING_AREA + 0x0000)
+
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
 #define	CTRL_DOWN	0x04
@@ -310,6 +312,31 @@ static void draw_tile(byte *ptr, int x, int y) {
     }
 }
 
+static void clear_tile(int x, int y) {
+    x = x >> 3;
+    for (byte i = 0; i < 16; i++) {
+	byte *where = map_y[y++] + x;
+	where[0] = where[1] = 0;
+    }
+}
+
+static void richard_pos(byte x, byte y) {
+    px = x; py = y;
+}
+
+static void place_richard(byte x, byte y) {
+    draw_tile(RICHARD, x, y);
+    richard_pos(x, y);
+}
+
+static void roll_richard(int8 dx, int8 dy) {
+    if (consume_stamina(12)) {
+	clear_tile(px, py);
+	richard_pos(px + dx, py + dy);
+	draw_tile(RICHARD, px, py);
+    }
+}
+
 static void move_richard(void) {
     byte change = input_change(read_input());
 
@@ -317,16 +344,16 @@ static void move_richard(void) {
 	replenish_stamina(24);
     }
     else if (change & CTRL_UP) {
-	consume_stamina(12);
+	roll_richard(0, -16);
     }
     else if (change & CTRL_DOWN) {
-	consume_stamina(12);
+	roll_richard(0, 16);
     }
     else if (change & CTRL_LEFT) {
-	consume_stamina(12);
+	roll_richard(-16, 0);
     }
     else if (change & CTRL_RIGHT) {
-	consume_stamina(12);
+	roll_richard(16, 0);
     }
 }
 
@@ -343,6 +370,11 @@ static void start_game(void) {
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
+
+    memset(COLOUR(0x80), 0x1, 0x280);
+    decompress(RICHARD, richard);
+    place_richard(32, 96);
+
     game_loop();
 }
 
