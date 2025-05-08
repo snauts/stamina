@@ -268,6 +268,7 @@ static void show_title(void) {
 static byte stamina;
 static byte slider;
 static byte stance;
+static byte direction;
 static byte richard_pos[2];
 
 static void stamina_bar_update(byte pos, byte update) {
@@ -319,28 +320,50 @@ static byte read_input(void) {
     return use_joy ? in_joy(0) : read_QAOP();
 }
 
-static void draw_tile(byte *ptr, const byte *pos) {
+static byte flip_bits(byte source) {
+    byte result = 0;
+    for (byte i = 0; i < 8; i++) {
+	result = result << 1;
+	result |= source & 1;
+	source = source >> 1;
+    }
+    return result;
+}
+
+static void draw_tile(byte *ptr, const byte *pos, byte id) {
     byte x = pos[X] >> 3;
     byte y = pos[Y];
+    byte flip_h = id & 1;
+    byte flip_v = id & 2;
+    if (flip_v) y += 15;
+    ptr += (id & ~0x3) << 3;
     for (byte i = 0; i < 16; i++) {
-	byte *where = map_y[y++] + x;
-	where[0] = *ptr++;
-	where[1] = *ptr++;
+	byte *where = map_y[y] + x;
+	if (flip_h) {
+	    where[1] = flip_bits(*ptr++);
+	    where[0] = flip_bits(*ptr++);
+	}
+	else {
+	    where[0] = *ptr++;
+	    where[1] = *ptr++;
+	}
+	if (flip_v) y--; else y++;
     }
 }
 
 static void place_richard(byte x, byte y) {
+    direction = 0;
     stance = STANCE;
     richard_pos[X] = x;
     richard_pos[Y] = y;
-    draw_tile(RICHARD(stance), richard_pos);
+    draw_tile(RICHARD(stance), richard_pos, direction);
 }
 
 static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
-    draw_tile(EMPTY, pos);
+    draw_tile(EMPTY, pos, 0);
     pos[X] += dx;
     pos[Y] += dy;
-    draw_tile(ptr, pos);
+    draw_tile(ptr, pos, direction);
 }
 
 static void roll_richard(int8 dx, int8 dy) {
@@ -353,7 +376,7 @@ static void roll_richard(int8 dx, int8 dy) {
 }
 
 static void rest_richard(void) {
-    draw_tile(RICHARD(RESTED), richard_pos);
+    draw_tile(RICHARD(RESTED), richard_pos, direction);
     replenish_stamina(24);
 }
 
@@ -370,9 +393,11 @@ static void move_richard(void) {
 	roll_richard(0, 8);
     }
     else if (change & CTRL_LEFT) {
+	direction = 1;
 	roll_richard(-8, 0);
     }
     else if (change & CTRL_RIGHT) {
+	direction = 0;
 	roll_richard(8, 0);
     }
 }
