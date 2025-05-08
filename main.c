@@ -411,6 +411,22 @@ static void game_loop(void) {
     }
 }
 
+static void load_level(void **ptr) {
+    void *dst = EMPTY;
+    decompress(COLOUR(0x80), *ptr++);
+
+    /* build tileset */
+    while (*ptr) dst = decompress(dst, *ptr++);
+
+    unsigned char *id = LEVEL;
+    for (byte y = 32; y <= 176; y += 16) {
+	for (byte x = 0; x < 16; x++) {
+	    byte pos[2] = { x << 4, y };
+	    draw_tile(EMPTY, pos, *id++);
+	}
+    }
+}
+
 static void start_game(void) {
     memset(EMPTY, 0, 32);
     show_block(bar, 0, 24);
@@ -418,7 +434,7 @@ static void start_game(void) {
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
 
-    decompress(COLOUR(0x80), dungeon);
+    load_level(room_dungeon);
     decompress(RICHARD(0), richard);
     place_richard(32, 96);
 
