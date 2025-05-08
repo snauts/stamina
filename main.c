@@ -368,12 +368,21 @@ static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
     draw_tile(ptr, pos, direction);
 }
 
+static void restore_tile(byte *pos) {
+    byte *id = LEVEL;
+    id += pos[X] >> 4;
+    id += pos[Y] - 32;
+    draw_tile(EMPTY, pos, *id);
+}
+
 static void roll_richard(int8 dx, int8 dy) {
     if (consume_stamina(6)) {
 	stance = !stance;
+	byte pos[2] = { richard_pos[X], richard_pos[Y] };
 	move_tile(RICHARD(MOVING), richard_pos, dx, dy);
 	game_idle(4);
 	move_tile(RICHARD(stance), richard_pos, dx, dy);
+	restore_tile(pos);
     }
 }
 
