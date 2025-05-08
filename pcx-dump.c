@@ -262,19 +262,51 @@ static void save_image(unsigned char *data, int size) {
     compress_and_save(name, data, size);
 }
 
-static void serialize_tiles(unsigned char *buf, int size) {
+static void serialize_tiles(void *ptr, int size) {
     int index = 0;
-    unsigned char tiles[size];
+    unsigned short *buf = ptr;
+    unsigned short tiles[size / 2];
     for (int y = 0; y < header.h; y += 16) {
 	for (int x = 0; x < header.w; x += 16) {
 	    for (int i = 0; i < 16; i++) {
 		int offset = ((y + i) * header.w + x) / 8;
-		tiles[index++] = buf[offset + 0];
-		tiles[index++] = buf[offset + 1];
+		tiles[index++] = buf[offset / 2];
 	    }
 	}
     }
-    memcpy(buf, tiles, size);
+    memcpy(ptr, tiles, size);
+}
+
+static unsigned short flip_bits(unsigned short source) {
+    unsigned short result = 0;
+    for (int i = 0; i < 16; i++) {
+	result = result << 1;
+	result |= source & 1;
+	source = source >> 1;
+    }
+    return result;
+}
+
+static void flip_vertical(void *ptr, int size) {
+    int index = 0;
+    unsigned short *buf = ptr;
+    unsigned short tiles[size / 2];
+    for (int i = 0; i < size; i += 32) {
+	for (int y = 15; y >= 0; y--) {
+	    tiles[index++] = buf[i / 2 + y];
+	}
+    }
+    memcpy(ptr, tiles, size);
+}
+
+static void flip_horizontal(void *ptr, int size) {
+    int index = 0;
+    unsigned short *buf = ptr;
+    unsigned short tiles[size / 2];
+    for (int i = 0; i < size / 2; i++) {
+	tiles[i] = flip_bits(buf[i]);
+    }
+    memcpy(ptr, tiles, size);
 }
 
 static void save_bitmap(unsigned char *buf, int size) {
