@@ -15,6 +15,8 @@ struct Header {
     short w, h;
 } header;
 
+static int default_color = 4;
+
 static void __attribute__((unused)) hexdump(unsigned char *buf, int size) {
     for (int i = 0; i < size; i++) {
 	fprintf(stderr, "%02x ", buf[i]);
@@ -250,7 +252,7 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
 	}
 	i += w;
     }
-    return pixel == 0 ? 0x4 : pixel;
+    return pixel == 0 ? default_color : pixel;
 }
 
 static void save_image(unsigned char *data, int size) {
@@ -291,7 +293,7 @@ static void save_bitmap(unsigned char *buf, int size) {
 
 int main(int argc, char **argv) {
     if (argc < 3) {
-	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx\n");
+	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx [color]\n");
 	fprintf(stderr, "  -c   dump compressed image\n");
 	fprintf(stderr, "  -t   dump compressed tiles\n");
 	fprintf(stderr, "  -f   dump compressed file\n");
@@ -306,6 +308,7 @@ int main(int argc, char **argv) {
     case 't':
 	void *buf = read_pcx(header.name);
 	if (buf == NULL) return -ENOENT;
+	if (argc >= 4) default_color = atoi(argv[3]);
 	save_bitmap(buf, header.w * header.h);
 	free(buf);
 	break;
