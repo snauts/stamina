@@ -31,8 +31,9 @@ static byte *map_y[192];
 
 #define FRAME(x)	((x) << 5)
 
-#define EMPTY		(STAGING_AREA + FRAME(0))
-#define RICHARD(x)	(STAGING_AREA + FRAME(1 + (x)))
+#define LEVEL		(STAGING_AREA)
+#define EMPTY		(STAGING_AREA + FRAME(5))
+#define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
 #define  STANCE			0
 #define  RESTED			2
 #define  MOVING			3
@@ -416,7 +417,7 @@ static void start_game(void) {
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
 
-    memset(COLOUR(0x80), 0x1, 0x280);
+    decompress(COLOUR(0x80), dungeon);
     decompress(RICHARD(0), richard);
     place_richard(32, 96);
 
