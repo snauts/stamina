@@ -17,7 +17,8 @@ pcx:
 	@./pcx-dump -c title.pcx >> data.h
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h
-	@./pcx-dump -l 1 dungeon.pcx special.pcx >> data.h
+	@./pcx-dump -t bricks.pcx >> data.h
+	@./pcx-dump -l 1 dungeon.pcx special.pcx bricks.pcx >> data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
