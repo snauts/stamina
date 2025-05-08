@@ -29,6 +29,12 @@ static byte *map_y[192];
 #define IRQ_BASE	0xfe00
 #endif
 
+#define	CTRL_FIRE	0x10
+#define	CTRL_UP		0x08
+#define	CTRL_DOWN	0x04
+#define	CTRL_LEFT	0x02
+#define	CTRL_RIGHT	0x01
+
 static void interrupt(void) __naked {
     __asm__("di");
     __asm__("push af");
@@ -243,7 +249,11 @@ static void show_title(void) {
     wait_1_or_2();
 }
 
-static byte stamina, slider;
+#define FULL_STAMINA 48
+
+static byte stamina;
+static byte slider;
+static byte px, py;
 
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
@@ -255,6 +265,19 @@ static void update_bar(void) {
     }
     if (slider > stamina) {
 	stamina_bar_update(--slider, 0x00);
+    }
+}
+
+static byte consume_stamina(byte amount) {
+    byte enough = (stamina >= amount);
+    if (enough) stamina -= amount;
+    return enough;
+}
+
+static void replenish_stamina(byte amount) {
+    stamina = stamina + amount;
+    if (stamina > FULL_STAMINA) {
+	stamina = FULL_STAMINA;
     }
 }
 
@@ -283,15 +306,38 @@ static void draw_tile(byte *ptr, int x, int y) {
     }
 }
 
+static void move_richard(void) {
+    byte change = input_change(read_input());
+
+    if (change & CTRL_FIRE) {
+	replenish_stamina(24);
+    }
+    else if (change & CTRL_UP) {
+	consume_stamina(12);
+    }
+    else if (change & CTRL_DOWN) {
+	consume_stamina(12);
+    }
+    else if (change & CTRL_LEFT) {
+	consume_stamina(12);
+    }
+    else if (change & CTRL_RIGHT) {
+	consume_stamina(12);
+    }
+}
+
 static void game_loop(void) {
     for (;;) {
+	update_bar();
+	move_richard();
 	wait_vblank();
     }
 }
 
 static void start_game(void) {
     show_block(bar, 0, 24);
-    stamina = slider = 48;
+    last_input = read_input();
+    stamina = slider = FULL_STAMINA;
     game_loop();
 }
 
