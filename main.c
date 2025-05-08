@@ -331,7 +331,7 @@ static void place_richard(byte x, byte y) {
     draw_tile(RICHARD(0), richard_pos);
 }
 
-static void move_sprite(byte *ptr, byte *pos, int8 dx, int8 dy) {
+static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
     draw_tile(EMPTY, pos);
     pos[X] += dx;
     pos[Y] += dy;
@@ -339,12 +339,12 @@ static void move_sprite(byte *ptr, byte *pos, int8 dx, int8 dy) {
 }
 
 static void roll_richard(int8 dx, int8 dy) {
-    if (consume_stamina(12)) {
+    if (consume_stamina(6)) {
 	draw_tile(RICHARD(1), richard_pos);
 	game_idle(2);
-	move_sprite(RICHARD(2), richard_pos, dx, dy);
+	move_tile(RICHARD(2), richard_pos, dx, dy);
 	game_idle(2);
-	move_sprite(RICHARD(1), richard_pos, dx, dy);
+	move_tile(RICHARD(1), richard_pos, dx, dy);
 	game_idle(2);
 	draw_tile(RICHARD(0), richard_pos);
     }
