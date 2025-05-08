@@ -33,6 +33,8 @@ static byte *map_y[192];
 
 #define EMPTY		(STAGING_AREA + FRAME(0))
 #define RICHARD(x)	(STAGING_AREA + FRAME(1 + (x)))
+#define  RESTED			2
+#define  MOVING			3
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -264,6 +266,7 @@ static void show_title(void) {
 
 static byte stamina;
 static byte slider;
+static byte stance;
 static byte richard_pos[2];
 
 static void stamina_bar_update(byte pos, byte update) {
@@ -326,9 +329,10 @@ static void draw_tile(byte *ptr, const byte *pos) {
 }
 
 static void place_richard(byte x, byte y) {
+    stance = 0;
     richard_pos[X] = x;
     richard_pos[Y] = y;
-    draw_tile(RICHARD(0), richard_pos);
+    draw_tile(RICHARD(stance), richard_pos);
 }
 
 static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
@@ -340,14 +344,15 @@ static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
 
 static void roll_richard(int8 dx, int8 dy) {
     if (consume_stamina(6)) {
-	move_tile(RICHARD(1), richard_pos, dx, dy);
-	game_idle(8);
-	move_tile(RICHARD(0), richard_pos, dx, dy);
+	stance = !stance;
+	move_tile(RICHARD(MOVING), richard_pos, dx, dy);
+	game_idle(4);
+	move_tile(RICHARD(stance), richard_pos, dx, dy);
     }
 }
 
 static void rest_richard(void) {
-    draw_tile(RICHARD(2), richard_pos);
+    draw_tile(RICHARD(RESTED), richard_pos);
     replenish_stamina(24);
 }
 
