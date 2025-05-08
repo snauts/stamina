@@ -262,6 +262,21 @@ static void save_image(unsigned char *data, int size) {
     compress_and_save(name, data, size);
 }
 
+static void serialize_tiles(unsigned char *buf, int size) {
+    int index = 0;
+    unsigned char tiles[size];
+    for (int y = 0; y < header.h; y += 16) {
+	for (int x = 0; x < header.w; x += 16) {
+	    for (int i = 0; i < 16; i++) {
+		int offset = ((y + i) * header.w + x) / 8;
+		tiles[index++] = buf[offset + 0];
+		tiles[index++] = buf[offset + 1];
+	    }
+	}
+    }
+    memcpy(buf, tiles, size);
+}
+
 static void save_bitmap(unsigned char *buf, int size) {
     int j = 0;
     int pixel_size = size / 8;
@@ -283,6 +298,7 @@ static void save_bitmap(unsigned char *buf, int size) {
 
     switch (option) {
     case 't':
+	serialize_tiles(pixel, pixel_size);
 	save_image(pixel, pixel_size);
 	break;
     case 'c':
