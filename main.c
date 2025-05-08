@@ -33,6 +33,7 @@ static byte *map_y[192];
 
 #define EMPTY		(STAGING_AREA + FRAME(0))
 #define RICHARD(x)	(STAGING_AREA + FRAME(1 + (x)))
+#define  STANCE			0
 #define  RESTED			2
 #define  MOVING			3
 
@@ -329,7 +330,7 @@ static void draw_tile(byte *ptr, const byte *pos) {
 }
 
 static void place_richard(byte x, byte y) {
-    stance = 0;
+    stance = STANCE;
     richard_pos[X] = x;
     richard_pos[Y] = y;
     draw_tile(RICHARD(stance), richard_pos);
