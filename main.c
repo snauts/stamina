@@ -217,14 +217,18 @@ static byte read_1_or_2(void) {
 }
 
 static byte use_joy;
+static byte last_input;
+
+static byte input_change(byte input) {
+    byte change = input & (input ^ last_input);
+    last_input = input;
+    return change;
+}
 
 static void wait_1_or_2(void) {
-    byte prev, next = read_1_or_2();
-    do {
-	prev = next;
-	next = read_1_or_2();
-    } while ((next & (prev ^ next)) == 0);
-    use_joy = next & 2;
+    last_input = read_1_or_2();
+    while (!input_change(read_1_or_2())) { }
+    use_joy = last_input & 2;
 }
 
 static void show_title(void) {
