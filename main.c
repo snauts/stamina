@@ -31,7 +31,7 @@ static byte *map_y[192];
 
 #define FRAME(x)	((x) << 5)
 
-#define LEVEL		(STAGING_AREA)
+#define LEVEL		(STAGING_AREA - 32)
 #define EMPTY		(STAGING_AREA + FRAME(5))
 #define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
 #define  STANCE			0
@@ -269,8 +269,8 @@ static void show_title(void) {
 static byte stamina;
 static byte slider;
 static byte stance;
+static byte position;
 static byte direction;
-static byte richard_pos[2];
 
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
@@ -331,9 +331,9 @@ static byte flip_bits(byte source) {
     return result;
 }
 
-static void draw_tile(byte *ptr, const byte *pos, byte id) {
-    byte x = pos[X] >> 3;
-    byte y = pos[Y];
+static void draw_tile(byte *ptr, byte pos, byte id) {
+    byte x = (pos & 0x0f) << 1;
+    byte y = (pos & 0xf0);
     byte flip_h = id & 1;
     byte flip_v = id & 2;
     if (flip_v) y += 15;
@@ -355,49 +355,25 @@ static void draw_tile(byte *ptr, const byte *pos, byte id) {
 static void place_richard(byte x, byte y) {
     direction = 0;
     stance = STANCE;
-    richard_pos[X] = x;
-    richard_pos[Y] = y;
-    draw_tile(RICHARD(stance), richard_pos, direction);
+    position = (y << 4) + x;
+    draw_tile(RICHARD(stance), position, direction);
 }
 
-static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
-    draw_tile(EMPTY, pos, 0);
-    pos[X] += dx;
-    pos[Y] += dy;
-    draw_tile(ptr, pos, direction);
+static byte is_walkable(int8 delta) {
+    return LEVEL[position + delta] == 4;
 }
 
-static byte find_id(byte *pos) {
-    byte *id = LEVEL;
-    id += pos[X] >> 4;
-    id += pos[Y] - 32;
-    return *id;
-}
-
-static void restore_tile(byte *pos) {
-    draw_tile(EMPTY, pos, find_id(pos));
-}
-
-static byte is_walkable(int8 dx, int8 dy) {
-    byte pos[2] = {
-	richard_pos[X] + dx,
-	richard_pos[Y] + dy,
-    };
-    return find_id(pos) == 4;
-}
-
-static void roll_richard(int8 dx, int8 dy) {
-    if (is_walkable(dx, dy) && consume_stamina(6)) {
-	byte pos[2];
+static void roll_richard(int8 delta) {
+    if (is_walkable(delta) && consume_stamina(6)) {
 	stance = !stance;
-	memcpy(pos, richard_pos, 2);
-	move_tile(RICHARD(stance), richard_pos, dx, dy);
-	restore_tile(pos);
+	draw_tile(EMPTY, position, LEVEL[position]);
+	position += delta;
+	draw_tile(RICHARD(stance), position, direction);
     }
 }
 
 static void rest_richard(void) {
-    draw_tile(RICHARD(RESTED), richard_pos, direction);
+    draw_tile(RICHARD(RESTED), position, direction);
     replenish_stamina(24);
 }
 
@@ -408,18 +384,18 @@ static void move_richard(void) {
 	rest_richard();
     }
     else if (change & CTRL_UP) {
-	roll_richard(0, -16);
+	roll_richard(-16);
     }
     else if (change & CTRL_DOWN) {
-	roll_richard(0, 16);
+	roll_richard(16);
     }
     else if (change & CTRL_LEFT) {
 	direction = 1;
-	roll_richard(-16, 0);
+	roll_richard(-1);
     }
     else if (change & CTRL_RIGHT) {
 	direction = 0;
-	roll_richard(16, 0);
+	roll_richard(1);
     }
 }
 
@@ -437,12 +413,8 @@ static void load_level(void **ptr) {
     /* build tileset */
     while (*ptr) dst = decompress(dst, *ptr++);
 
-    unsigned char *id = LEVEL;
-    for (byte y = 32; y <= 176; y += 16) {
-	for (byte x = 0; x < 16; x++) {
-	    byte pos[2] = { x << 4, y };
-	    draw_tile(EMPTY, pos, *id++);
-	}
+    for (byte pos = 32; pos < 192; pos++) {
+	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
 }
 
@@ -452,10 +424,10 @@ static void start_game(void) {
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
+    decompress(RICHARD(0), richard);
 
     load_level(room_dungeon);
-    decompress(RICHARD(0), richard);
-    place_richard(32, 96);
+    place_richard(2, 6);
 
     game_loop();
 }
