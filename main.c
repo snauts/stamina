@@ -368,15 +368,27 @@ static void move_tile(byte *ptr, byte *pos, int8 dx, int8 dy) {
     draw_tile(ptr, pos, direction);
 }
 
-static void restore_tile(byte *pos) {
+static byte find_id(byte *pos) {
     byte *id = LEVEL;
     id += pos[X] >> 4;
     id += pos[Y] - 32;
-    draw_tile(EMPTY, pos, *id);
+    return *id;
+}
+
+static void restore_tile(byte *pos) {
+    draw_tile(EMPTY, pos, find_id(pos));
+}
+
+static byte is_walkable(int8 dx, int8 dy) {
+    byte pos[2] = {
+	richard_pos[X] + (dx << 1),
+	richard_pos[Y] + (dy << 1)
+    };
+    return find_id(pos) == 4;
 }
 
 static void roll_richard(int8 dx, int8 dy) {
-    if (consume_stamina(6)) {
+    if (is_walkable(dx, dy) && consume_stamina(6)) {
 	stance = !stance;
 	byte pos[2] = { richard_pos[X], richard_pos[Y] };
 	move_tile(RICHARD(MOVING), richard_pos, dx, dy);
