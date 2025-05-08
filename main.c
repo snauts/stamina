@@ -32,6 +32,7 @@ static byte *map_y[192];
 #define FRAME(x)	((x) << 5)
 
 #define LEVEL		(STAGING_AREA - 32)
+#define  TILE(id)		(id << 2)
 #define EMPTY		(STAGING_AREA + FRAME(5))
 #define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
 #define  STANCE			0
@@ -352,15 +353,19 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
-static void place_richard(byte x, byte y) {
-    direction = 0;
-    stance = STANCE;
-    position = (y << 4) + x;
+static void draw_richard() {
     draw_tile(RICHARD(stance), position, direction);
 }
 
+static void place_richard(byte x, byte y) {
+    position = (y << 4) + x;
+    stance = STANCE;
+    direction = 0;
+    draw_richard();
+}
+
 static byte is_walkable(int8 delta) {
-    return LEVEL[position + delta] == 4;
+    return LEVEL[position + delta] == TILE(1);
 }
 
 static void roll_richard(int8 delta) {
@@ -368,13 +373,14 @@ static void roll_richard(int8 delta) {
 	stance = !stance;
 	draw_tile(EMPTY, position, LEVEL[position]);
 	position += delta;
-	draw_tile(RICHARD(stance), position, direction);
+	draw_richard();
     }
 }
 
 static void rest_richard(void) {
-    draw_tile(RICHARD(RESTED), position, direction);
     replenish_stamina(24);
+    stance = RESTED;
+    draw_richard();
 }
 
 static void move_richard(void) {
