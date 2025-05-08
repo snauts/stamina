@@ -8,11 +8,16 @@
 #include <errno.h>
 #include <fcntl.h>
 
+#define MAX_TILES	64
+#define TILE_SIZE	(32 * MAX_TILES)
+
 static char option;
 
 struct Header {
     short w, h;
 } header;
+
+#define SIZE(array) (sizeof(array) / sizeof(*(array)))
 
 static void __attribute__((unused)) hexdump(unsigned char *buf, int size) {
     for (int i = 0; i < size; i++) {
@@ -284,7 +289,7 @@ static unsigned short flip_bits(unsigned short source) {
     return result;
 }
 
-static void flip_vertical(void *ptr, int size) {
+static void *flip_vertical(void *ptr, int size) {
     int index = 0;
     unsigned short *buf = ptr;
     unsigned short tiles[size / 2];
@@ -294,9 +299,10 @@ static void flip_vertical(void *ptr, int size) {
 	}
     }
     memcpy(ptr, tiles, size);
+    return ptr;
 }
 
-static void flip_horizontal(void *ptr, int size) {
+static void *flip_horizontal(void *ptr, int size) {
     int index = 0;
     unsigned short *buf = ptr;
     unsigned short tiles[size / 2];
@@ -304,6 +310,7 @@ static void flip_horizontal(void *ptr, int size) {
 	tiles[i] = flip_bits(buf[i]);
     }
     memcpy(ptr, tiles, size);
+    return ptr;
 }
 
 static int get_tile_id(void *tile, void *set, int size) {
@@ -322,7 +329,11 @@ static int pixel_size(void) {
 }
 
 static int color_size(void) {
-    return image_size() / 64;
+    return pixel_size() / 8;
+}
+
+static int tile_count(void) {
+    return pixel_size() / 32;
 }
 
 static int total_size(void) {
@@ -370,11 +381,52 @@ static void save_bitmap(const char *name) {
     free(buf);
 }
 
+static unsigned char *copy_tiles(unsigned char *tiles) {
+    unsigned char *ptr = malloc(TILE_SIZE);
+    memcpy(ptr, tiles, TILE_SIZE);
+    return ptr;
+}
+
+static void build_tileset(unsigned char **tileset, int argc, char **argv) {
+    int count = 0;
+    int offset = 0;
+    unsigned char *ptr;
+    ptr = malloc(TILE_SIZE);
+    memset(ptr, 0, TILE_SIZE);
+    for (int i = 3; i < argc; i++) {
+	unsigned char *buf = load_bitmap(argv[i]);
+	serialize_tiles(buf, pixel_size());
+	count += tile_count();
+	if (count > MAX_TILES) {
+	    fprintf(stderr, "ERROR: too much tiles\n");
+	    exit(-EOVERFLOW);
+	}
+	memcpy(ptr + offset, buf, pixel_size());
+	offset += pixel_size();
+	free(buf);
+    }
+
+    tileset[0] = ptr;
+
+    tileset[1] = flip_horizontal(copy_tiles(ptr), TILE_SIZE);
+    tileset[2] = flip_vertical(copy_tiles(ptr), TILE_SIZE);
+    tileset[3] = flip_vertical(copy_tiles(tileset[1]), TILE_SIZE);
+}
+
+static unsigned char *compress_level(int argc, char **argv) {
+    unsigned char *tileset[4];
+    build_tileset(tileset, argc, argv);
+    for (int i = 0; i < SIZE(tileset); i++) {
+	free(tileset[i]);
+    }
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
 	fprintf(stderr, "USAGE: pcx-dump [option] file.pcx [extra]\n");
 	fprintf(stderr, "  -c   dump compressed image\n");
 	fprintf(stderr, "  -t   dump compressed tiles\n");
+	fprintf(stderr, "  -l   dump compressed level\n");
 	fprintf(stderr, "  -f   dump compressed file\n");
 	return 0;
     }
@@ -388,6 +440,9 @@ int main(int argc, char **argv) {
 	break;
     case 'f':
 	compress_file(argv[2]);
+	break;
+    case 'l':
+	compress_level(argc, argv);
 	break;
     }
     return 0;
