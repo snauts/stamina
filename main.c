@@ -36,7 +36,6 @@ static byte *map_y[192];
 #define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
 #define  STANCE			0
 #define  RESTED			2
-#define  MOVING			3
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -381,8 +380,8 @@ static void restore_tile(byte *pos) {
 
 static byte is_walkable(int8 dx, int8 dy) {
     byte pos[2] = {
-	richard_pos[X] + dx + dx,
-	richard_pos[Y] + dy + dy,
+	richard_pos[X] + dx,
+	richard_pos[Y] + dy,
     };
     return find_id(pos) == 4;
 }
@@ -392,8 +391,6 @@ static void roll_richard(int8 dx, int8 dy) {
 	byte pos[2];
 	stance = !stance;
 	memcpy(pos, richard_pos, 2);
-	move_tile(RICHARD(MOVING), richard_pos, dx, dy);
-	game_idle(4);
 	move_tile(RICHARD(stance), richard_pos, dx, dy);
 	restore_tile(pos);
     }
@@ -411,18 +408,18 @@ static void move_richard(void) {
 	rest_richard();
     }
     else if (change & CTRL_UP) {
-	roll_richard(0, -8);
+	roll_richard(0, -16);
     }
     else if (change & CTRL_DOWN) {
-	roll_richard(0, 8);
+	roll_richard(0, 16);
     }
     else if (change & CTRL_LEFT) {
 	direction = 1;
-	roll_richard(-8, 0);
+	roll_richard(-16, 0);
     }
     else if (change & CTRL_RIGHT) {
 	direction = 0;
-	roll_richard(8, 0);
+	roll_richard(16, 0);
     }
 }
 
