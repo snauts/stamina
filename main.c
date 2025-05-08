@@ -29,7 +29,10 @@ static byte *map_y[192];
 #define IRQ_BASE	0xfe00
 #endif
 
-#define RICHARD		(STAGING_AREA + 0x0000)
+#define FRAME(x)	((x) << 5)
+
+#define EMPTY		(STAGING_AREA + FRAME(0))
+#define RICHARD		(STAGING_AREA + FRAME(1))
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -372,6 +375,7 @@ static void game_loop(void) {
 }
 
 static void start_game(void) {
+    memset(EMPTY, 0, 32);
     show_block(bar, 0, 24);
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
