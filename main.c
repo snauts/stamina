@@ -274,6 +274,13 @@ static void update_bar(void) {
     }
 }
 
+static void game_idle(byte ticks) {
+    for (byte i = 0; i < ticks; i++) {
+	wait_vblank();
+	update_bar();
+    }
+}
+
 static byte consume_stamina(byte amount) {
     byte enough = (stamina >= amount);
     if (enough) stamina -= amount;
@@ -359,9 +366,8 @@ static void move_richard(void) {
 
 static void game_loop(void) {
     for (;;) {
-	update_bar();
 	move_richard();
-	wait_vblank();
+	game_idle(1);
     }
 }
 
