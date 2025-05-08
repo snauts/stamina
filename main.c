@@ -346,11 +346,16 @@ static void roll_richard(int8 dx, int8 dy) {
     }
 }
 
+static void rest_richard(void) {
+    draw_tile(RICHARD(2), richard_pos);
+    replenish_stamina(24);
+}
+
 static void move_richard(void) {
     byte change = input_change(read_input());
 
     if (change & CTRL_FIRE) {
-	replenish_stamina(24);
+	rest_richard();
     }
     else if (change & CTRL_UP) {
 	roll_richard(0, -8);
