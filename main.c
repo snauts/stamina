@@ -205,7 +205,7 @@ static void clear_msg(void) {
     for (byte y = 20; y < 28; y++) memset(map_y[y], 0, 32);
 }
 
-static void decompress(byte *dst, const byte *src) {
+static void *decompress(byte *dst, const byte *src) {
     while (*src) {
         byte n = *src & 0x7f;
         if (*(src++) & 0x80) {
@@ -221,6 +221,7 @@ static void decompress(byte *dst, const byte *src) {
 	    }
         }
     }
+    return dst;
 }
 
 static void show_block(const void *src, byte y, byte n) {
