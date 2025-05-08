@@ -309,6 +309,13 @@ static void flip_horizontal(void *ptr, int size) {
     memcpy(ptr, tiles, size);
 }
 
+static int get_tile_id(void *tile, void *set, int size) {
+    for (int offset = 0; offset < size; offset += 32) {
+	if (memcmp(tile, set + offset, 32) == 0) return offset / 32;
+    }
+    return -1;
+}
+
 static void save_bitmap(unsigned char *buf, int size) {
     int j = 0;
     int pixel_size = size / 8;
