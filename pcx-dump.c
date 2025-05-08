@@ -425,10 +425,17 @@ static unsigned char *compress_level(int argc, char **argv) {
     build_tileset(tileset, argc, argv);
 
     unsigned char *level = load_bitmap(argv[2]);
+
+    unsigned char result[color_size() + tile_count()];
+    memcpy(result, level + pixel_size(), color_size());
+
     serialize_tiles(level, pixel_size());
     for (int i = 0; i < pixel_size(); i += 32) {
 	int id = get_tileset_id(level + i, tileset, TILE_SIZE);
+	result[color_size() + i / 32] = id;
     }
+
+    save_array(argv[2], result, sizeof(result));
 
     for (int i = 0; i < SIZE(tileset); i++) {
 	free(tileset[i]);
