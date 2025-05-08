@@ -11,7 +11,6 @@
 static char option;
 
 struct Header {
-    char *name;
     short w, h;
 } header;
 
@@ -253,11 +252,11 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
     return pixel == 0 ? 5 : pixel;
 }
 
-static void save_image(unsigned char *data, int size) {
-    char name[256];
-    remove_extension(name, header.name);
-    fprintf(stderr, "dumping pcx image %s\n", header.name);
-    compress_and_save(name, data, size);
+static void save_image(const char *name, unsigned char *data, int size) {
+    char variable_name[256];
+    remove_extension(variable_name, name);
+    fprintf(stderr, "dumping pcx image %s\n", name);
+    compress_and_save(variable_name, data, size);
 }
 
 static void serialize_tiles(void *ptr, int size) {
@@ -314,34 +313,61 @@ static int get_tile_id(void *tile, void *set, int size) {
     return -1;
 }
 
-static void save_bitmap(unsigned char *buf, int size) {
-    int j = 0;
-    int pixel_size = size / 8;
-    int color_size = size / 64;
-    unsigned char pixel[pixel_size + color_size];
-    unsigned char *color = pixel + pixel_size;
-    unsigned short on[color_size];
+static int image_size(void) {
+    return header.w * header.h;
+}
 
-    for (int i = 0; i < size; i += 8) {
+static int pixel_size(void) {
+    return image_size() / 8;
+}
+
+static int color_size(void) {
+    return image_size() / 64;
+}
+
+static int total_size(void) {
+    return pixel_size() + color_size();
+}
+
+static void *convert_bitmap(unsigned char *buf) {
+    int j = 0;
+    unsigned char pixel[total_size()];
+    unsigned char *color = pixel + pixel_size();
+    unsigned short on[color_size()];
+
+    for (int i = 0; i < image_size(); i += 8) {
 	if (i / header.w % 8 == 0) {
 	    on[j++] = on_pixel(buf, i, header.w);
 	}
 	unsigned char data = on[ink_index(i)] & 0xff;
 	pixel[i / 8] = consume_pixels(buf + i, data);
     }
-    for (int i = 0; i < color_size; i++) {
+    for (int i = 0; i < color_size(); i++) {
 	color[i] = encode_ink(on[i]);
     }
 
+    memcpy(buf, pixel, total_size());
+    return buf;
+}
+
+static void *load_bitmap(const char *name) {
+    return convert_bitmap(read_pcx(name));
+}
+
+static void save_bitmap(const char *name) {
+    unsigned char *buf = load_bitmap(name);
+
     switch (option) {
     case 't':
-	serialize_tiles(pixel, pixel_size);
-	save_image(pixel, pixel_size);
+	serialize_tiles(buf, pixel_size());
+	save_image(name, buf, pixel_size());
 	break;
     case 'c':
-	save_image(pixel, pixel_size + color_size);
+	save_image(name, buf, total_size());
 	break;
     }
+
+    free(buf);
 }
 
 int main(int argc, char **argv) {
@@ -354,18 +380,14 @@ int main(int argc, char **argv) {
     }
 
     option = argv[1][1];
-    header.name = argv[2];
 
     switch (option) {
     case 'c':
     case 't':
-	void *buf = read_pcx(header.name);
-	if (buf == NULL) return -ENOENT;
-	save_bitmap(buf, header.w * header.h);
-	free(buf);
+	save_bitmap(argv[2]);
 	break;
     case 'f':
-	compress_file(header.name);
+	compress_file(argv[2]);
 	break;
     }
     return 0;
