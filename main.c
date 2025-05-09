@@ -118,10 +118,17 @@ static void precalculate(void) {
 #endif
 }
 
+static void clear_block(byte y, byte h) {
+    byte **row = map_y + y;
+    for (byte i = 0; i < h; i++) {
+	memset(*row++, 0, 32);
+    }
+}
+
 static void clear_screen(void) {
 #if defined(ZXS)
     memset(COLOUR(0), 0x00, 0x300);
-    memset(SCREEN(0), 0x00, 0x1800);
+    clear_block(0, 192);
     out_fe(0);
 #endif
 }
@@ -195,13 +202,6 @@ static byte str_len(const char *msg) {
 
 static byte str_offset(const char *msg, byte from) {
     return from - (str_len(msg) >> 1);
-}
-
-static void clear_block(byte y, byte h) {
-    byte **row = map_y + y;
-    for (byte i = 0; i < h; i++) {
-	memset(*row++, 0, 32);
-    }
 }
 
 static byte has_message;
