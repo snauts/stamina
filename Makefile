@@ -1,12 +1,14 @@
 ARCH ?= -mz80
 
 MAKE := make --no-print-directory
+SIZE := ls -l stamina.tap | cut -d " " -f 5
 
 CFLAGS += --nostdinc --nostdlib --no-std-crt0
 CFLAGS += --code-loc $(CODE) --data-loc $(DATA)
 
 all:	msg zxs
 	@echo stamina build built
+	@echo zxs tape size $(shell $(SIZE))
 
 msg:
 	@echo building stamina build
