@@ -421,10 +421,11 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
     tileset[3] = flip_vertical(copy_tiles(tileset[1]), TILE_SIZE);
 }
 
-static void save_room_data(int argc, char **argv) {
-    char name[256];
+static void save_room_data(char *name, int argc, char **argv) {
     printf("static const void* const room_%s[] = {\n", name);
-    for (int i = 2; i < argc; i++) {
+    printf(" layout_of_%s,", name);
+
+    for (int i = 3; i < argc; i++) {
 	remove_extension(name, argv[i]);
 	printf(" %s,", name);
     }
@@ -448,8 +449,11 @@ static unsigned char *compress_level(int argc, char **argv) {
 	result[color_size() + i / 32] = id;
     }
 
-    save_array(file_name, result, sizeof(result));
-    save_room_data(argc, argv);
+    char name[256];
+    sprintf(name, "layout_of_%s", file_name);
+    save_array(name, result, sizeof(result));
+    remove_extension(name, file_name);
+    save_room_data(name, argc, argv);
 
     for (int i = 0; i < SIZE(tileset); i++) {
 	free(tileset[i]);
