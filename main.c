@@ -441,7 +441,6 @@ static void load_level(void **ptr) {
 
 static void start_game(void) {
     has_message = 0;
-    memset(EMPTY, 0, 32);
     show_block(bar, 0, 24);
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
