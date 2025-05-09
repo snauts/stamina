@@ -32,7 +32,7 @@ static const struct Room dungeon = {
 };
 
 static const struct Bump tunnel_bump[] = {
-    LOAD_ROOM(POS(13, 9), 1, &dungeon, POS(2, 6)),
+    LOAD_ROOM(POS(2, 9), -1, &dungeon, POS(13, 9)),
 };
 
 static const struct Room tunnel = {
