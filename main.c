@@ -22,9 +22,6 @@ typedef unsigned short word;
 #define FRAME(x)	((x) << 5)
 #define POS(x, y)	((byte) ((x) + ((y) << 4)))
 
-#include "data.h"
-#include "room.h"
-
 static const struct Room *room;
 static volatile byte vblank;
 static byte *map_y[192];
@@ -52,6 +49,9 @@ static byte *map_y[192];
 #define	CTRL_RIGHT	0x01
 
 enum { X = 0, Y = 1 };
+
+#include "data.h"
+#include "room.h"
 
 static void interrupt(void) __naked {
     __asm__("di");
@@ -490,6 +490,7 @@ static bool load_room(const void *new_room, byte pos) {
 static void start_game(void) {
     direction = 0;
     has_message = 0;
+    door_broken = false;
     show_block(bar, 0, 24);
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
