@@ -40,7 +40,7 @@ static byte *map_y[192];
 #define EMPTY		(STAGING_AREA + FRAME(5))
 #define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
 #define  STANCE			0
-#define  RESTED			2
+#define  RESTED			4
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
