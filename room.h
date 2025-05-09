@@ -1,4 +1,4 @@
-typedef void(*Caller)(const void *, byte);
+typedef bool(*Caller)(const void *, byte);
 
 struct Bump {
     byte pos;
@@ -15,7 +15,7 @@ struct Room {
     byte count;
 };
 
-static void load_room(const void *ptr, byte pos);
+static bool load_room(const void *ptr, byte pos);
 
 #define LOAD_ROOM(from, dir, room, dst) \
     { .pos = from, .delta = dir, .fn = &load_room, .ptr = room, .arg = dst }

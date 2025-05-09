@@ -6,7 +6,11 @@ void start_up(void) __naked {
 typedef signed char int8;
 typedef signed short int16;
 typedef unsigned char byte;
+typedef unsigned char bool;
 typedef unsigned short word;
+
+#define false		0
+#define true		1
 
 #define NULL		((void *) 0)
 #define ADDR(obj)	((word) (obj))
@@ -446,7 +450,7 @@ static void game_loop(void) {
     }
 }
 
-static void load_room(const void *new_room, byte pos) {
+static bool load_room(const void *new_room, byte pos) {
     /* clear previous */
     clear_block(32, 160);
 
@@ -466,6 +470,7 @@ static void load_room(const void *new_room, byte pos) {
     place_richard(pos);
 
     show_message(room->msg);
+    return true;
 }
 
 static void start_game(void) {
