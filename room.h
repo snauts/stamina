@@ -11,6 +11,7 @@ struct Bump {
 struct Room {
     const char *msg;
     const void **map;
+    void (*setup)(void);
     const void *bump;
     byte count;
 };
@@ -29,6 +30,7 @@ static const struct Room dungeon = {
     .map = map_of_dungeon,
     .bump = dungeon_bump,
     .count = SIZE(dungeon_bump),
+    .setup = NULL,
 };
 
 static const struct Bump tunnel_bump[] = {
@@ -40,4 +42,5 @@ static const struct Room tunnel = {
     .map = map_of_tunnel,
     .bump = tunnel_bump,
     .count = SIZE(tunnel_bump),
+    .setup = NULL,
 };

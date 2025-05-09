@@ -99,6 +99,10 @@ static void __sdcc_call_iy(void) __naked {
     __asm__("jp (iy)");
 }
 
+static void __sdcc_call_hl(void) __naked {
+    __asm__("jp (hl)");
+}
+
 static void memset(byte *ptr, byte data, word len) {
     while (len-- > 0) { *ptr++ = data; }
 }
@@ -470,6 +474,8 @@ static bool load_room(const void *new_room, byte pos) {
     /* build tileset */
     void *dst = EMPTY;
     while (*map) dst = decompress(dst, *map++);
+
+    if (room->setup) room->setup();
 
     for (byte pos = 32; pos < 192; pos++) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
