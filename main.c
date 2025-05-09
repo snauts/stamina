@@ -197,12 +197,27 @@ static byte str_offset(const char *msg, byte from) {
     return from - (str_len(msg) >> 1);
 }
 
-static void show_msg(const char *msg) {
-    put_str(msg, str_offset(msg, 128), 20);
+static void clear_block(byte y, byte h) {
+    byte **row = map_y + y;
+    for (byte i = 0; i < h; i++) {
+	memset(*row++, 0, 32);
+    }
 }
 
-static void clear_msg(void) {
-    for (byte y = 20; y < 28; y++) memset(map_y[y], 0, 32);
+static byte has_message;
+
+static void clear_message(void) {
+    if (has_message) {
+	clear_block(20, 8);
+	has_message = 0;
+    }
+}
+
+static void show_message(const char *msg) {
+    clear_message();
+    byte x = str_offset(msg, 128);
+    put_str(msg, x, 20);
+    has_message = 1;
 }
 
 static void *decompress(byte *dst, const byte *src) {
@@ -425,6 +440,7 @@ static void load_level(void **ptr) {
 }
 
 static void start_game(void) {
+    has_message = 0;
     memset(EMPTY, 0, 32);
     show_block(bar, 0, 24);
     last_input = read_input();
