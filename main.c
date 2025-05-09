@@ -21,6 +21,7 @@ typedef unsigned short word;
 #include "data.h"
 #include "room.h"
 
+static const struct Room *room;
 static volatile byte vblank;
 static byte *map_y[192];
 
@@ -90,8 +91,8 @@ static void out_fe(byte data) {
     __asm__("out (#0xfe), a"); data;
 }
 
-static void __sdcc_call_hl(void) __naked {
-    __asm__("jp (hl)");
+static void __sdcc_call_iy(void) __naked {
+    __asm__("jp (iy)");
 }
 
 static void memset(byte *ptr, byte data, word len) {
@@ -386,12 +387,27 @@ static byte is_walkable(int8 delta) {
     return LEVEL[position + delta] == TILE(1);
 }
 
+static void activate_bumps(int8 delta) {
+    byte count = room->count;
+    const struct Bump *bump = room->bump;
+    for (byte i = 0; i < count; i++) {
+	if (position == bump->pos && delta == bump->delta) {
+	    bump->fn(bump->ptr, bump->arg);
+	    break;
+	}
+	bump++;
+    }
+}
+
 static void roll_richard(int8 delta) {
     if (is_walkable(delta) && consume_stamina(6)) {
 	stance = !stance;
 	draw_tile(EMPTY, position, LEVEL[position]);
 	position += delta;
 	draw_richard();
+    }
+    else {
+	activate_bumps(delta);
     }
 }
 
@@ -431,9 +447,9 @@ static void game_loop(void) {
 }
 
 static void load_room(const void *ptr, byte pos) {
+    room = ptr;
     void *dst = EMPTY;
     clear_block(32, 160);
-    const struct Room *room = ptr;
     const void **map = room->map;
     decompress(COLOUR(0x80), *map++);
 
