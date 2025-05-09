@@ -27,6 +27,7 @@ zxs:
 	@bin2tap -b stamina.bin
 
 prg: pcx
+	@echo compiling source code
 	@sdcc $(ARCH) $(CFLAGS) $(TYPE) main.c -o stamina.ihx
 	@hex2bin stamina.ihx > /dev/null
 

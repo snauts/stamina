@@ -30,6 +30,7 @@ static byte *map_y[192];
 #endif
 
 #define FRAME(x)	((x) << 5)
+#define POS(x, y)	((x) + ((y) << 4))
 
 #define LEVEL		(STAGING_AREA - 32)
 #define  TILE(id)		(id << 2)
@@ -373,10 +374,10 @@ static void draw_richard(void) {
     draw_tile(RICHARD(stance), position, direction);
 }
 
-static void place_richard(byte x, byte y) {
-    position = (y << 4) + x;
+static void place_richard(byte pos, byte dir) {
+    direction = dir;
+    position = pos;
     stance = STANCE;
-    direction = 0;
     draw_richard();
 }
 
@@ -449,7 +450,7 @@ static void start_game(void) {
     decompress(RICHARD(0), richard);
 
     load_level(room_dungeon);
-    place_richard(2, 6);
+    place_richard(POS(2, 6), 0);
 
     game_loop();
 }
