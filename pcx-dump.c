@@ -422,7 +422,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
 }
 
 static void save_room_data(char *name, int argc, char **argv) {
-    printf("static const void* const room_%s[] = {\n", name);
+    printf("static const void* const map_of_%s[] = {\n", name);
     printf(" layout_of_%s,", name);
 
     for (int i = 3; i < argc; i++) {

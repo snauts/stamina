@@ -16,6 +16,7 @@ typedef unsigned short word;
 #define PTR(addr)	((byte *) (addr))
 
 #include "data.h"
+#include "room.h"
 
 static volatile byte vblank;
 static byte *map_y[192];
@@ -430,8 +431,10 @@ static void game_loop(void) {
     }
 }
 
-static void load_level(void **ptr) {
+static void load_room(const struct Room *room, byte pos, byte dir) {
     void *dst = EMPTY;
+    clear_block(32, 160);
+    const void **ptr = room->map;
     decompress(COLOUR(0x80), *ptr++);
 
     /* build tileset */
@@ -440,6 +443,10 @@ static void load_level(void **ptr) {
     for (byte pos = 32; pos < 192; pos++) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
+
+    place_richard(pos, dir);
+
+    show_message(room->msg);
 }
 
 static void start_game(void) {
@@ -450,8 +457,7 @@ static void start_game(void) {
     stamina = slider = FULL_STAMINA;
     decompress(RICHARD(0), richard);
 
-    load_level(room_dungeon);
-    place_richard(POS(2, 6), 0);
+    load_room(&dungeon, POS(2, 6), 0);
 
     game_loop();
 }

@@ -26,7 +26,7 @@ zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
 	@bin2tap -b stamina.bin
 
-prg: pcx
+prg: pcx room.h
 	@echo compiling source code
 	@sdcc $(ARCH) $(CFLAGS) $(TYPE) main.c -o stamina.ihx
 	@hex2bin stamina.ihx > /dev/null
