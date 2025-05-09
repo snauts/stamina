@@ -31,9 +31,13 @@ static const struct Room dungeon = {
     .count = SIZE(dungeon_bump),
 };
 
+static const struct Bump tunnel_bump[] = {
+    LOAD_ROOM(POS(13, 9), 1, &dungeon, POS(2, 6)),
+};
+
 static const struct Room tunnel = {
     .msg = "Dungeon Tunnel",
     .map = map_of_tunnel,
-    .bump = NULL,
-    .count = 0,
+    .bump = tunnel_bump,
+    .count = SIZE(tunnel_bump),
 };
