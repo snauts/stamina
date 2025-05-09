@@ -401,7 +401,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
     unsigned char *ptr;
     ptr = malloc(TILE_SIZE);
     memset(ptr, 0, TILE_SIZE);
-    for (int i = 4; i < argc; i++) {
+    for (int i = 3; i < argc; i++) {
 	unsigned char *buf = load_bitmap(argv[i]);
 	serialize_tiles(buf, pixel_size());
 	count += tile_count();
@@ -424,7 +424,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
 static void save_room_data(int argc, char **argv) {
     char name[256];
     printf("static const void* const room_%s[] = {\n", name);
-    for (int i = 3; i < argc; i++) {
+    for (int i = 2; i < argc; i++) {
 	remove_extension(name, argv[i]);
 	printf(" %s,", name);
     }
@@ -436,7 +436,7 @@ static unsigned char *compress_level(int argc, char **argv) {
     unsigned char *tileset[4];
     build_tileset(tileset, argc, argv);
 
-    const char *file_name = argv[3];
+    const char *file_name = argv[2];
     unsigned char *level = load_bitmap(file_name);
 
     unsigned char result[color_size() + tile_count()];
@@ -478,7 +478,6 @@ int main(int argc, char **argv) {
 	compress_file(argv[2]);
 	break;
     case 'l':
-	default_color = atoi(argv[2]);
 	compress_level(argc, argv);
 	break;
     }
