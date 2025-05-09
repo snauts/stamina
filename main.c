@@ -372,6 +372,7 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 
 static void draw_richard(void) {
     draw_tile(RICHARD(stance), position, direction);
+    clear_message();
 }
 
 static void place_richard(byte pos, byte dir) {
