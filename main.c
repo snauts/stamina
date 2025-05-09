@@ -15,6 +15,9 @@ typedef unsigned short word;
 #define SIZE(array)	(sizeof(array) / sizeof(*(array)))
 #define PTR(addr)	((byte *) (addr))
 
+#define FRAME(x)	((x) << 5)
+#define POS(x, y)	((byte) ((x) + ((y) << 4)))
+
 #include "data.h"
 #include "room.h"
 
@@ -29,9 +32,6 @@ static byte *map_y[192];
 #define FONT_ADDRESS	PTR(0x3c00)
 #define IRQ_BASE	0xfe00
 #endif
-
-#define FRAME(x)	((x) << 5)
-#define POS(x, y)	((x) + ((y) << 4))
 
 #define LEVEL		(STAGING_AREA - 32)
 #define  TILE(id)		(id << 2)
@@ -376,8 +376,7 @@ static void draw_richard(void) {
     clear_message();
 }
 
-static void place_richard(byte pos, byte dir) {
-    direction = dir;
+static void place_richard(byte pos) {
     position = pos;
     stance = STANCE;
     draw_richard();
@@ -431,7 +430,7 @@ static void game_loop(void) {
     }
 }
 
-static void load_room(const struct Room *room, byte pos, byte dir) {
+static void load_room(const struct Room *room, byte pos) {
     void *dst = EMPTY;
     clear_block(32, 160);
     const void **ptr = room->map;
@@ -444,12 +443,13 @@ static void load_room(const struct Room *room, byte pos, byte dir) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
 
-    place_richard(pos, dir);
+    place_richard(pos);
 
     show_message(room->msg);
 }
 
 static void start_game(void) {
+    direction = 0;
     has_message = 0;
     show_block(bar, 0, 24);
     last_input = read_input();
@@ -457,7 +457,7 @@ static void start_game(void) {
     stamina = slider = FULL_STAMINA;
     decompress(RICHARD(0), richard);
 
-    load_room(&dungeon, POS(2, 6), 0);
+    load_room(&dungeon, POS(2, 6));
 
     game_loop();
 }
