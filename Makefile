@@ -20,6 +20,7 @@ pcx:
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h
 	@./pcx-dump -t bricks.pcx >> data.h
+	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l dungeon.pcx special.pcx bricks.pcx >> data.h
 
 zxs:

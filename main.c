@@ -430,14 +430,15 @@ static void game_loop(void) {
     }
 }
 
-static void load_room(const struct Room *room, byte pos) {
+static void load_room(const void *ptr, byte pos) {
     void *dst = EMPTY;
     clear_block(32, 160);
-    const void **ptr = room->map;
-    decompress(COLOUR(0x80), *ptr++);
+    const struct Room *room = ptr;
+    const void **map = room->map;
+    decompress(COLOUR(0x80), *map++);
 
     /* build tileset */
-    while (*ptr) dst = decompress(dst, *ptr++);
+    while (*map) dst = decompress(dst, *map++);
 
     for (byte pos = 32; pos < 192; pos++) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
