@@ -391,13 +391,21 @@ static byte is_walkable(int8 delta) {
     return LEVEL[position + delta] == TILE(1);
 }
 
+static bool invoke_bump(Caller fn, void *ptr, byte arg) {
+    return fn(ptr, arg);
+}
+
 static void activate_bumps(int8 delta) {
-    byte count = room->count;
     const struct Bump *bump = room->bump;
-    for (byte i = 0; i < count; i++) {
+    byte count = room->count;
+    while (count-- > 0) {
 	if (position == bump->pos && delta == bump->delta) {
-	    bump->fn(bump->ptr, bump->arg);
-	    break;
+	    /*
+	     * there seems to be compiler bug:
+	     * bump->fn(bump->ptr, bump->arg)
+	     * fails to pass bump->ptr correctly
+	     */
+	    if (invoke_bump(bump->fn, bump->ptr, bump->arg)) return;
 	}
 	bump++;
     }
