@@ -496,7 +496,7 @@ static void start_game(void) {
     stamina = slider = FULL_STAMINA;
     decompress(RICHARD(0), richard);
 
-    load_room(&dungeon, POS(2, 6));
+    load_room(&prison, POS(6, 6));
 
     game_loop();
 }
