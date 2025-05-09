@@ -446,14 +446,17 @@ static void game_loop(void) {
     }
 }
 
-static void load_room(const void *ptr, byte pos) {
-    room = ptr;
-    void *dst = EMPTY;
+static void load_room(const void *new_room, byte pos) {
+    /* clear previous */
     clear_block(32, 160);
+
+    /* unpack data */
+    room = new_room;
     const void **map = room->map;
     decompress(COLOUR(0x80), *map++);
 
     /* build tileset */
+    void *dst = EMPTY;
     while (*map) dst = decompress(dst, *map++);
 
     for (byte pos = 32; pos < 192; pos++) {
