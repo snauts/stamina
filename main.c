@@ -355,15 +355,16 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     if (flip_v) y += 15;
     ptr += (id & ~0x3) << 3;
     for (byte i = 0; i < 16; i++) {
-	byte *where = map_y[y] + x;
+	byte b1 = *ptr++;
+	byte b2 = *ptr++;
 	if (flip_h) {
-	    where[1] = flip_bits(*ptr++);
-	    where[0] = flip_bits(*ptr++);
+	    byte tmp = b1;
+	    b1 = flip_bits(b2);
+	    b2 = flip_bits(tmp);
 	}
-	else {
-	    where[0] = *ptr++;
-	    where[1] = *ptr++;
-	}
+	byte *where = map_y[y] + x;
+	*where++ = b1;
+	*where++ = b2;
 	if (flip_v) y--; else y++;
     }
 }
