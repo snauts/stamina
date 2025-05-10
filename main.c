@@ -384,7 +384,7 @@ static void draw_richard(void) {
 }
 
 static void place_richard(byte pos) {
-    stance = stance & 3;
+    stance = stance & 7;
     position = pos;
     draw_richard();
 }
@@ -426,7 +426,7 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
-    stance = (stance & 3) | TILE(RESTED);
+    stance = (stance & 7) | TILE(RESTED);
     replenish_stamina(24);
     draw_richard();
 }
