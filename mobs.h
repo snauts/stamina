@@ -13,8 +13,8 @@ enum {
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
-    { .pos = POS(10, 7), .sprite = 0 },
-    { .pos = POS(10, 5), .sprite = 0 },
+    { .pos = POS(10, 7), .sprite = TILE(0) },
+    { .pos = POS(10, 5), .sprite = TILE(1) },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -37,10 +37,16 @@ static void reset_actors(void) {
 
 static void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
-    draw_tile(ENEMY(0), mob->pos, mob->sprite);
     ptr->fn = fn;
     ptr->mob = mob;
     actor_count++;
+}
+
+static void place_actors(void) {
+    for (byte i = 0; i < actor_count; i++) {
+	struct Mob *mob = actors[i].mob;
+	draw_tile(ENEMY(0), mob->pos, mob->sprite);
+    }
 }
 
 static void shamble_mobs(void) {

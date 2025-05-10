@@ -513,6 +513,7 @@ static bool load_room(const void *new_room, byte pos) {
     }
 
     place_richard(pos);
+    place_actors();
 
     show_message(room->msg);
     return true;
@@ -527,6 +528,7 @@ static void start_game(void) {
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
     decompress(RICHARD, richard);
+    reset_mobs();
 
     load_room(&prison, POS(6, 6));
 
