@@ -53,6 +53,7 @@ enum { X = 0, Y = 1 };
 
 #include "data.h"
 #include "room.h"
+#include "mobs.h"
 
 static void interrupt(void) __naked {
     __asm__("di");
@@ -382,7 +383,12 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 
 static void draw_richard(void) {
     draw_tile(RICHARD, position, sprite);
+}
+
+static void move_actors(void) {
+    draw_richard();
     clear_message();
+    shamble_mobs();
 }
 
 static void place_richard(byte pos) {
@@ -420,7 +426,7 @@ static void roll_richard(int8 delta) {
 	draw_tile(EMPTY, position, LEVEL[position]);
 	sprite = (sprite & 7) ^ TILE(MOVING);
 	position += delta;
-	draw_richard();
+	move_actors();
     }
     else {
 	activate_bumps(delta);
@@ -430,7 +436,7 @@ static void roll_richard(int8 delta) {
 static void rest_richard(void) {
     sprite = (sprite & 7) | TILE(RESTED);
     replenish_stamina(24);
-    draw_richard();
+    move_actors();
 }
 
 static void move_richard(void) {
@@ -465,6 +471,7 @@ static void game_loop(void) {
 static bool load_room(const void *new_room, byte pos) {
     /* clear previous */
     clear_block(32, 160);
+    reset_actors();
 
     /* unpack data */
     room = new_room;
