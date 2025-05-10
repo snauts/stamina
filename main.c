@@ -51,9 +51,21 @@ static byte *map_y[192];
 
 enum { X = 0, Y = 1 };
 
+static byte consume_stamina(byte amount);
+static void show_message(const char *msg);
+static bool load_room(const void *ptr, byte pos);
+static bool bump_msg(const void *text, byte ignore);
+static void draw_tile(byte *ptr, byte pos, byte id);
+static void *decompress(byte *dst, const byte *src);
+
+static bool bump_msg(const void *text, byte value) {
+    show_message(text);
+    return value;
+}
+
 #include "data.h"
-#include "room.h"
 #include "mobs.h"
+#include "room.h"
 
 static void interrupt(void) __naked {
     __asm__("di");

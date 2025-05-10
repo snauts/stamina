@@ -1,8 +1,22 @@
-typedef void(*Action)(void *);
+struct Mob {
+    byte pos;
+    byte sprite;
+};
+
+enum {
+    LARRY,
+    BARRY,
+    /* this should be last */
+    TOTAL_MOBS,
+};
+
+static struct Mob mobs[TOTAL_MOBS];
+
+typedef void(*Action)(struct Mob *);
 
 struct Actor {
     Action fn;
-    void *mob;
+    struct Mob *mob;
 };
 
 static byte actor_count;
@@ -12,8 +26,9 @@ static void reset_actors(void) {
     actor_count = 0;
 }
 
-static void add_actor(Action fn, void *mob) {
+static void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
+    draw_tile(ENEMY(0), mob->pos, mob->sprite);
     ptr->fn = fn;
     ptr->mob = mob;
     actor_count++;
@@ -25,4 +40,8 @@ static void shamble_mobs(void) {
 	ptr->fn(ptr->mob);
 	ptr++;
     }
+}
+
+static void shamble_beast(struct Mob *mob) {
+    mob;
 }

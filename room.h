@@ -16,12 +16,6 @@ struct Room {
     byte count;
 };
 
-static byte consume_stamina(byte amount);
-static void show_message(const char *msg);
-static bool load_room(const void *ptr, byte pos);
-static void draw_tile(byte *ptr, byte pos, byte id);
-static bool bump_msg(const void *text, byte ignore);
-
 #define MAKE_BUMP(from, dir, action, data, param) \
     { .pos = from, .delta = dir, .fn = action, .ptr = data, .arg = param }
 
@@ -29,12 +23,13 @@ static const struct Bump dungeon_bump[] = {
     MAKE_BUMP(POS(2, 6), -1, &load_room, &tunnel, POS(13, 6)),
 };
 
+static void setup_dungeon(void);
 static const struct Room dungeon = {
     .msg = "Dreadful Dungeon",
     .map = map_of_dungeon,
     .bump = dungeon_bump,
     .count = SIZE(dungeon_bump),
-    .setup = NULL,
+    .setup = &setup_dungeon,
 };
 
 static const char tutorial1[] = "You die if attacked while resting";
@@ -91,7 +86,8 @@ static void setup_prison(void) {
     if (door_broken) LEVEL[POS(10, 6)] = TILE(6);
 }
 
-static bool bump_msg(const void *text, byte value) {
-    show_message(text);
-    return value;
+static void setup_dungeon(void) {
+    decompress(ENEMY(0), beast);
+    add_actor(&shamble_beast, mobs + LARRY);
+    add_actor(&shamble_beast, mobs + BARRY);
 }
