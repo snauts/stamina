@@ -49,6 +49,14 @@ static void place_actors(void) {
     }
 }
 
+static struct Mob *is_mob(byte pos) {
+    for (byte i = 0; i < actor_count; i++) {
+	struct Mob *mob = actors[i].mob;
+	if (mob->pos == pos) return mob;
+    }
+    return NULL;
+}
+
 static void shamble_mobs(void) {
     struct Actor *ptr = actors;
     for (byte i = 0; i < actor_count; i++) {

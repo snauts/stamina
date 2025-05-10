@@ -447,7 +447,8 @@ static void activate_bumps(int8 delta) {
 
 static void roll_richard(int8 delta) {
     byte target = position + delta;
-    if (is_walkable(target) && consume_stamina(6)) {
+    struct Mob *mob = is_mob(target);
+    if (!mob && is_walkable(target) && consume_stamina(6)) {
 	draw_tile(EMPTY, position, LEVEL[position]);
 	sprite = (sprite & 7) ^ TILE(MOVING);
 	position = target;
