@@ -321,8 +321,8 @@ static void show_title(void) {
 
 static byte stamina;
 static byte slider;
-static byte sprite;
-static byte position;
+
+static struct Mob player;
 
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
@@ -406,7 +406,7 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 }
 
 static void draw_richard(void) {
-    draw_tile(RICHARD, position, sprite);
+    draw_tile(RICHARD, player.pos, player.img);
 }
 
 static void move_actors(void) {
@@ -416,8 +416,8 @@ static void move_actors(void) {
 }
 
 static void place_richard(byte pos) {
-    sprite = sprite & 7;
-    position = pos;
+    player.img = player.img & 7;
+    player.pos = pos;
     draw_richard();
 }
 
@@ -433,7 +433,7 @@ static void activate_bumps(int8 delta) {
     const struct Bump *bump = room->bump;
     byte count = room->count;
     while (count-- > 0) {
-	if (position == bump->pos && delta == bump->delta) {
+	if (player.pos == bump->pos && delta == bump->delta) {
 	    /*
 	     * there seems to be compiler bug:
 	     * bump->fn(bump->ptr, bump->arg)
@@ -446,12 +446,12 @@ static void activate_bumps(int8 delta) {
 }
 
 static void roll_richard(int8 delta) {
-    byte target = position + delta;
+    byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
     if (!mob && is_walkable(target) && consume_stamina(6)) {
-	draw_tile(EMPTY, position, LEVEL[position]);
-	sprite = (sprite & 7) ^ TILE(MOVING);
-	position = target;
+	draw_tile(EMPTY, player.pos, LEVEL[player.pos]);
+	player.img = (player.img & 7) ^ TILE(MOVING);
+	player.pos = target;
 	move_actors();
     }
     else {
@@ -460,7 +460,7 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
-    sprite = (sprite & 7) | TILE(RESTED);
+    player.img = (player.img & 7) | TILE(RESTED);
     replenish_stamina(24);
     move_actors();
 }
@@ -478,11 +478,11 @@ static void move_richard(void) {
 	roll_richard(16);
     }
     else if (change & CTRL_LEFT) {
-	sprite |= 1;
+	player.img |= 1;
 	roll_richard(-1);
     }
     else if (change & CTRL_RIGHT) {
-	sprite &= ~1;
+	player.img &= ~1;
 	roll_richard(1);
     }
 }
@@ -522,7 +522,7 @@ static bool load_room(const void *new_room, byte pos) {
 }
 
 static void start_game(void) {
-    sprite = 0;
+    player.img = 0;
     has_message = 0;
     door_broken = false;
     show_block(bar, 0, 24);
