@@ -38,7 +38,7 @@ static const struct Room dungeon = {
 };
 
 static const char tutorial1[] = "You die if attacked while resting";
-static const char tutorial2[] = "Oh, still human are you?";
+static const char tutorial2[] = "Decimate King's army to break the seal";
 static const char tutorial3[] = "Stance affects attack and defence";
 static const char tutorial4[] = "That is a fine rapier you have there";
 
