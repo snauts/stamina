@@ -514,8 +514,8 @@ static bool load_room(const void *new_room, byte pos) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
 
-    place_richard(pos);
     place_actors();
+    place_richard(pos);
 
     show_message(room->msg);
     return true;
