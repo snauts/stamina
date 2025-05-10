@@ -37,8 +37,8 @@ static byte *map_y[192];
 
 #define LEVEL		(STAGING_AREA - 32)
 #define  TILE(id)		(id << 2)
-#define EMPTY		(STAGING_AREA + FRAME(5))
-#define RICHARD		(EMPTY + FRAME(256))
+#define EMPTY		(STAGING_AREA + 160)
+#define RICHARD		(EMPTY + FRAME(64))
 #define  RESTED			4
 
 #define	CTRL_FIRE	0x10
