@@ -1,6 +1,6 @@
 struct Mob {
     byte pos;
-    byte sprite;
+    byte img;
 };
 
 enum {
@@ -13,8 +13,8 @@ enum {
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
-    { .pos = POS(10, 7), .sprite = TILE(0) },
-    { .pos = POS(10, 5), .sprite = TILE(1) },
+    { .pos = POS(10, 7), .img = TILE(0) },
+    { .pos = POS(10, 5), .img = TILE(1) },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -45,7 +45,7 @@ static void add_actor(Action fn, struct Mob *mob) {
 static void place_actors(void) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = actors[i].mob;
-	draw_tile(ENEMY(0), mob->pos, mob->sprite);
+	draw_tile(ENEMY(0), mob->pos, mob->img);
     }
 }
 
