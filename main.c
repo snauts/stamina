@@ -38,8 +38,7 @@ static byte *map_y[192];
 #define LEVEL		(STAGING_AREA - 32)
 #define  TILE(id)		(id << 2)
 #define EMPTY		(STAGING_AREA + FRAME(5))
-#define RICHARD(x)	(EMPTY + FRAME(256 + (x)))
-#define  STANCE			0
+#define RICHARD		(EMPTY + FRAME(256))
 #define  RESTED			4
 
 #define	CTRL_FIRE	0x10
@@ -297,7 +296,6 @@ static byte stamina;
 static byte slider;
 static byte stance;
 static byte position;
-static byte direction;
 
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
@@ -381,13 +379,13 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 }
 
 static void draw_richard(void) {
-    draw_tile(RICHARD(stance), position, direction);
+    draw_tile(RICHARD, position, stance);
     clear_message();
 }
 
 static void place_richard(byte pos) {
+    stance = stance & 3;
     position = pos;
-    stance = STANCE;
     draw_richard();
 }
 
@@ -417,8 +415,8 @@ static void activate_bumps(int8 delta) {
 
 static void roll_richard(int8 delta) {
     if (is_walkable(delta) && consume_stamina(6)) {
-	stance = !stance;
 	draw_tile(EMPTY, position, LEVEL[position]);
+	stance = (stance & 7) ^ 4;
 	position += delta;
 	draw_richard();
     }
@@ -428,8 +426,8 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
+    stance = (stance & 3) | TILE(RESTED);
     replenish_stamina(24);
-    stance = RESTED;
     draw_richard();
 }
 
@@ -446,11 +444,11 @@ static void move_richard(void) {
 	roll_richard(16);
     }
     else if (change & CTRL_LEFT) {
-	direction = 1;
+	stance |= 1;
 	roll_richard(-1);
     }
     else if (change & CTRL_RIGHT) {
-	direction = 0;
+	stance &= ~1;
 	roll_richard(1);
     }
 }
@@ -488,14 +486,14 @@ static bool load_room(const void *new_room, byte pos) {
 }
 
 static void start_game(void) {
-    direction = 0;
+    stance = 0;
     has_message = 0;
     door_broken = false;
     show_block(bar, 0, 24);
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
-    decompress(RICHARD(0), richard);
+    decompress(RICHARD, richard);
 
     load_room(&prison, POS(6, 6));
 
