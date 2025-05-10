@@ -39,7 +39,9 @@ static byte *map_y[192];
 #define  TILE(id)		(id << 2)
 #define EMPTY		(STAGING_AREA + 160)
 #define RICHARD		(EMPTY + FRAME(64))
+#define  MOVING			1
 #define  RESTED			4
+#define ENEMY(n)	(RICHARD + FRAME(8 + 4 * n))
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -294,7 +296,7 @@ static void show_title(void) {
 
 static byte stamina;
 static byte slider;
-static byte stance;
+static byte sprite;
 static byte position;
 
 static void stamina_bar_update(byte pos, byte update) {
@@ -379,12 +381,12 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 }
 
 static void draw_richard(void) {
-    draw_tile(RICHARD, position, stance);
+    draw_tile(RICHARD, position, sprite);
     clear_message();
 }
 
 static void place_richard(byte pos) {
-    stance = stance & 7;
+    sprite = sprite & 7;
     position = pos;
     draw_richard();
 }
@@ -416,7 +418,7 @@ static void activate_bumps(int8 delta) {
 static void roll_richard(int8 delta) {
     if (is_walkable(delta) && consume_stamina(6)) {
 	draw_tile(EMPTY, position, LEVEL[position]);
-	stance = (stance & 7) ^ 4;
+	sprite = (sprite & 7) ^ TILE(MOVING);
 	position += delta;
 	draw_richard();
     }
@@ -426,7 +428,7 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
-    stance = (stance & 7) | TILE(RESTED);
+    sprite = (sprite & 7) | TILE(RESTED);
     replenish_stamina(24);
     draw_richard();
 }
@@ -444,11 +446,11 @@ static void move_richard(void) {
 	roll_richard(16);
     }
     else if (change & CTRL_LEFT) {
-	stance |= 1;
+	sprite |= 1;
 	roll_richard(-1);
     }
     else if (change & CTRL_RIGHT) {
-	stance &= ~1;
+	sprite &= ~1;
 	roll_richard(1);
     }
 }
@@ -486,7 +488,7 @@ static bool load_room(const void *new_room, byte pos) {
 }
 
 static void start_game(void) {
-    stance = 0;
+    sprite = 0;
     has_message = 0;
     door_broken = false;
     show_block(bar, 0, 24);
