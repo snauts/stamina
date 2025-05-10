@@ -421,8 +421,8 @@ static void place_richard(byte pos) {
     draw_richard();
 }
 
-static byte is_walkable(int8 delta) {
-    return LEVEL[position + delta] == TILE(1);
+static byte is_walkable(byte place) {
+    return LEVEL[place] == TILE(1);
 }
 
 static bool invoke_bump(Caller fn, void *ptr, byte arg) {
@@ -446,10 +446,11 @@ static void activate_bumps(int8 delta) {
 }
 
 static void roll_richard(int8 delta) {
-    if (is_walkable(delta) && consume_stamina(6)) {
+    byte target = position + delta;
+    if (is_walkable(target) && consume_stamina(6)) {
 	draw_tile(EMPTY, position, LEVEL[position]);
 	sprite = (sprite & 7) ^ TILE(MOVING);
-	position += delta;
+	position = target;
 	move_actors();
     }
     else {

@@ -20,8 +20,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 typedef void(*Action)(struct Mob *);
 
 struct Actor {
-    Action fn;
     struct Mob *mob;
+    Action fn;
 };
 
 static byte actor_count;
