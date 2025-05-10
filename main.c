@@ -57,6 +57,7 @@ static bool load_room(const void *ptr, byte pos);
 static bool bump_msg(const void *text, byte ignore);
 static void draw_tile(byte *ptr, byte pos, byte id);
 static void *decompress(byte *dst, const byte *src);
+static void memcpy(void *dst, const void *src, word len);
 
 static bool bump_msg(const void *text, byte value) {
     show_message(text);
@@ -121,8 +122,19 @@ static void memset(byte *ptr, byte data, word len) {
     while (len-- > 0) { *ptr++ = data; }
 }
 
-static void memcpy(byte *dst, const byte *src, word len) {
-    while (len-- > 0) { *dst++ = *src++; }
+static void memcpy(void *dst, const void *src, word len) __naked {
+    __asm__("ex de, hl");
+    __asm__("pop iy");
+    __asm__("pop bc");
+    __asm__("ld a, c");
+    __asm__("or a, b");
+    __asm__("jr Z, done");
+    __asm__("push de");
+    __asm__("ldir");
+    __asm__("pop de");
+    __asm__("done:");
+    __asm__("jp (iy)");
+    dst; src; len;
 }
 
 static void setup_system(void) {

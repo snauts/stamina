@@ -12,6 +12,11 @@ enum {
 
 static struct Mob mobs[TOTAL_MOBS];
 
+static const struct Mob mobs_reset[TOTAL_MOBS] = {
+    { .pos = POS(10, 7), .sprite = 0 },
+    { .pos = POS(10, 5), .sprite = 0 },
+};
+
 typedef void(*Action)(struct Mob *);
 
 struct Actor {
@@ -21,6 +26,10 @@ struct Actor {
 
 static byte actor_count;
 static struct Actor actors[4];
+
+static void reset_mobs(void) {
+    memcpy(mobs, mobs_reset, sizeof(mobs));
+}
 
 static void reset_actors(void) {
     actor_count = 0;
