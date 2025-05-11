@@ -6,7 +6,6 @@ void start_up(void) __naked {
 typedef signed char int8;
 typedef signed short int16;
 typedef unsigned char byte;
-typedef unsigned char bool;
 typedef unsigned short word;
 
 #define false		0
@@ -58,13 +57,13 @@ enum { X = 0, Y = 1 };
 
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
-static bool load_room(const void *ptr, byte pos);
-static bool bump_msg(const void *text, byte ignore);
+static byte load_room(const void *ptr, byte pos);
+static byte bump_msg(const void *text, byte ignore);
 static void draw_tile(byte *ptr, byte pos, byte id);
 static void *decompress(byte *dst, const byte *src);
 static void memcpy(void *dst, const void *src, word len);
 
-static bool bump_msg(const void *text, byte value) {
+static byte bump_msg(const void *text, byte value) {
     show_message(text);
     return value;
 }
@@ -426,7 +425,7 @@ static byte is_walkable(byte place) {
     return LEVEL[place] == TILE(1);
 }
 
-static bool invoke_bump(Caller fn, void *ptr, byte arg) {
+static byte invoke_bump(Caller fn, void *ptr, byte arg) {
     return fn(ptr, arg);
 }
 
@@ -516,7 +515,7 @@ static void game_loop(void) {
     }
 }
 
-static bool load_room(const void *new_room, byte pos) {
+static byte load_room(const void *new_room, byte pos) {
     /* clear previous */
     clear_block(32, 160);
     reset_actors();

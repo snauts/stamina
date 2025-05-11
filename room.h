@@ -1,4 +1,4 @@
-typedef bool(*Caller)(const void *, byte);
+typedef byte(*Caller)(const void *, byte);
 
 struct Bump {
     byte pos;
@@ -67,8 +67,8 @@ static const struct Room prison = {
     .setup = &setup_prison,
 };
 
-static bool door_broken;
-static bool break_door(const void *ptr, byte pos) {
+static byte door_broken;
+static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
 	load_room(ptr, pos);
     }
