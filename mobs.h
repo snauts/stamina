@@ -13,8 +13,8 @@ enum {
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
-    { .pos = POS(10, 7), .img = TILE(0) },
-    { .pos = POS(10, 5), .img = TILE(1) },
+    { .pos = POS(10, 7), .img = SET(1) | TILE(0) | LEFT },
+    { .pos = POS(10, 5), .img = SET(1) | TILE(1) | LEFT },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -35,6 +35,10 @@ static void reset_actors(void) {
     actor_count = 0;
 }
 
+static void draw_mob(struct Mob *mob) {
+    draw_tile(MOB(0), mob->pos, mob->img);
+}
+
 static void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
     ptr->fn = fn;
@@ -44,8 +48,7 @@ static void add_actor(Action fn, struct Mob *mob) {
 
 static void place_actors(void) {
     for (byte i = 0; i < actor_count; i++) {
-	struct Mob *mob = actors[i].mob;
-	draw_tile(ENEMY(0), mob->pos, mob->img);
+	draw_mob(actors[i].mob);
     }
 }
 
@@ -70,7 +73,7 @@ static void change_stance(struct Mob *mob) {
 }
 
 static void change_image(struct Mob *mob, byte tile) {
-    mob->img = (mob->img & 7) | tile;
+    mob->img = (mob->img & 0xE7) | tile;
 }
 
 static void shamble_beast(struct Mob *mob) {

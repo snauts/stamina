@@ -87,7 +87,7 @@ static void setup_prison(void) {
 }
 
 static void setup_dungeon(void) {
-    decompress(ENEMY(0), beast);
+    decompress(MOB(1), beast);
     add_actor(&shamble_beast, mobs + LARRY);
     add_actor(&shamble_beast, mobs + BARRY);
 }

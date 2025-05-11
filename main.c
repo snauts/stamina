@@ -37,13 +37,15 @@ static byte *map_y[192];
 
 #define LEVEL		(STAGING_AREA - 32)
 #define  TILE(id)		(id << 2)
+#define  SET(id)		(id << 5)
+#define  RIGHT			0
+#define  LEFT			1
 #define EMPTY		(STAGING_AREA + 160)
-#define RICHARD		(EMPTY + FRAME(64))
+#define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
 #define  MOVING			0
 #define  STANCE			1
 #define  ATTACK			2
 #define  RESTED			4
-#define ENEMY(n)	(RICHARD + FRAME(8 + 4 * n))
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -407,12 +409,8 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
-static void draw_richard(void) {
-    draw_tile(RICHARD, player.pos, player.img);
-}
-
 static void move_actors(void) {
-    draw_richard();
+    draw_mob(&player);
     clear_message();
     shamble_mobs();
 }
@@ -420,7 +418,7 @@ static void move_actors(void) {
 static void place_richard(byte pos) {
     change_image(&player, TILE(MOVING));
     player.pos = pos;
-    draw_richard();
+    draw_mob(&player);
 }
 
 static byte is_walkable(byte place) {
@@ -451,11 +449,11 @@ static void attack_mob(struct Mob *mob) {
     change_image(&player, TILE(ATTACK));
     for (byte i = 0; i < 4; i++) {
 	change_stance(&player);
-	draw_richard();
+	draw_mob(&player);
 	game_idle(8);
     }
     change_image(&player, TILE(MOVING));
-    draw_richard();
+    draw_mob(&player);
 
     mob;
 }
@@ -548,7 +546,7 @@ static void start_game(void) {
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
-    decompress(RICHARD, richard);
+    decompress(MOB(0), richard);
     reset_mobs();
 
     load_room(&prison, POS(6, 6));
