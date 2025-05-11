@@ -445,17 +445,20 @@ static void activate_bumps(int8 delta) {
     }
 }
 
-static void attack_mob(struct Mob *mob) {
-    change_image(&player, TILE(ATTACK));
+static void animate_attack(struct Mob *mob) {
+    change_image(mob, TILE(ATTACK));
     for (byte i = 0; i < 4; i++) {
-	change_stance(&player);
-	draw_mob(&player);
+	change_stance(mob);
+	draw_mob(mob);
 	game_idle(8);
     }
-    change_image(&player, TILE(MOVING));
-    draw_mob(&player);
+    change_image(mob, TILE(MOVING));
+    draw_mob(mob);
+}
 
-    mob;
+static void attack_mob(struct Mob *mob) {
+    animate_attack(&player);
+    animate_attack(mob);
 }
 
 static void roll_richard(int8 delta) {
