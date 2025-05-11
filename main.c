@@ -477,6 +477,7 @@ static void roll_richard(int8 delta) {
 static void rest_richard(void) {
     change_image(&player, TILE(RESTED));
     replenish_stamina(24);
+    draw_mob(&player);
 }
 
 static void move_richard(void) {
