@@ -409,12 +409,6 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
-static void move_actors(void) {
-    draw_mob(&player);
-    clear_message();
-    shamble_mobs();
-}
-
 static void place_richard(byte pos) {
     change_image(&player, TILE(MOVING));
     player.pos = pos;
@@ -467,13 +461,12 @@ static void roll_richard(int8 delta) {
     struct Mob *mob = is_mob(target);
     if (mob != NULL && !is_dead(mob) && consume_stamina(18)) {
 	attack_mob(mob);
+	shamble_mobs();
     }
     else if (mob == NULL && is_walkable(target) && consume_stamina(6)) {
-	draw_tile(EMPTY, player.pos, LEVEL[player.pos]);
-	change_image(&player, TILE(MOVING));
-	change_stance(&player);
-	player.pos = target;
-	move_actors();
+	move_mob(&player, target);
+	clear_message();
+	shamble_mobs();
     }
     else {
 	activate_bumps(delta);
@@ -483,7 +476,6 @@ static void roll_richard(int8 delta) {
 static void rest_richard(void) {
     change_image(&player, TILE(RESTED));
     replenish_stamina(24);
-    move_actors();
 }
 
 static void move_richard(void) {
@@ -491,6 +483,7 @@ static void move_richard(void) {
 
     if (change & CTRL_FIRE) {
 	rest_richard();
+	shamble_mobs();
     }
     else if (change & CTRL_UP) {
 	roll_richard(-16);

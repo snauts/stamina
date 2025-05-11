@@ -80,6 +80,14 @@ static void change_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE7) | tile;
 }
 
+static void move_mob(struct Mob *mob, byte target) {
+    draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
+    change_image(mob, TILE(MOVING));
+    change_stance(mob);
+    mob->pos = target;
+    draw_mob(mob);
+}
+
 static void shamble_beast(struct Mob *mob) {
     mob;
 }
