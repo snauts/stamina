@@ -76,8 +76,9 @@ static byte is_dead(struct Mob *mob) {
     return (mob->img & 0x18) == TILE(BEATEN);
 }
 
-static void change_image(struct Mob *mob, byte tile) {
+static void update_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE7) | tile;
+    draw_mob(mob);
 }
 
 static void mob_direction(struct Mob *mob, int8 delta) {
@@ -91,10 +92,9 @@ static void mob_direction(struct Mob *mob, int8 delta) {
 
 static void move_mob(struct Mob *mob, byte target) {
     draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
-    change_image(mob, TILE(MOVING));
-    change_stance(mob);
     mob->pos = target;
-    draw_mob(mob);
+    change_stance(mob);
+    update_image(mob, TILE(MOVING));
 }
 
 static void shamble_beast(struct Mob *mob) {

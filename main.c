@@ -410,9 +410,8 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 }
 
 static void place_richard(byte pos) {
-    change_image(&player, TILE(MOVING));
     player.pos = pos;
-    draw_mob(&player);
+    update_image(&player, TILE(MOVING));
 }
 
 static byte is_walkable(byte place) {
@@ -440,20 +439,17 @@ static void activate_bumps(int8 delta) {
 }
 
 static void animate_attack(struct Mob *mob) {
-    change_image(mob, TILE(ATTACK));
     for (byte i = 0; i < 4; i++) {
+	update_image(mob, TILE(ATTACK));
 	change_stance(mob);
-	draw_mob(mob);
 	game_idle(8);
     }
-    change_image(mob, TILE(MOVING));
-    draw_mob(mob);
+    update_image(mob, TILE(MOVING));
 }
 
 static void attack_mob(struct Mob *mob) {
     animate_attack(&player);
-    change_image(mob, TILE(BEATEN));
-    draw_mob(mob);
+    update_image(mob, TILE(BEATEN));
 }
 
 static void roll_richard(int8 delta) {
@@ -475,9 +471,8 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
-    change_image(&player, TILE(RESTED));
+    update_image(&player, TILE(RESTED));
     replenish_stamina(24);
-    draw_mob(&player);
 }
 
 static void move_richard(void) {
