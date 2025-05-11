@@ -326,8 +326,6 @@ static void show_title(void) {
 static byte stamina;
 static byte slider;
 
-static struct Mob player;
-
 static void stamina_bar_update(byte pos, byte update) {
     BYTE(COLOUR(36 + (pos >> 1))) = (slider & 1) ? 0x25 : update;
 }

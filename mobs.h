@@ -10,6 +10,8 @@ enum {
     TOTAL_MOBS,
 };
 
+static struct Mob player;
+
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
