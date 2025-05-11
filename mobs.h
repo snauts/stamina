@@ -72,6 +72,10 @@ static void change_stance(struct Mob *mob) {
     mob->img = mob->img ^ TILE(STANCE);
 }
 
+static byte is_dead(struct Mob *mob) {
+    return (mob->img & 0x18) == TILE(BEATEN);
+}
+
 static void change_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE7) | tile;
 }

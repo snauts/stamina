@@ -465,7 +465,7 @@ static void attack_mob(struct Mob *mob) {
 static void roll_richard(int8 delta) {
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
-    if (mob != NULL && consume_stamina(18)) {
+    if (mob != NULL && !is_dead(mob) && consume_stamina(18)) {
 	attack_mob(mob);
     }
     else if (mob == NULL && is_walkable(target) && consume_stamina(6)) {
