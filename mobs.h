@@ -99,6 +99,15 @@ static void move_mob(struct Mob *mob, byte target) {
     update_image(mob, TILE(MOVING));
 }
 
+static void animate_attack(struct Mob *mob) {
+    for (byte i = 0; i < 4; i++) {
+	update_image(mob, TILE(ATTACK));
+	change_stance(mob);
+	game_idle(8);
+    }
+    update_image(mob, TILE(MOVING));
+}
+
 static void shamble_beast(struct Mob *mob) {
     mob;
 }

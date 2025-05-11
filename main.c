@@ -55,6 +55,7 @@ static byte *map_y[192];
 
 enum { X = 0, Y = 1 };
 
+static void game_idle(byte ticks);
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
 static byte load_room(const void *ptr, byte pos);
@@ -434,15 +435,6 @@ static void activate_bumps(int8 delta) {
 	}
 	bump++;
     }
-}
-
-static void animate_attack(struct Mob *mob) {
-    for (byte i = 0; i < 4; i++) {
-	update_image(mob, TILE(ATTACK));
-	change_stance(mob);
-	game_idle(8);
-    }
-    update_image(mob, TILE(MOVING));
 }
 
 static void attack_mob(struct Mob *mob) {
