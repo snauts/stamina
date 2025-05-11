@@ -448,6 +448,15 @@ static void activate_bumps(int8 delta) {
 }
 
 static void attack_mob(struct Mob *mob) {
+    change_image(&player, TILE(ATTACK));
+    for (byte i = 0; i < 4; i++) {
+	change_stance(&player);
+	draw_richard();
+	game_idle(8);
+    }
+    change_image(&player, TILE(MOVING));
+    draw_richard();
+
     mob;
 }
 
@@ -459,6 +468,7 @@ static void roll_richard(int8 delta) {
     }
     else if (mob == NULL && is_walkable(target) && consume_stamina(6)) {
 	draw_tile(EMPTY, player.pos, LEVEL[player.pos]);
+	change_image(&player, TILE(MOVING));
 	change_stance(&player);
 	player.pos = target;
 	move_actors();

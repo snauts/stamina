@@ -66,7 +66,7 @@ static void shamble_mobs(void) {
 }
 
 static void change_stance(struct Mob *mob) {
-    mob->img = (mob->img & 7) ^ TILE(STANCE);
+    mob->img = mob->img ^ TILE(STANCE);
 }
 
 static void change_image(struct Mob *mob, byte tile) {
