@@ -457,6 +457,7 @@ static void attack_mob(struct Mob *mob) {
 }
 
 static void roll_richard(int8 delta) {
+    mob_direction(&player, delta);
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
     if (mob != NULL && !is_dead(mob) && consume_stamina(18)) {
@@ -492,11 +493,9 @@ static void move_richard(void) {
 	roll_richard(16);
     }
     else if (change & CTRL_LEFT) {
-	player.img |= 1;
 	roll_richard(-1);
     }
     else if (change & CTRL_RIGHT) {
-	player.img &= ~1;
 	roll_richard(1);
     }
 }

@@ -80,6 +80,15 @@ static void change_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE7) | tile;
 }
 
+static void mob_direction(struct Mob *mob, int8 delta) {
+    if (delta == 1) {
+	mob->img &= ~1;
+    }
+    else if (delta == -1) {
+	mob->img |= 1;
+    }
+}
+
 static void move_mob(struct Mob *mob, byte target) {
     draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
     change_image(mob, TILE(MOVING));
