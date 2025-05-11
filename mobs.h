@@ -65,6 +65,14 @@ static void shamble_mobs(void) {
     }
 }
 
+static void change_stance(struct Mob *mob) {
+    mob->img = (mob->img & 7) ^ TILE(STANCE);
+}
+
+static void change_image(struct Mob *mob, byte tile) {
+    mob->img = (mob->img & 7) | tile;
+}
+
 static void shamble_beast(struct Mob *mob) {
     mob;
 }

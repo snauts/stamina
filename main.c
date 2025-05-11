@@ -39,7 +39,9 @@ static byte *map_y[192];
 #define  TILE(id)		(id << 2)
 #define EMPTY		(STAGING_AREA + 160)
 #define RICHARD		(EMPTY + FRAME(64))
-#define  MOVING			1
+#define  MOVING			0
+#define  STANCE			1
+#define  ATTACK			2
 #define  RESTED			4
 #define ENEMY(n)	(RICHARD + FRAME(8 + 4 * n))
 
@@ -416,7 +418,7 @@ static void move_actors(void) {
 }
 
 static void place_richard(byte pos) {
-    player.img = player.img & 7;
+    change_image(&player, TILE(MOVING));
     player.pos = pos;
     draw_richard();
 }
@@ -445,12 +447,19 @@ static void activate_bumps(int8 delta) {
     }
 }
 
+static void attack_mob(struct Mob *mob) {
+    mob;
+}
+
 static void roll_richard(int8 delta) {
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
-    if (!mob && is_walkable(target) && consume_stamina(6)) {
+    if (mob != NULL && consume_stamina(18)) {
+	attack_mob(mob);
+    }
+    else if (mob == NULL && is_walkable(target) && consume_stamina(6)) {
 	draw_tile(EMPTY, player.pos, LEVEL[player.pos]);
-	player.img = (player.img & 7) ^ TILE(MOVING);
+	change_stance(&player);
 	player.pos = target;
 	move_actors();
     }
@@ -460,7 +469,7 @@ static void roll_richard(int8 delta) {
 }
 
 static void rest_richard(void) {
-    player.img = (player.img & 7) | TILE(RESTED);
+    change_image(&player, TILE(RESTED));
     replenish_stamina(24);
     move_actors();
 }
