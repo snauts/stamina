@@ -46,6 +46,7 @@ static byte *map_y[192];
 #define  STANCE			1
 #define  ATTACK			2
 #define  RESTED			4
+#define  BEATEN			4
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -458,7 +459,8 @@ static void animate_attack(struct Mob *mob) {
 
 static void attack_mob(struct Mob *mob) {
     animate_attack(&player);
-    animate_attack(mob);
+    change_image(mob, TILE(BEATEN));
+    draw_mob(mob);
 }
 
 static void roll_richard(int8 delta) {
