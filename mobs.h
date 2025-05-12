@@ -192,6 +192,7 @@ static void shamble_beast(struct Mob *mob) {
 	}
 	mob_direction(mob, delta);
 	pos = pos + delta;
+	game_idle(5);
 	move_mob(mob, pos);
     }
 }
