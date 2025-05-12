@@ -161,6 +161,10 @@ static void animate_attack(struct Mob *mob, struct Mob *victim) {
     update_image(mob, TILE(MOVING));
 }
 
+static byte not_occupied(byte pos) {
+    return is_walkable(pos) && is_mob(pos) == NULL;
+}
+
 static void shamble_beast(struct Mob *mob) {
     mob;
 }

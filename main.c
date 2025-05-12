@@ -60,6 +60,7 @@ static byte spawn_pos;
 enum { X = 0, Y = 1 };
 
 static void game_idle(byte ticks);
+static byte is_walkable(byte place);
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
 static byte load_room(const void *ptr, byte pos);
