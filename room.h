@@ -74,7 +74,7 @@ static const struct Room prison = {
 static byte door_broken;
 static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
-	change_room(ptr, pos);
+	return change_room(ptr, pos);
     }
     else if (consume_stamina(FULL_STAMINA)) {
 	show_message("You break down the door");

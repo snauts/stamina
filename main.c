@@ -454,7 +454,7 @@ static byte invoke_bump(Caller fn, void *ptr, byte arg) {
     return fn(ptr, arg);
 }
 
-static void activate_bumps(int8 delta) {
+static byte activate_bumps(int8 delta) {
     const struct Bump *bump = room->bump;
     byte count = room->count;
     while (count-- > 0) {
@@ -464,10 +464,11 @@ static void activate_bumps(int8 delta) {
 	     * bump->fn(bump->ptr, bump->arg)
 	     * fails to pass bump->ptr correctly
 	     */
-	    if (invoke_bump(bump->fn, bump->ptr, bump->arg)) return;
+	    if (invoke_bump(bump->fn, bump->ptr, bump->arg)) return true;
 	}
 	bump++;
     }
+    return false;
 }
 
 static byte push_corpse(struct Mob *mob, byte delta) {
@@ -507,8 +508,8 @@ static void roll_richard(int8 delta) {
 	clear_message();
 	shamble_mobs();
     }
-    else {
-	activate_bumps(delta);
+    else if (!activate_bumps(delta) && stamina == 0) {
+	show_message("You feel exausted");
     }
 }
 
