@@ -35,7 +35,7 @@ static const struct Room dungeon = {
 static const char tutorial1[] = "Attacking takes half of your stamina";
 static const char tutorial2[] = "Decimate King's army to break the curse";
 static const char tutorial3[] = "That is a fine rapier you have there";
-static const char tutorial4[] = "Was it worth traveling north, Richard?";
+static const char tutorial4[] = "Corpses can be pushed around";
 
 static const struct Bump tunnel_bump[] = {
     MAKE_BUMP(POS( 2, 6), -1, &load_room, &prison, POS(9, 6)),
