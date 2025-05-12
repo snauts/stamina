@@ -423,6 +423,7 @@ static void horizontal_line(byte y) {
 static void reload(void) {
     reset_mobs();
     load_room(respawn, spawn_pos);
+    replenish_stamina(FULL_STAMINA);    
 }
 
 static void wait_space(void) {
