@@ -46,16 +46,20 @@ static byte diff(byte a, byte b) {
     return a > b ? a - b : b - a;
 }
 
-static byte dx(byte a, byte b) {
+static byte distance_x(byte a, byte b) {
     return diff(a & 0x0f, b & 0xf);
 }
 
-static byte dy(byte a, byte b) {
+static byte distance_y(byte a, byte b) {
     return diff(a & 0xf0, b & 0xf0) >> 4;
 }
 
-static byte manhattan(byte a, byte b) {
-    return dx(a, b) + dy(a, b);
+static int8 step_x(byte a, byte b) {
+    return (a & 0x0f) > (b & 0x0f) ? -0x01 : 0x01;
+}
+
+static int8 step_y(byte a, byte b) {
+    return (a & 0xf0) > (b & 0xf0) ? -0x10 : 0x10;
 }
 
 static void set_mob_ink(struct Mob *mob) {
@@ -93,8 +97,12 @@ static struct Mob *is_mob(byte pos) {
     return NULL;
 }
 
+static byte is_state(struct Mob *mob, byte state) {
+    return (mob->img & 0x18) == state;
+}
+
 static byte is_dead(struct Mob *mob) {
-    return (mob->img & 0x18) == TILE(BEATEN);
+    return is_state(mob, TILE(BEATEN));
 }
 
 static void shamble_mobs(void) {
@@ -161,8 +169,8 @@ static void animate_attack(struct Mob *mob, struct Mob *victim) {
     update_image(mob, TILE(MOVING));
 }
 
-static byte not_occupied(byte pos) {
-    return is_walkable(pos) && is_mob(pos) == NULL;
+static byte is_occupied(byte pos) {
+    return !is_walkable(pos) || is_mob(pos) != NULL;
 }
 
 static void shamble_beast(struct Mob *mob) {
