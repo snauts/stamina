@@ -99,12 +99,8 @@ static struct Mob *is_mob(byte pos) {
     return NULL;
 }
 
-static byte is_state(struct Mob *mob, byte state) {
-    return (mob->img & 0x18) == state;
-}
-
 static byte is_dead(struct Mob *mob) {
-    return is_state(mob, TILE(BEATEN));
+    return (mob->img & 0x18) == TILE(BEATEN);
 }
 
 static void shamble_mobs(void) {
@@ -112,7 +108,10 @@ static void shamble_mobs(void) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = ptr->mob;
 	if (!is_dead(mob)) ptr->fn(mob);
-	if (is_dead(&player)) break;
+	if (is_dead(&player)) {
+	    game_idle(25);
+	    break;
+	}
 	ptr++;
     }
 }
@@ -194,7 +193,6 @@ static void shamble_beast(struct Mob *mob) {
 	}
 	mob_direction(mob, delta);
 	pos = pos + delta;
-	game_idle(5);
 	move_mob(mob, pos);
     }
 }
