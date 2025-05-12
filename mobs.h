@@ -152,15 +152,16 @@ static void move_mob(struct Mob *mob, byte target) {
     change_stance(mob, TILE(MOVING));
 }
 
-static void beat_victim(struct Mob *victim) {
-    if (victim != NULL) update_image(victim, TILE(BEATEN));
+static void beat_victim(struct Mob *victim, byte frame) {
+    if (victim != NULL) update_image(victim, TILE(BEATEN) + frame);
 }
 
 static void animate_attack(struct Mob *mob, struct Mob *victim) {
-    for (byte i = 0; i < 4; i++) {
-	if (i == 1) beat_victim(victim);
+    beat_victim(victim, TILE(0));
+    for (byte i = 0; i < 5; i++) {
+	if (i == 1) beat_victim(victim, TILE(1));
 	change_stance(mob, TILE(ATTACK));
-	game_idle(8);
+	game_idle(10);
     }
     update_image(mob, TILE(MOVING));
 }
