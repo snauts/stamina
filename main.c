@@ -328,6 +328,7 @@ static void show_title(void) {
     wait_1_or_2();
 }
 
+#define MOVE_STAMINA 2
 #define FULL_STAMINA 48
 
 static byte stamina;
@@ -476,17 +477,20 @@ static byte push_corpse(struct Mob *mob, byte delta) {
 }
 
 static byte move_corpse(struct Mob *mob, byte delta) {
-    return mob == NULL || (is_dead(mob) && push_corpse(mob, delta));
+    if (mob == NULL) return true;
+    return is_dead(mob)
+	&& stamina >= MOVE_STAMINA
+	&& push_corpse(mob, delta);
 }
 
 static byte should_attack(struct Mob *mob) {
-    return mob != NULL && !is_dead(mob) && consume_stamina(24);
+    return mob != NULL && !is_dead(mob) && consume_stamina(FULL_STAMINA / 2);
 }
 
 static byte should_move(struct Mob *mob, byte target, byte delta) {
     return move_corpse(mob, delta)
 	&& is_walkable(target)
-	&& consume_stamina(2);
+	&& consume_stamina(MOVE_STAMINA);
 }
 
 static void roll_richard(int8 delta) {
