@@ -102,6 +102,7 @@ static void shamble_mobs(void) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = ptr->mob;
 	if (!is_dead(mob)) ptr->fn(mob);
+	if (is_dead(&player)) break;
 	ptr++;
     }
 }
