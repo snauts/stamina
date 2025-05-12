@@ -427,6 +427,7 @@ static void wait_space(void) {
 }
 
 static void you_died(void) {
+    memset(COLOUR(0x120), 0, 0xc0);
     clear_block(72, 56);
     show_block(title, 80, 40);
     horizontal_line(127);
@@ -525,6 +526,7 @@ static void game_loop(void) {
 
 static byte load_room(const void *new_room, byte pos) {
     /* clear previous */
+    memset(COLOUR(0x80), 0, 0x280);
     clear_block(32, 160);
     reset_actors();
 
