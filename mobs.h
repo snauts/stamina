@@ -146,11 +146,21 @@ static void restore_color(byte pos) {
     *dst = *src;
 }
 
-static void move_mob(struct Mob *mob, byte target) {
-    draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
-    restore_color(mob->pos);
+static void clear_mob(struct Mob *mob, byte target) {
+    byte pos = mob->pos;
     mob->pos = target;
+    restore_color(pos);
+    draw_tile(EMPTY, pos, LEVEL[pos]);
+}
+
+static void move_mob(struct Mob *mob, byte target) {
+    clear_mob(mob, target);
     change_stance(mob, TILE(MOVING));
+}
+
+static void push_mob(struct Mob *mob, byte target) {
+    clear_mob(mob, target);
+    draw_mob(mob);
 }
 
 static void beat_victim(struct Mob *victim, byte frame) {
