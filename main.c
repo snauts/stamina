@@ -319,7 +319,7 @@ static void show_title(void) {
     put_str("Have", 12, 0);
     memset(COLOUR(0x00), 4, 0x20);
     show_block(title, 8, 40);
-    put_str("Stamina?", 192, 48);
+    put_str("not dying?", 176, 48);
     memset(COLOUR(0xc0), 4, 0x240);
     put_str("Game by Snauts", 0, 184);
     put_str("1 - QAOP+Space", 81, 104);
