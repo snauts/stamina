@@ -72,7 +72,7 @@ static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
 	load_room(ptr, pos);
     }
-    else if (consume_stamina(42)) {
+    else if (consume_stamina(48)) {
 	draw_tile(EMPTY, POS(10, 6), TILE(6));
 	door_broken = true;
     }

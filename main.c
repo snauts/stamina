@@ -471,7 +471,7 @@ static void roll_richard(int8 delta) {
     mob_direction(&player, delta);
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
-    if (mob != NULL && !is_dead(mob) && consume_stamina(18)) {
+    if (mob != NULL && !is_dead(mob) && consume_stamina(24)) {
 	animate_attack(&player, mob);
 	shamble_mobs();
     }
