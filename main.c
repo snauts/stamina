@@ -410,6 +410,7 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 }
 
 static void place_richard(byte pos) {
+    player.ink = 5;
     player.pos = pos;
     update_image(&player, TILE(MOVING));
 }
