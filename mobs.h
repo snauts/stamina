@@ -38,8 +38,22 @@ static void reset_actors(void) {
     actor_count = 0;
 }
 
+static word pos_to_ink(byte pos) {
+    return ((pos & 0x0f) << 1) | ((pos & 0xf0) << 2);
+}
+
+static void set_mob_ink(struct Mob *mob) {
+    byte ink = mob->ink;
+    byte *ptr = COLOUR(pos_to_ink(mob->pos));
+    *ptr = ink; ptr += 0x01;
+    *ptr = ink; ptr += 0x1f;
+    *ptr = ink; ptr += 0x01;
+    *ptr = ink;
+}
+
 static void draw_mob(struct Mob *mob) {
     draw_tile(MOB(0), mob->pos, mob->img);
+    set_mob_ink(mob);
 }
 
 static void add_actor(Action fn, struct Mob *mob) {
@@ -93,8 +107,19 @@ static void mob_direction(struct Mob *mob, int8 delta) {
     }
 }
 
+static void restore_color(byte pos) {
+    word index = pos_to_ink(pos);
+    byte *dst = COLOUR(index);
+    byte *src = INK + index;
+    *dst = *src; dst += 0x01; src += 0x01;
+    *dst = *src; dst += 0x1f; src += 0x1f;
+    *dst = *src; dst += 0x01; src += 0x01;
+    *dst = *src;
+}
+
 static void move_mob(struct Mob *mob, byte target) {
     draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
+    restore_color(mob->pos);
     mob->pos = target;
     change_stance(mob);
     update_image(mob, TILE(MOVING));
