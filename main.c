@@ -487,7 +487,7 @@ static void roll_richard(int8 delta) {
 
 static void rest_richard(void) {
     update_image(&player, TILE(RESTED));
-    replenish_stamina(24);
+    replenish_stamina(12);
 }
 
 static void move_richard(void) {
