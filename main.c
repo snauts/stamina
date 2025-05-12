@@ -34,12 +34,13 @@ static byte *map_y[192];
 #define IRQ_BASE	0xfe00
 #endif
 
-#define LEVEL		(STAGING_AREA - 32)
+#define INK		(STAGING_AREA)
+#define LEVEL		(INK + 0x260)
 #define  TILE(id)		(id << 2)
 #define  SET(id)		(id << 5)
 #define  RIGHT			0
 #define  LEFT			1
-#define EMPTY		(STAGING_AREA + 160)
+#define EMPTY		(LEVEL + 0xc0)
 #define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
 #define  MOVING			0
 #define  STANCE			1
@@ -501,7 +502,7 @@ static byte load_room(const void *new_room, byte pos) {
     /* unpack data */
     room = new_room;
     const void **map = room->map;
-    decompress(COLOUR(0x80), *map++);
+    decompress(INK, *map++);
 
     /* build tileset */
     void *dst = EMPTY;
@@ -513,8 +514,9 @@ static byte load_room(const void *new_room, byte pos) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
 
-    place_actors();
+    memcpy(COLOUR(0x80), INK, 0x280);
     place_richard(pos);
+    place_actors();
 
     show_message(room->msg);
     return true;
