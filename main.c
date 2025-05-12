@@ -48,8 +48,8 @@ static byte spawn_pos;
 #define  MOVING			0
 #define  STANCE			1
 #define  ATTACK			2
-#define  RESTED			4
 #define  BEATEN			4
+#define  RESTED			6
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -512,6 +512,8 @@ static void move_richard(void) {
     else if (change & CTRL_RIGHT) {
 	roll_richard(1);
     }
+
+    if (is_dead(&player)) you_died();
 }
 
 static void game_loop(void) {
