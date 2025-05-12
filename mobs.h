@@ -135,17 +135,25 @@ static void restore_color(byte pos) {
     *dst = *src;
 }
 
-static void move_mob(struct Mob *mob, byte target) {
-    draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
-    restore_color(mob->pos);
-    mob->pos = target;
+static void move_stance(struct Mob *mob) {
     change_stance(mob);
     update_image(mob, TILE(MOVING));
 }
 
+static void move_mob(struct Mob *mob, byte target) {
+    draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
+    restore_color(mob->pos);
+    mob->pos = target;
+    move_stance(mob);
+}
+
+static void beat_victim(struct Mob *victim) {
+    if (victim != NULL) update_image(victim, TILE(BEATEN));
+}
+
 static void animate_attack(struct Mob *mob, struct Mob *victim) {
     for (byte i = 0; i < 4; i++) {
-	if (i == 1) update_image(victim, TILE(BEATEN));
+	if (i == 1) beat_victim(victim);
 	update_image(mob, TILE(ATTACK));
 	change_stance(mob);
 	game_idle(8);
