@@ -115,13 +115,15 @@ static void shamble_mobs(void) {
     }
 }
 
-static void change_stance(struct Mob *mob) {
-    mob->img = mob->img ^ TILE(STANCE);
+static void update_image(struct Mob *mob, byte tile) {
+    mob->img = (mob->img & 0xE3) | tile;
+    draw_mob(mob);
 }
 
-static void update_image(struct Mob *mob, byte tile) {
-    mob->img = (mob->img & 0xE7) | tile;
-    draw_mob(mob);
+static void change_stance(struct Mob *mob, byte tile) {
+    byte stance = mob->img & TILE(STANCE);
+    if (!stance) tile |= TILE(STANCE);
+    update_image(mob, tile);
 }
 
 static void mob_direction(struct Mob *mob, int8 delta) {
@@ -143,16 +145,11 @@ static void restore_color(byte pos) {
     *dst = *src;
 }
 
-static void move_stance(struct Mob *mob) {
-    change_stance(mob);
-    update_image(mob, TILE(MOVING));
-}
-
 static void move_mob(struct Mob *mob, byte target) {
     draw_tile(EMPTY, mob->pos, LEVEL[mob->pos]);
     restore_color(mob->pos);
     mob->pos = target;
-    move_stance(mob);
+    change_stance(mob, TILE(MOVING));
 }
 
 static void beat_victim(struct Mob *victim) {
@@ -162,8 +159,7 @@ static void beat_victim(struct Mob *victim) {
 static void animate_attack(struct Mob *mob, struct Mob *victim) {
     for (byte i = 0; i < 4; i++) {
 	if (i == 1) beat_victim(victim);
-	update_image(mob, TILE(ATTACK));
-	change_stance(mob);
+	change_stance(mob, TILE(ATTACK));
 	game_idle(8);
     }
     update_image(mob, TILE(MOVING));
