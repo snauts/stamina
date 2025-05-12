@@ -7,6 +7,7 @@ struct Mob {
 enum {
     LARRY,
     BARRY,
+    HARRY,
     /* this should be last */
     TOTAL_MOBS,
 };
@@ -16,8 +17,9 @@ static struct Mob player;
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
-    { .pos = POS(10, 7), .ink = 2, .img = SET(1) | TILE(0) | LEFT },
-    { .pos = POS(10, 5), .ink = 2, .img = SET(1) | TILE(1) | LEFT },
+    { .pos = POS(10, 8), .ink = 2, .img = SET(1) | TILE(0) | LEFT },
+    { .pos = POS(10, 6), .ink = 2, .img = SET(1) | TILE(1) | LEFT },
+    { .pos = POS(10, 4), .ink = 2, .img = SET(1) | TILE(0) | LEFT },
 };
 
 typedef void(*Action)(struct Mob *);
