@@ -143,8 +143,9 @@ static void move_mob(struct Mob *mob, byte target) {
     update_image(mob, TILE(MOVING));
 }
 
-static void animate_attack(struct Mob *mob) {
+static void animate_attack(struct Mob *mob, struct Mob *victim) {
     for (byte i = 0; i < 4; i++) {
+	if (i == 1) update_image(victim, TILE(BEATEN));
 	update_image(mob, TILE(ATTACK));
 	change_stance(mob);
 	game_idle(8);
