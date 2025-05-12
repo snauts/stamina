@@ -19,8 +19,12 @@ struct Room {
 #define MAKE_BUMP(from, dir, action, data, param) \
     { .pos = from, .delta = dir, .fn = action, .ptr = data, .arg = param }
 
+static byte change_room(const void *new_room, byte pos) {
+    return consume_stamina(MOVE_STAMINA) && load_room(new_room, pos);
+}
+
 static const struct Bump dungeon_bump[] = {
-    MAKE_BUMP(POS(2, 6), -1, &load_room, &tunnel, POS(13, 6)),
+    MAKE_BUMP(POS(2, 6), -1, &change_room, &tunnel, POS(13, 6)),
 };
 
 static void setup_dungeon(void);
@@ -38,8 +42,8 @@ static const char tutorial3[] = "That is a fine rapier you have there";
 static const char tutorial4[] = "Corpses can be pushed around";
 
 static const struct Bump tunnel_bump[] = {
-    MAKE_BUMP(POS( 2, 6), -1, &load_room, &prison, POS(9, 6)),
-    MAKE_BUMP(POS(13, 6),  1, &load_room, &dungeon, POS(2, 6)),
+    MAKE_BUMP(POS( 2, 6), -1, &change_room, &prison, POS(9, 6)),
+    MAKE_BUMP(POS(13, 6),  1, &change_room, &dungeon, POS(2, 6)),
     MAKE_BUMP(POS( 5, 4), -16, &bump_msg, tutorial1, true),
     MAKE_BUMP(POS( 5, 8),  16, &bump_msg, tutorial2, true),
     MAKE_BUMP(POS(10, 4), -16, &bump_msg, tutorial3, true),
@@ -70,9 +74,9 @@ static const struct Room prison = {
 static byte door_broken;
 static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
-	load_room(ptr, pos);
+	change_room(ptr, pos);
     }
-    else if (consume_stamina(48)) {
+    else if (consume_stamina(FULL_STAMINA)) {
 	show_message("You break down the door");
 	draw_tile(EMPTY, POS(10, 6), TILE(6));
 	update_image(&player, TILE(MOVING));

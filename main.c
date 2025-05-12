@@ -58,6 +58,9 @@ static byte spawn_pos;
 #define	CTRL_LEFT	0x02
 #define	CTRL_RIGHT	0x01
 
+#define MOVE_STAMINA	2
+#define FULL_STAMINA	48
+
 enum { X = 0, Y = 1 };
 
 static void game_idle(byte ticks);
@@ -327,9 +330,6 @@ static void show_title(void) {
     put_str("2 - Joystick", 80, 120);
     wait_1_or_2();
 }
-
-#define MOVE_STAMINA 2
-#define FULL_STAMINA 48
 
 static byte stamina;
 static byte slider;
