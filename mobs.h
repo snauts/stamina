@@ -93,20 +93,21 @@ static struct Mob *is_mob(byte pos) {
     return NULL;
 }
 
+static byte is_dead(struct Mob *mob) {
+    return (mob->img & 0x18) == TILE(BEATEN);
+}
+
 static void shamble_mobs(void) {
     struct Actor *ptr = actors;
     for (byte i = 0; i < actor_count; i++) {
-	ptr->fn(ptr->mob);
+	struct Mob *mob = ptr->mob;
+	if (!is_dead(mob)) ptr->fn(mob);
 	ptr++;
     }
 }
 
 static void change_stance(struct Mob *mob) {
     mob->img = mob->img ^ TILE(STANCE);
-}
-
-static byte is_dead(struct Mob *mob) {
-    return (mob->img & 0x18) == TILE(BEATEN);
 }
 
 static void update_image(struct Mob *mob, byte tile) {
