@@ -475,7 +475,7 @@ static void roll_richard(int8 delta) {
 	animate_attack(&player, mob);
 	shamble_mobs();
     }
-    else if (mob == NULL && is_walkable(target) && consume_stamina(6)) {
+    else if (mob == NULL && is_walkable(target) && consume_stamina(3)) {
 	move_mob(&player, target);
 	clear_message();
 	shamble_mobs();
