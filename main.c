@@ -467,15 +467,23 @@ static void activate_bumps(int8 delta) {
     }
 }
 
+static byte should_attack(struct Mob *mob) {
+    return mob != NULL && !is_dead(mob) && consume_stamina(24);
+}
+
+static byte should_move(struct Mob *mob, byte target) {
+    return mob == NULL && is_walkable(target) && consume_stamina(2);
+}
+
 static void roll_richard(int8 delta) {
     mob_direction(&player, delta);
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
-    if (mob != NULL && !is_dead(mob) && consume_stamina(24)) {
+    if (should_attack(mob)) {
 	animate_attack(&player, mob);
 	shamble_mobs();
     }
-    else if (mob == NULL && is_walkable(target) && consume_stamina(4)) {
+    else if (should_move(mob, target)) {
 	move_mob(&player, target);
 	clear_message();
 	shamble_mobs();
