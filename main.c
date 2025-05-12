@@ -537,7 +537,10 @@ static void move_richard(void) {
 	roll_richard(1);
     }
 
-    if (is_dead(&player)) you_died();
+    if (is_dead(&player)) {
+	game_idle(25);
+	you_died();
+    }
 }
 
 static void game_loop(void) {
