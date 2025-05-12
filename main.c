@@ -25,6 +25,9 @@ static const struct Room *room;
 static volatile byte vblank;
 static byte *map_y[192];
 
+static const void *respawn;
+static byte spawn_pos;
+
 #if defined(ZXS)
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
 #define SCREEN(x)	PTR(0x4000 + (x))
@@ -409,6 +412,29 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
+static void horizontal_line(byte y) {
+    memset(COLOUR((y & ~7) << 2), 5, 32);
+    memset(map_y[y], 0xff, 32);
+}
+
+static void reload(void) {
+    reset_mobs();
+    load_room(respawn, spawn_pos);
+}
+
+static void wait_space(void) {
+    while (!(input_change(read_input()) & CTRL_FIRE)) { }
+}
+
+static void you_died(void) {
+    clear_block(72, 56);
+    show_block(title, 80, 40);
+    horizontal_line(127);
+    horizontal_line(72);
+    wait_space();
+    reload();
+}
+
 static void place_richard(byte pos) {
     player.ink = 5;
     player.pos = pos;
@@ -532,9 +558,9 @@ static void start_game(void) {
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
     decompress(MOB(0), richard);
-    reset_mobs();
-
-    load_room(&prison, POS(6, 6));
+    spawn_pos = POS(6, 6);
+    respawn = &prison;
+    reload();
 
     game_loop();
 }
