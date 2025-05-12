@@ -174,5 +174,27 @@ static byte is_occupied(byte pos) {
 }
 
 static void shamble_beast(struct Mob *mob) {
-    mob;
+    byte pos = mob->pos;
+    byte dx = distance_x(pos, player.pos);
+    byte dy = distance_y(pos, player.pos);
+
+    if (dx + dy == 1) {
+	animate_attack(mob, &player);
+    }
+    else {
+	int8 delta = step_x(pos, player.pos);
+	int8 other = step_y(pos, player.pos);
+	if (dx < dy) {
+	    byte tmp = other;
+	    other = delta;
+	    delta = tmp;
+	}
+	if (is_occupied(pos + delta)) {
+	    if (is_occupied(pos + other)) return;
+	    delta = other;
+	}
+	mob_direction(mob, delta);
+	pos = pos + delta;
+	move_mob(mob, pos);
+    }
 }
