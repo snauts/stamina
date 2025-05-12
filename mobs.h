@@ -42,6 +42,22 @@ static word pos_to_ink(byte pos) {
     return ((pos & 0x0f) << 1) | ((pos & 0xf0) << 2);
 }
 
+static byte diff(byte a, byte b) {
+    return a > b ? a - b : b - a;
+}
+
+static byte dx(byte a, byte b) {
+    return diff(a & 0x0f, b & 0xf);
+}
+
+static byte dy(byte a, byte b) {
+    return diff(a & 0xf0, b & 0xf0) >> 4;
+}
+
+static byte manhattan(byte a, byte b) {
+    return dx(a, b) + dy(a, b);
+}
+
 static void set_mob_ink(struct Mob *mob) {
     byte ink = mob->ink;
     byte *ptr = COLOUR(pos_to_ink(mob->pos));
