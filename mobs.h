@@ -136,7 +136,7 @@ static void mob_direction(struct Mob *mob, int8 delta) {
 static void restore_color(byte pos) {
     word index = pos_to_ink(pos);
     byte *dst = COLOUR(index);
-    byte *src = INK + index;
+    byte *src = INK + index - 0x80;
     *dst = *src; dst += 0x01; src += 0x01;
     *dst = *src; dst += 0x1f; src += 0x1f;
     *dst = *src; dst += 0x01; src += 0x01;
