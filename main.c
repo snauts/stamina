@@ -585,10 +585,11 @@ static byte load_room(const void *new_room, byte pos) {
     memcpy(COLOUR(0x80), INK, 0x280);
 
     place_actors();
+    show_message(room->msg);
+
     struct Mob *block = is_mob(pos);
     if (!block || is_dead(block)) {
 	place_richard(pos);
-	show_message(room->msg);
     }
     else {
 	game_idle(50);
