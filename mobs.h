@@ -5,11 +5,15 @@ struct Mob {
 };
 
 enum {
-    LARRY,
+    LARRY, /* dungeon */
     BARRY,
     HARRY,
-    /* this should be last */
-    TOTAL_MOBS,
+
+    JURIS, /* corridor */
+    ZIGIS,
+    ROBIS,
+
+    TOTAL_MOBS, /* this should be last */
 };
 
 static struct Mob player;
@@ -17,9 +21,15 @@ static struct Mob player;
 static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
+    /* dungeon */
     { .pos = POS(10, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
     { .pos = POS(10, 6), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
     { .pos = POS(10, 4), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
+
+    /* corridor */
+    { .pos = POS(7, 4), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
+    { .pos = POS(6, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
+    { .pos = POS(8, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
 };
 
 typedef void(*Action)(struct Mob *);

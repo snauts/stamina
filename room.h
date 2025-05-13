@@ -115,4 +115,8 @@ static void setup_dungeon(void) {
 }
 
 static void setup_corridor(void) {
+    decompress(MOB(1), beast);
+    add_actor(&shamble_beast, mobs + JURIS);
+    add_actor(&shamble_beast, mobs + ZIGIS);
+    add_actor(&shamble_beast, mobs + ROBIS);
 }
