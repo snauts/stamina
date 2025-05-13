@@ -80,8 +80,8 @@ static void draw_mob(struct Mob *mob) {
 
 static void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
-    ptr->fn = fn;
     ptr->mob = mob;
+    ptr->fn = fn;
     actor_count++;
 }
 
