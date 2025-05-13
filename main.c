@@ -567,6 +567,7 @@ static void game_loop(void) {
 
 static byte load_room(const void *new_room, byte pos) {
     /* clear previous */
+    const void *from = room;
     memset(COLOUR(0x80), 0, 0x280);
     clear_block(32, 160);
     reset_actors();
@@ -587,10 +588,17 @@ static byte load_room(const void *new_room, byte pos) {
     }
 
     memcpy(COLOUR(0x80), INK, 0x280);
-    place_richard(pos);
-    place_actors();
 
-    show_message(room->msg);
+    place_actors();
+    if (is_mob(pos) == NULL) {
+	place_richard(pos);
+	show_message(room->msg);
+    }
+    else {
+	game_idle(50);
+	load_room(from, player.pos);
+	show_message("Path is blocked");
+    }
     return true;
 }
 
