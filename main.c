@@ -63,6 +63,7 @@ static byte spawn_pos;
 
 enum { X = 0, Y = 1 };
 
+static void thud_sound(void);
 static void clear_message(void);
 static void game_idle(byte ticks);
 static void beep(word p, word len);
@@ -502,6 +503,10 @@ static byte should_move(struct Mob *mob, byte target, int8 delta) {
     return is_walkable(target)
 	&& move_corpse(mob, delta)
 	&& consume_stamina(MOVE_STAMINA);
+}
+
+static void thud_sound(void) {
+    for (word p = 500; p > 100; p -= 100) beep(p, 200);
 }
 
 static void roll_richard(int8 delta) {

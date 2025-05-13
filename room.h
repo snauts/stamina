@@ -81,6 +81,7 @@ static byte break_door(const void *ptr, byte pos) {
 	draw_tile(EMPTY, POS(10, 6), TILE(6));
 	update_image(&player, TILE(MOVING));
 	door_broken = true;
+	thud_sound();
     }
     else {
 	show_message("Rest to replenish stamina");
