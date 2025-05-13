@@ -506,7 +506,7 @@ static byte should_move(struct Mob *mob, byte target, int8 delta) {
 }
 
 static void thud_sound(void) {
-    for (word p = 500; p > 100; p -= 100) beep(p, 200);
+    for (byte p = 250; p > 50; p -= 50) beep(p << 1, 200);
 }
 
 static void roll_richard(int8 delta) {
