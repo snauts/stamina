@@ -482,30 +482,25 @@ static byte activate_bumps(int8 delta) {
     return false;
 }
 
-static byte push_corpse(struct Mob *mob, byte delta) {
+static byte push_corpse(struct Mob *mob, int8 delta) {
     byte target = mob->pos + delta;
-    if (is_occupied(target)) return false;
-    push_mob(mob, target);
+    if (stamina >= MOVE_STAMINA && !is_occupied(target)) {
+	push_mob(mob, target);
+    }
     return true;
 }
 
-static byte move_corpse(struct Mob *mob, byte delta) {
-    return is_dead(mob)
-	&& stamina >= MOVE_STAMINA
-	&& push_corpse(mob, delta);
-}
-
-static byte can_move(struct Mob *mob, byte delta) {
-    return mob == NULL || move_corpse(mob, delta);
+static byte move_corpse(struct Mob *mob, int8 delta) {
+    return mob == NULL || (is_dead(mob) && push_corpse(mob, delta));
 }
 
 static byte should_attack(struct Mob *mob) {
     return mob != NULL && !is_dead(mob) && consume_stamina(FULL_STAMINA / 2);
 }
 
-static byte should_move(struct Mob *mob, byte target, byte delta) {
-    return can_move(mob, delta)
-	&& is_walkable(target)
+static byte should_move(struct Mob *mob, byte target, int8 delta) {
+    return is_walkable(target)
+	&& move_corpse(mob, delta)
 	&& consume_stamina(MOVE_STAMINA);
 }
 
