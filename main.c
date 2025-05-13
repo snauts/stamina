@@ -490,10 +490,13 @@ static byte push_corpse(struct Mob *mob, byte delta) {
 }
 
 static byte move_corpse(struct Mob *mob, byte delta) {
-    if (mob == NULL) return true;
     return is_dead(mob)
 	&& stamina >= MOVE_STAMINA
 	&& push_corpse(mob, delta);
+}
+
+static byte can_move(struct Mob *mob, byte delta) {
+    return mob == NULL || move_corpse(mob, delta);
 }
 
 static byte should_attack(struct Mob *mob) {
@@ -501,7 +504,7 @@ static byte should_attack(struct Mob *mob) {
 }
 
 static byte should_move(struct Mob *mob, byte target, byte delta) {
-    return move_corpse(mob, delta)
+    return can_move(mob, delta)
 	&& is_walkable(target)
 	&& consume_stamina(MOVE_STAMINA);
 }
