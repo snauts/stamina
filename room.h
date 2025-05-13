@@ -25,6 +25,7 @@ static byte change_room(const void *new_room, byte pos) {
 
 static const struct Bump dungeon_bump[] = {
     MAKE_BUMP(POS(2, 6), -1, &change_room, &tunnel, POS(13, 6)),
+    MAKE_BUMP(POS(14, 6), 1, &change_room, &corridor, POS(1, 6)),
 };
 
 static void setup_dungeon(void);
@@ -71,6 +72,19 @@ static const struct Room prison = {
     .setup = &setup_prison,
 };
 
+static const struct Bump corridor_bump[] = {
+    MAKE_BUMP(POS(1, 6), -1, &change_room, &dungeon, POS(14, 6)),
+};
+
+static void setup_corridor(void);
+static const struct Room corridor = {
+    .msg = "Creepy Corridor",
+    .map = map_of_corridor,
+    .bump = corridor_bump,
+    .count = SIZE(corridor_bump),
+    .setup = &setup_corridor,
+};
+
 static byte door_broken;
 static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
@@ -98,4 +112,7 @@ static void setup_dungeon(void) {
     add_actor(&shamble_beast, mobs + BARRY);
     add_actor(&shamble_beast, mobs + LARRY);
     add_actor(&shamble_beast, mobs + HARRY);
+}
+
+static void setup_corridor(void) {
 }

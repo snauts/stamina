@@ -24,6 +24,7 @@ pcx:
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l dungeon.pcx special.pcx bricks.pcx >> data.h
+	@./pcx-dump -l corridor.pcx special.pcx bricks.pcx >> data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
