@@ -170,6 +170,7 @@ static void animate_attack(struct Mob *mob, struct Mob *victim) {
     for (byte i = 0; i < 5; i++) {
 	if (i == 1) beat_victim(victim, TILE(1));
 	change_stance(mob, TILE(ATTACK));
+	beep(i & 1 ? 900 : 300, 600);
 	game_idle(10);
     }
     update_image(mob, TILE(MOVING));

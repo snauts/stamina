@@ -65,6 +65,7 @@ enum { X = 0, Y = 1 };
 
 static void clear_message(void);
 static void game_idle(byte ticks);
+static void beep(word p, word len);
 static byte is_walkable(byte place);
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
@@ -519,7 +520,7 @@ static void roll_richard(int8 delta) {
     }
     else if (!activate_bumps(delta) && stamina == 0) {
 	show_message("You feel exausted");
-	beep(200, 1500);
+	beep(150, 1500);
     }
 }
 
