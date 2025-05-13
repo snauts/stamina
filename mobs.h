@@ -105,12 +105,10 @@ static byte is_dead(struct Mob *mob) {
 
 static void shamble_mobs(void) {
     clear_message();
-    struct Actor *ptr = actors;
     for (byte i = 0; i < actor_count; i++) {
-	struct Mob *mob = ptr->mob;
-	if (!is_dead(mob)) ptr->fn(mob);
+	struct Mob *mob = actors[i].mob;
+	if (!is_dead(mob)) actors[i].fn(mob);
 	if (is_dead(&player)) break;
-	ptr++;
     }
 }
 
