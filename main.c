@@ -63,6 +63,7 @@ static byte spawn_pos;
 
 enum { X = 0, Y = 1 };
 
+static void clear_message(void);
 static void game_idle(byte ticks);
 static byte is_walkable(byte place);
 static byte consume_stamina(byte amount);
@@ -505,7 +506,6 @@ static void roll_richard(int8 delta) {
     }
     else if (should_move(mob, target, delta)) {
 	move_mob(&player, target);
-	clear_message();
 	shamble_mobs();
     }
     else if (!activate_bumps(delta) && stamina == 0) {

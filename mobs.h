@@ -104,6 +104,7 @@ static byte is_dead(struct Mob *mob) {
 }
 
 static void shamble_mobs(void) {
+    clear_message();
     struct Actor *ptr = actors;
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = ptr->mob;
