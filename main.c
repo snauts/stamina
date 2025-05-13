@@ -185,6 +185,15 @@ static void clear_screen(void) {
 #endif
 }
 
+static void beep(word p, word len) {
+    word c = 0;
+    while (len-- != 0) {
+	out_fe((c >> 11) & 0x10);
+	c += p;
+    }
+    out_fe(0x00);
+}
+
 static void put_char(char symbol, byte x, byte y) {
     byte shift = x & 7;
     byte offset = x >> 3;
@@ -510,6 +519,7 @@ static void roll_richard(int8 delta) {
     }
     else if (!activate_bumps(delta) && stamina == 0) {
 	show_message("You feel exausted");
+	beep(200, 1500);
     }
 }
 
