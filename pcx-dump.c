@@ -262,19 +262,27 @@ static unsigned short on_pixel(unsigned char *buf, int i, int w) {
     return pixel == 0 ? default_color : pixel;
 }
 
-static void serialize_tiles(void *ptr, int size) {
+static int serialize_tiles(void *ptr, int size, int skip_blanks) {
     int index = 0;
     unsigned short *buf = ptr;
     unsigned short tiles[size / 2];
     for (int y = 0; y < header.h; y += 16) {
 	for (int x = 0; x < header.w; x += 16) {
+	    int should_skip = 1;
 	    for (int i = 0; i < 16; i++) {
 		int offset = ((y + i) * header.w + x) / 8;
-		tiles[index++] = buf[offset / 2];
+		unsigned short data = buf[offset / 2];
+		if (data != 0) should_skip = 0;
+		tiles[index++] = data;
+	    }
+	    /* allow first tile to be empty */
+	    if (skip_blanks && should_skip && index > 16) {
+		index -= 16;
 	    }
 	}
     }
     memcpy(ptr, tiles, size);
+    return 2 * index;
 }
 
 static unsigned short flip_bits(unsigned short source) {
@@ -340,10 +348,6 @@ static int color_size(void) {
     return pixel_size() / 8;
 }
 
-static int tile_count(void) {
-    return pixel_size() / 32;
-}
-
 static int total_size(void) {
     return pixel_size() + color_size();
 }
@@ -378,8 +382,7 @@ static void save_bitmap(const char *name) {
 
     switch (option) {
     case 't':
-	serialize_tiles(buf, pixel_size());
-	save_array(name, buf, pixel_size());
+	save_array(name, buf, serialize_tiles(buf, pixel_size(), 1));
 	break;
     case 'c':
 	save_array(name, buf, total_size());
@@ -403,14 +406,14 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
     memset(ptr, 0, TILE_SIZE);
     for (int i = 3; i < argc; i++) {
 	unsigned char *buf = load_bitmap(argv[i]);
-	serialize_tiles(buf, pixel_size());
-	count += tile_count();
+	int size = serialize_tiles(buf, pixel_size(), 1);
+	count += size / 32;
 	if (count > MAX_TILES) {
 	    fprintf(stderr, "ERROR: too much tiles\n");
 	    exit(-EOVERFLOW);
 	}
-	memcpy(ptr + offset, buf, pixel_size());
-	offset += pixel_size();
+	memcpy(ptr + offset, buf, size);
+	offset += size;
 	free(buf);
     }
 
@@ -440,10 +443,11 @@ static unsigned char *compress_level(int argc, char **argv) {
     const char *file_name = argv[2];
     unsigned char *level = load_bitmap(file_name);
 
-    unsigned char result[color_size() + tile_count()];
+    int size = serialize_tiles(level, pixel_size(), 0);
+
+    unsigned char result[color_size() + size / 32];
     memcpy(result, level + pixel_size(), color_size());
 
-    serialize_tiles(level, pixel_size());
     for (int i = 0; i < pixel_size(); i += 32) {
 	int id = get_tileset_id(level + i, tileset, TILE_SIZE);
 	result[color_size() + i / 32] = id;
