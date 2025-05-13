@@ -18,7 +18,7 @@ static struct Mob mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(10, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
-    { .pos = POS(11, 6), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
+    { .pos = POS(10, 6), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
     { .pos = POS(10, 4), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
 };
 
