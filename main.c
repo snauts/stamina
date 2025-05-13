@@ -523,7 +523,8 @@ static void roll_richard(int8 delta) {
     }
     else if (!activate_bumps(delta) && stamina == 0) {
 	show_message("You feel exausted");
-	beep(150, 1500);
+	beep(200, 1000);
+	beep(500, 500);
     }
 }
 
