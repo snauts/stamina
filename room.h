@@ -111,7 +111,7 @@ static byte break_door(const void *ptr, byte pos) {
 	draw_tile(EMPTY, POS(10, 6), TILE(6));
 	update_image(&player, TILE(MOVING));
 	door_broken = true;
-	thud_sound();
+	swoosh(5, 5, -1);
     }
     else {
 	show_message("Rest to replenish stamina");
@@ -124,7 +124,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
 	draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
 	show_message("Fire of North lit");
 	spawn_pos = POS(7, 7);
-	beep(30000, 1000);
+	swoosh(80, 20, 2);
 	respawn = ptr;
     }
     return true;

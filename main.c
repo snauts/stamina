@@ -64,13 +64,13 @@ static byte spawn_pos;
 
 enum { X = 0, Y = 1 };
 
-static void thud_sound(void);
 static void clear_message(void);
 static void game_idle(byte ticks);
 static void beep(word p, word len);
 static byte is_walkable(byte place);
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
+static void swoosh(int8 f, int8 n, int8 s);
 static byte load_room(const void *ptr, byte pos);
 static byte bump_msg(const void *text, byte ignore);
 static void draw_tile(byte *ptr, byte pos, byte id);
@@ -195,6 +195,13 @@ static void beep(word p, word len) {
 	c += p;
     }
     out_fe(0x00);
+}
+
+static void swoosh(int8 f, int8 n, int8 s) {
+    while (n-- > 0) {
+	beep(f << 8, 200);
+	f += s;
+    }
 }
 
 static void put_char(char symbol, byte x, byte y) {
@@ -507,10 +514,6 @@ static byte should_move(struct Mob *mob, byte target, int8 delta) {
 	&& consume_stamina(MOVE_STAMINA);
 }
 
-static void thud_sound(void) {
-    for (byte p = 250; p > 50; p -= 50) beep(p << 1, 200);
-}
-
 static void roll_richard(int8 delta) {
     mob_direction(&player, delta);
     byte target = player.pos + delta;
@@ -525,8 +528,7 @@ static void roll_richard(int8 delta) {
     }
     else if (!activate_bumps(delta) && stamina == 0) {
 	show_message("You feel exausted");
-	beep(200, 1000);
-	beep(500, 500);
+	swoosh(3, 3, 1);
     }
 }
 
