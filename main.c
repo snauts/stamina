@@ -339,7 +339,7 @@ static void show_title(void) {
     put_str("not dying?", 176, 48);
     memset(COLOUR(0xc0), 4, 0x240);
     put_str("Game by Snauts", 0, 184);
-    put_str("1 - QAOP+Space", 81, 104);
+    put_str("1 - QAOP+M", 81, 104);
     put_str("2 - Joystick", 80, 120);
     wait_1_or_2();
 }
@@ -382,7 +382,8 @@ static void replenish_stamina(byte amount) {
 
 static byte read_QAOP(void) {
     byte ret = 0;
-    ret |= (in_key(0x7f) & 1);
+    byte hit = in_key(0x7f);
+    ret |= hit & (hit >> 2);
     ret <<= 1;
     ret |= (in_key(0xfb) & 1);
     ret <<= 1;
