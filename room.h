@@ -19,6 +19,7 @@ struct Room {
 #define MAKE_BUMP(from, dir, action, data, param) \
     { .pos = from, .delta = dir, .fn = action, .ptr = data, .arg = param }
 
+static byte set_bonfire(const void *ptr, byte pos);
 static byte change_room(const void *new_room, byte pos) {
     return consume_stamina(MOVE_STAMINA) && load_room(new_room, pos);
 }
@@ -88,6 +89,7 @@ static const struct Room corridor = {
 
 static const struct Bump courtyard_bump[] = {
     MAKE_BUMP(POS(2, 7), -1, &change_room, &corridor, POS(13, 6)),
+    MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(8, 7)),
 };
 
 static void setup_courtyard(void);
@@ -117,6 +119,17 @@ static byte break_door(const void *ptr, byte pos) {
     return true;
 }
 
+static byte set_bonfire(const void *ptr, byte pos) {
+    if (respawn != ptr) {
+	draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
+	show_message("Fire of North lit");
+	spawn_pos = POS(7, 7);
+	beep(30000, 1000);
+	respawn = ptr;
+    }
+    return true;
+}
+
 static void setup_prison(void) {
     if (door_broken) LEVEL[POS(10, 6)] = TILE(6);
 }
@@ -136,4 +149,5 @@ static void setup_corridor(void) {
 }
 
 static void setup_courtyard(void) {
+    if (respawn != &courtyard) LEVEL[POS(8, 7)] -= TILE(1);
 }
