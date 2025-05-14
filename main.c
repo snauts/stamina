@@ -617,6 +617,7 @@ static void start_game(void) {
     decompress(MOB(0), richard);
     spawn_pos = POS(6, 6);
     respawn = &prison;
+    hourglass(0x0);
     reload();
 
     game_loop();

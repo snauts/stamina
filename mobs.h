@@ -113,13 +113,24 @@ static byte is_dead(struct Mob *mob) {
     return (mob->img & 0x18) == TILE(BEATEN);
 }
 
-static void shamble_mobs(void) {
-    clear_message();
+static void activate_mobs(void) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = actors[i].mob;
 	if (!is_dead(mob)) actors[i].fn(mob);
 	if (is_dead(&player)) break;
     }
+}
+
+static void hourglass(byte color) {
+    * COLOUR(0x01) = color;
+    * COLOUR(0x21) = color;
+}
+
+static void shamble_mobs(void) {
+    clear_message();
+    hourglass(0x5);
+    activate_mobs();
+    hourglass(0x0);
 }
 
 static void update_image(struct Mob *mob, byte tile) {
