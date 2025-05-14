@@ -89,7 +89,7 @@ static const struct Room corridor = {
 
 static const struct Bump courtyard_bump[] = {
     MAKE_BUMP(POS(2, 7), -1, &change_room, &corridor, POS(13, 6)),
-    MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(8, 7)),
+    MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(7, 7)),
 };
 
 static void setup_courtyard(void);
@@ -121,11 +121,11 @@ static byte break_door(const void *ptr, byte pos) {
 
 static byte set_bonfire(const void *ptr, byte pos) {
     if (respawn != ptr) {
-	advance_tile(pos);
-	show_message("Fire of North lit");
-	spawn_pos = POS(7, 7);
-	swoosh(80, 20, 2);
 	respawn = ptr;
+	spawn_pos = pos;
+	advance_tile(POS(8, 7));
+	show_message("Fire of North lit");
+	swoosh(60, 20, 2);
     }
     return true;
 }
