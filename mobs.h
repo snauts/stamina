@@ -196,10 +196,19 @@ static byte is_occupied(byte pos) {
     return !is_walkable(pos) || is_mob(pos) != NULL;
 }
 
+static void animate_mob_shamble(struct Mob *mob) {
+    for (byte i = 0; i < 2; i++) {
+	change_stance(mob, TILE(MOVING));
+	game_idle(10);
+    }
+}
+
 static void shamble_beast(struct Mob *mob) {
     byte pos = mob->pos;
     byte dx = distance_x(pos, player.pos);
     byte dy = distance_y(pos, player.pos);
+
+    animate_mob_shamble(mob);
 
     if (dx + dy == 1) {
 	animate_attack(mob, &player);
