@@ -67,6 +67,7 @@ enum { X = 0, Y = 1 };
 static void clear_message(void);
 static void game_idle(byte ticks);
 static void beep(word p, word len);
+static void advance_tile(byte pos);
 static byte is_walkable(byte place);
 static byte consume_stamina(byte amount);
 static void show_message(const char *msg);
@@ -434,6 +435,10 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
 	*where++ = b2;
 	if (flip_v) y--; else y++;
     }
+}
+
+static void advance_tile(byte pos) {
+    draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
 }
 
 static void horizontal_line(byte y) {

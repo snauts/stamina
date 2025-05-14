@@ -108,8 +108,8 @@ static byte break_door(const void *ptr, byte pos) {
     }
     else if (consume_stamina(FULL_STAMINA)) {
 	show_message("You break down the door");
-	draw_tile(EMPTY, POS(10, 6), TILE(6));
 	update_image(&player, TILE(MOVING));
+	advance_tile(POS(10, 6));
 	door_broken = true;
 	swoosh(5, 5, -1);
     }
@@ -121,7 +121,7 @@ static byte break_door(const void *ptr, byte pos) {
 
 static byte set_bonfire(const void *ptr, byte pos) {
     if (respawn != ptr) {
-	draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
+	advance_tile(pos);
 	show_message("Fire of North lit");
 	spawn_pos = POS(7, 7);
 	swoosh(80, 20, 2);
@@ -131,7 +131,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
 }
 
 static void setup_prison(void) {
-    if (door_broken) LEVEL[POS(10, 6)] = TILE(6);
+    if (door_broken) LEVEL[POS(10, 6)] += TILE(1);
 }
 
 static void setup_dungeon(void) {
