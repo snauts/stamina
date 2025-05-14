@@ -60,6 +60,7 @@ static byte spawn_pos;
 
 #define MOVE_STAMINA	2
 #define FULL_STAMINA	48
+#define KILL_STAMINA	36
 
 enum { X = 0, Y = 1 };
 
@@ -496,7 +497,7 @@ static byte move_corpse(struct Mob *mob, int8 delta) {
 }
 
 static byte should_attack(struct Mob *mob) {
-    return mob != NULL && !is_dead(mob) && consume_stamina(FULL_STAMINA / 2);
+    return mob != NULL && !is_dead(mob) && consume_stamina(KILL_STAMINA);
 }
 
 static byte should_move(struct Mob *mob, byte target, int8 delta) {
