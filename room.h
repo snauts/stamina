@@ -74,6 +74,7 @@ static const struct Room prison = {
 
 static const struct Bump corridor_bump[] = {
     MAKE_BUMP(POS(1, 6), -1, &change_room, &dungeon, POS(14, 6)),
+    MAKE_BUMP(POS(13, 6), 1, &change_room, &courtyard, POS(2, 7)),
 };
 
 static void setup_corridor(void);
@@ -83,6 +84,19 @@ static const struct Room corridor = {
     .bump = corridor_bump,
     .count = SIZE(corridor_bump),
     .setup = &setup_corridor,
+};
+
+static const struct Bump courtyard_bump[] = {
+    MAKE_BUMP(POS(2, 7), -1, &change_room, &corridor, POS(13, 6)),
+};
+
+static void setup_courtyard(void);
+static const struct Room courtyard = {
+    .msg = "Central Courtyard",
+    .map = map_of_courtyard,
+    .bump = courtyard_bump,
+    .count = SIZE(courtyard_bump),
+    .setup = &setup_courtyard,
 };
 
 static byte door_broken;
@@ -119,4 +133,7 @@ static void setup_corridor(void) {
     add_actor(&shamble_beast, mobs + JURIS);
     add_actor(&shamble_beast, mobs + ZIGIS);
     add_actor(&shamble_beast, mobs + ROBIS);
+}
+
+static void setup_courtyard(void) {
 }

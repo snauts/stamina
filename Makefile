@@ -15,16 +15,22 @@ msg:
 
 pcx:
 	@gcc $(TYPE) pcx-dump.c -o pcx-dump
+
 	@./pcx-dump -c bar.pcx > data.h
 	@./pcx-dump -c title.pcx >> data.h
+
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h
 	@./pcx-dump -t bricks.pcx >> data.h
+	@./pcx-dump -t garden.pcx >> data.h
+	@./pcx-dump -t walls.pcx >> data.h
 	@./pcx-dump -t beast.pcx >> data.h
+
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l dungeon.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l corridor.pcx special.pcx bricks.pcx >> data.h
+	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
