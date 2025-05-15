@@ -53,7 +53,7 @@ static const struct Bump tunnel_bump[] = {
 };
 
 static const struct Room tunnel = {
-    .msg = "Dungeon Tunnel",
+    .msg = "Tunnel of Advices",
     .map = map_of_tunnel,
     .bump = tunnel_bump,
     .count = SIZE(tunnel_bump),
@@ -92,6 +92,10 @@ static const struct Bump courtyard_bump[] = {
     MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(7, 7)),
     MAKE_BUMP(POS(7, 3), -16, &change_room, &hallway, POS(7, 11)),
     MAKE_BUMP(POS(8, 3), -16, &change_room, &hallway, POS(8, 11)),
+    MAKE_BUMP(POS(6, 11), 16, &change_room, &bailey, POS(6, 2)),
+    MAKE_BUMP(POS(7, 11), 16, &change_room, &bailey, POS(7, 2)),
+    MAKE_BUMP(POS(8, 11), 16, &change_room, &bailey, POS(8, 2)),
+    MAKE_BUMP(POS(9, 11), 16, &change_room, &bailey, POS(9, 2)),
 };
 
 static void setup_courtyard(void);
@@ -113,6 +117,21 @@ static const struct Room hallway = {
     .map = map_of_hallway,
     .bump = hallway_bump,
     .count = SIZE(hallway_bump),
+    .setup = NULL,
+};
+
+static const struct Bump bailey_bump[] = {
+    MAKE_BUMP(POS(6, 2), -16, &change_room, &courtyard, POS(6, 11)),
+    MAKE_BUMP(POS(7, 2), -16, &change_room, &courtyard, POS(7, 11)),
+    MAKE_BUMP(POS(8, 2), -16, &change_room, &courtyard, POS(8, 11)),
+    MAKE_BUMP(POS(9, 2), -16, &change_room, &courtyard, POS(9, 11)),
+};
+
+static const struct Room bailey = {
+    .msg = "Besieged Bailey",
+    .map = map_of_bailey,
+    .bump = bailey_bump,
+    .count = SIZE(bailey_bump),
     .setup = NULL,
 };
 
