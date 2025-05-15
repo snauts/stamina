@@ -90,6 +90,8 @@ static const struct Room corridor = {
 static const struct Bump courtyard_bump[] = {
     MAKE_BUMP(POS(2, 7), -1, &change_room, &corridor, POS(13, 6)),
     MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(7, 7)),
+    MAKE_BUMP(POS(7, 3), -16, &change_room, &hallway, POS(7, 11)),
+    MAKE_BUMP(POS(8, 3), -16, &change_room, &hallway, POS(8, 11)),
 };
 
 static void setup_courtyard(void);
@@ -99,6 +101,19 @@ static const struct Room courtyard = {
     .bump = courtyard_bump,
     .count = SIZE(courtyard_bump),
     .setup = &setup_courtyard,
+};
+
+static const struct Bump hallway_bump[] = {
+    MAKE_BUMP(POS(7, 11), 16, &change_room, &courtyard, POS(7, 3)),
+    MAKE_BUMP(POS(8, 11), 16, &change_room, &courtyard, POS(8, 3)),
+};
+
+static const struct Room hallway = {
+    .msg = "Haunted Hallway",
+    .map = map_of_hallway,
+    .bump = hallway_bump,
+    .count = SIZE(hallway_bump),
+    .setup = NULL,
 };
 
 static byte door_broken;

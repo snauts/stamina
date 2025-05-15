@@ -28,6 +28,7 @@ pcx:
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h
+	@./pcx-dump -l hallway.pcx special.pcx walls.pcx >> data.h
 	@./pcx-dump -l dungeon.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l corridor.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
