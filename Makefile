@@ -25,6 +25,7 @@ pcx:
 	@./pcx-dump -t garden.pcx >> data.h
 	@./pcx-dump -t walls.pcx >> data.h
 	@./pcx-dump -t beast.pcx >> data.h
+	@./pcx-dump -t arrow.pcx >> data.h
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h

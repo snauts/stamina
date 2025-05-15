@@ -13,6 +13,9 @@ enum {
     ZIGIS,
     ROBIS,
 
+    ARROW1, /* hallway */
+    ARROW2,
+
     TOTAL_MOBS, /* this should be last */
 };
 
@@ -30,6 +33,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(7, 4), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
     { .pos = POS(6, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
     { .pos = POS(8, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
+
+    /* hallway */
+    { .pos = POS(10, 8), .ink = 0x02, .img = SET(1) | TILE(4) | FLIP },
+    { .pos = POS( 5, 4), .ink = 0x02, .img = SET(1) | TILE(4) | LEFT },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -84,6 +91,12 @@ static void draw_mob(struct Mob *mob) {
     set_mob_ink(mob);
 }
 
+static void reset_mob(struct Mob *mob) {
+    const byte *src = (const byte *) mobs_reset;
+    src += (word) mob - (word) mobs;
+    memcpy(mob, src, sizeof(struct Mob));
+}
+
 static void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
     ptr->mob = mob;
@@ -131,8 +144,12 @@ static void shamble_mobs(void) {
     hourglass(0x0);
 }
 
-static void update_image(struct Mob *mob, byte tile) {
+static void change_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE3) | tile;
+}
+
+static void update_image(struct Mob *mob, byte tile) {
+    change_image(mob, tile);
     draw_mob(mob);
 }
 
@@ -190,7 +207,7 @@ static void beat_victim(struct Mob *victim, byte frame) {
     if (victim != NULL) update_image(victim, TILE(BEATEN) + frame);
 }
 
-static void animate_attack(struct Mob *mob, struct Mob *victim) {
+static void animate_raw_attack(struct Mob *mob, struct Mob *victim) {
     beat_victim(victim, TILE(0));
     for (byte i = 0; i < 5; i++) {
 	if (i == 1) beat_victim(victim, TILE(1));
@@ -198,6 +215,10 @@ static void animate_attack(struct Mob *mob, struct Mob *victim) {
 	beep(i & 1 ? 1500 : 500, 500);
 	game_idle(10);
     }
+}
+
+static void animate_attack(struct Mob *mob, struct Mob *victim) {
+    animate_raw_attack(mob, victim);
     update_image(mob, TILE(MOVING));
 }
 
@@ -257,4 +278,29 @@ static void shamble_beast(struct Mob *mob) {
 	    move_mob(mob, src + delta);
 	}
     }
+}
+
+static void shoot_arrow(struct Mob *mob) {
+    byte pos = mob->pos;
+    int8 delta = mob->img & LEFT ? 1 : -1;
+    update_image(mob, TILE(0));
+    change_image(mob, TILE(1));
+
+    for (;;) {
+	game_idle(10);
+	pos += delta;
+	if (!is_walkable(pos)) {
+	    clear_mob(mob, pos);
+	    break;
+	}
+
+	push_mob(mob, pos);
+	if (player.pos == pos) {
+	    animate_raw_attack(mob, &player);
+	    return;
+	}
+    }
+    while (is_walkable(pos));
+    reset_mob(mob);
+    draw_mob(mob);
 }

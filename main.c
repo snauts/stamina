@@ -43,6 +43,7 @@ static byte spawn_pos;
 #define  SET(id)		(id << 5)
 #define  RIGHT			0
 #define  LEFT			1
+#define  FLIP			2
 #define EMPTY		(LEVEL + 0xc0)
 #define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
 #define  MOVING			0

@@ -112,12 +112,13 @@ static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(8, 11), 16, &change_room, &courtyard, POS(8, 3)),
 };
 
+static void setup_hallway(void);
 static const struct Room hallway = {
     .msg = "Haunted Hallway",
     .map = map_of_hallway,
     .bump = hallway_bump,
     .count = SIZE(hallway_bump),
-    .setup = NULL,
+    .setup = &setup_hallway,
 };
 
 static const struct Bump bailey_bump[] = {
@@ -180,6 +181,12 @@ static void setup_corridor(void) {
     add_actor(&shamble_beast, mobs + JURIS);
     add_actor(&shamble_beast, mobs + ZIGIS);
     add_actor(&shamble_beast, mobs + ROBIS);
+}
+
+static void setup_hallway(void) {
+    decompress(MOB(1), arrow);
+    add_actor(&shoot_arrow, mobs + ARROW1);
+    add_actor(&shoot_arrow, mobs + ARROW2);
 }
 
 static void setup_courtyard(void) {
