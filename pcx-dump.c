@@ -331,8 +331,6 @@ static int get_tileset_id(void *tile, unsigned char **tileset, int size) {
 	int id = get_tile_index(tile, tileset[index], size);
 	if (id >= 0) return (id << 2) | index;
     }
-    fprintf(stderr, "ERROR: tile not found in tileset\n");
-    exit(-EFAULT);
     return -1;
 }
 
@@ -450,6 +448,12 @@ static unsigned char *compress_level(int argc, char **argv) {
 
     for (int i = 0; i < pixel_size(); i += 32) {
 	int id = get_tileset_id(level + i, tileset, TILE_SIZE);
+	if (id == -1) {
+	    int n = i / 32;
+	    fprintf(stderr, "ERROR: %s tile (%d, %d) not found\n",
+		    file_name, n % 16, n / 16);
+	    exit(-EFAULT);
+	}
 	result[color_size() + i / 32] = id;
     }
 
