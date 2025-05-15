@@ -499,7 +499,10 @@ static byte activate_bumps(int8 delta) {
 
 static byte push_corpse(struct Mob *mob, int8 delta) {
     byte target = mob->pos + delta;
-    if (stamina >= MOVE_STAMINA && !is_occupied(target)) {
+    if (is_occupied(target)) {
+	target = player.pos;
+    }
+    if (stamina >= MOVE_STAMINA) {
 	push_mob(mob, target);
     }
     return true;
