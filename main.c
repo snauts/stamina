@@ -473,7 +473,7 @@ static void place_richard(byte pos) {
 }
 
 static byte is_walkable(byte place) {
-    return LEVEL[place] == TILE(1);
+    return place >= 32 && place < 192 && LEVEL[place] == TILE(1);
 }
 
 static byte invoke_bump(Caller fn, void *ptr, byte arg) {
