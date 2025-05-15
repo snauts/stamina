@@ -66,12 +66,8 @@ static byte distance_y(byte a, byte b) {
     return diff(a & 0xf0, b & 0xf0) >> 4;
 }
 
-static int8 step_x(byte a, byte b) {
-    return (a & 0x0f) > (b & 0x0f) ? -0x01 : 0x01;
-}
-
-static int8 step_y(byte a, byte b) {
-    return (a & 0xf0) > (b & 0xf0) ? -0x10 : 0x10;
+static byte manhattan(byte a, byte b) {
+    return distance_x(a, b) + distance_y(a, b);
 }
 
 static void set_mob_ink(struct Mob *mob) {
@@ -214,30 +210,48 @@ static void animate_mob_shamble(struct Mob *mob) {
     }
 }
 
-static void shamble_beast(struct Mob *mob) {
-    byte pos = mob->pos;
-    byte dx = distance_x(pos, player.pos);
-    byte dy = distance_y(pos, player.pos);
+static byte visited(byte *map, byte move, byte head) {
+    while (head-- > 0) {
+	if (*map++ == move) return true;
+    }
+    return false;
+}
 
+static int8 a_star(byte src, byte dst) {
+    static const int8 deltas[] = { -1, 1, -16, 16 };
+    static byte map[160];
+    byte head, tail;
+    head = tail = 0;
+
+    map[head++] = dst;
+    while (head > tail) {
+	byte next = map[tail++];
+	for (byte i = 0; i < SIZE(deltas); i++) {
+	    int8 delta = deltas[i];
+	    byte move = next + delta;
+	    if (move == src) return -delta;
+	    if (is_occupied(move)) continue;
+	    if (visited(map, move, head)) continue;
+	    map[head++] = move;
+	}
+    }
+    return 0;
+}
+
+static void shamble_beast(struct Mob *mob) {
     animate_mob_shamble(mob);
 
-    if (dx + dy == 1) {
+    byte src = mob->pos;
+    byte dst = player.pos;
+    if (manhattan(src, dst) == 1) {
 	animate_attack(mob, &player);
     }
     else {
-	int8 delta = step_x(pos, player.pos);
-	int8 other = step_y(pos, player.pos);
-	if (dx < dy) {
-	    byte tmp = other;
-	    other = delta;
-	    delta = tmp;
+	int8 delta = a_star(src, dst);
+
+	if (delta) {
+	    mob_direction(mob, delta);
+	    move_mob(mob, src + delta);
 	}
-	if (is_occupied(pos + delta)) {
-	    if (is_occupied(pos + other)) return;
-	    delta = other;
-	}
-	mob_direction(mob, delta);
-	pos = pos + delta;
-	move_mob(mob, pos);
     }
 }
