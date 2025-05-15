@@ -605,8 +605,7 @@ static byte load_room(const void *new_room, byte pos) {
     place_actors();
     show_message(room->msg);
 
-    struct Mob *block = is_mob(pos);
-    if (!block || is_dead(block)) {
+    if (is_mob(pos) == NULL) {
 	place_richard(pos);
     }
     else {
