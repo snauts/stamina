@@ -89,6 +89,7 @@ static const struct Room corridor = {
 
 static const struct Bump courtyard_bump[] = {
     MAKE_BUMP(POS(2, 7), -1, &change_room, &corridor, POS(13, 6)),
+    MAKE_BUMP(POS(14, 7), 1, &change_room, &cathedral, POS(1, 11)),
     MAKE_BUMP(POS(7, 7),  1, &set_bonfire, &courtyard, POS(7, 7)),
     MAKE_BUMP(POS(7, 3), -16, &change_room, &hallway, POS(7, 11)),
     MAKE_BUMP(POS(8, 3), -16, &change_room, &hallway, POS(8, 11)),
@@ -133,6 +134,22 @@ static const struct Room bailey = {
     .map = map_of_bailey,
     .bump = bailey_bump,
     .count = SIZE(bailey_bump),
+    .setup = NULL,
+};
+
+static const struct Bump cathedral_bump[] = {
+    MAKE_BUMP(POS(1, 7),  -1, &change_room, &courtyard, POS(14, 7)),
+    MAKE_BUMP(POS(1, 8),  -1, &change_room, &courtyard, POS(14, 7)),
+    MAKE_BUMP(POS(1, 9),  -1, &change_room, &courtyard, POS(14, 7)),
+    MAKE_BUMP(POS(1, 10), -1, &change_room, &courtyard, POS(14, 7)),
+    MAKE_BUMP(POS(1, 11), -1, &change_room, &courtyard, POS(14, 7)),
+};
+
+static const struct Room cathedral = {
+    .msg = "Cathedral Entrance",
+    .map = map_of_cathedral,
+    .bump = cathedral_bump,
+    .count = SIZE(cathedral_bump),
     .setup = NULL,
 };
 
