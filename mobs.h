@@ -306,7 +306,6 @@ static void shoot_arrow(struct Mob *mob) {
 	    return;
 	}
     }
-    while (is_walkable(pos));
     reset_mob(mob);
     draw_mob(mob);
 }
