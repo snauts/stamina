@@ -285,6 +285,8 @@ static void shamble_beast(struct Mob *mob) {
 }
 
 static void shoot_arrow(struct Mob *mob) {
+    if (--var) return;
+
     byte pos = mob->pos;
     int8 delta = mob->img & LEFT ? 1 : -1;
     update_image(mob, TILE(0));
