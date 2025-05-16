@@ -2,6 +2,7 @@ struct Mob {
     byte pos;
     byte img;
     byte ink;
+    byte var;
 };
 
 enum {
@@ -23,20 +24,23 @@ static struct Mob player;
 
 static struct Mob mobs[TOTAL_MOBS];
 
+#define IMG(set, tile, rest) \
+    SET(set) | TILE(tile) | rest
+
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* dungeon */
-    { .pos = POS(10, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
-    { .pos = POS(10, 6), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
-    { .pos = POS(10, 4), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
+    { .pos = POS(10, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(10, 6), .ink = 0x02, .img = IMG(1, 1, LEFT) },
+    { .pos = POS(10, 4), .ink = 0x02, .img = IMG(1, 0, LEFT) },
 
     /* corridor */
-    { .pos = POS(7, 4), .ink = 0x02, .img = SET(1) | TILE(1) | LEFT },
-    { .pos = POS(6, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
-    { .pos = POS(8, 8), .ink = 0x02, .img = SET(1) | TILE(0) | LEFT },
+    { .pos = POS(7, 4), .ink = 0x02, .img = IMG(1, 1, LEFT) },
+    { .pos = POS(6, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(8, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
 
     /* hallway */
-    { .pos = POS(10, 8), .ink = 0x02, .img = SET(1) | TILE(4) | FLIP },
-    { .pos = POS( 5, 4), .ink = 0x02, .img = SET(1) | TILE(4) | LEFT },
+    { .pos = POS(10, 8), .ink = 0x02, .img = IMG(1, 4, FLIP), .var = 3 },
+    { .pos = POS( 5, 4), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 2 },
 };
 
 typedef void(*Action)(struct Mob *);
