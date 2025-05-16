@@ -266,7 +266,7 @@ static int8 a_star(byte src, byte dst) {
 }
 
 static void shamble_beast(struct Mob *mob) {
-    if (!is_dead(mob)) return;
+    if (is_dead(mob)) return;
     animate_mob_shamble(mob);
 
     byte src = mob->pos;
