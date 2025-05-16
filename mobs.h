@@ -307,7 +307,7 @@ static void shoot_arrow(struct Mob *mob) {
 	    animate_raw_attack(mob, &player);
 	    return;
 	}
-	game_idle(10);
+	game_idle(5);
     }
     reset_mob(mob);
     draw_mob(mob);
