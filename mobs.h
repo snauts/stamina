@@ -285,15 +285,17 @@ static void shamble_beast(struct Mob *mob) {
 }
 
 static void shoot_arrow(struct Mob *mob) {
-    if (--mob->var) return;
+    mob->var--;
+    if (mob->var == 1) {
+	update_image(mob, TILE(5));
+    }
+    if (mob->var != 0) return;
 
     byte pos = mob->pos;
     int8 delta = mob->img & LEFT ? 1 : -1;
-    update_image(mob, TILE(0));
     change_image(mob, TILE(1));
 
     for (;;) {
-	game_idle(10);
 	pos += delta;
 	if (!is_walkable(pos)) {
 	    clear_mob(mob, pos);
@@ -305,6 +307,7 @@ static void shoot_arrow(struct Mob *mob) {
 	    animate_raw_attack(mob, &player);
 	    return;
 	}
+	game_idle(10);
     }
     reset_mob(mob);
     draw_mob(mob);
