@@ -112,8 +112,10 @@ static byte is_dead(struct Mob *mob) {
 static void activate_mobs(void) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = actors[i].mob;
-	if (!is_dead(mob)) actors[i].fn(mob);
-	if (is_dead(&player)) break;
+	actors[i].fn(mob);
+	if (is_dead(&player)) {
+	    break;
+	}
     }
 }
 
@@ -239,6 +241,7 @@ static int8 a_star(byte src, byte dst) {
 }
 
 static void shamble_beast(struct Mob *mob) {
+    if (!is_dead(mob)) return;
     animate_mob_shamble(mob);
 
     byte src = mob->pos;
