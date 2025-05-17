@@ -153,6 +153,14 @@ static const struct Room cathedral = {
     .setup = NULL,
 };
 
+static const struct Room rampart = {
+    .msg = "Ravaged Rampart",
+    .map = map_of_rampart,
+    .bump = NULL,
+    .count = 0,
+    .setup = NULL,
+};
+
 static byte door_broken;
 static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {

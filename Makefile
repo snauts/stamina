@@ -27,6 +27,7 @@ pcx:
 	@./pcx-dump -t beast.pcx >> data.h
 	@./pcx-dump -t arrow.pcx >> data.h
 	@./pcx-dump -t glass.pcx >> data.h
+	@./pcx-dump -t tower.pcx >> data.h
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h
@@ -36,6 +37,7 @@ pcx:
 	@./pcx-dump -l bailey.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l cathedral.pcx special.pcx glass.pcx >> data.h
+	@./pcx-dump -l rampart.pcx special.pcx tower.pcx >> data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
