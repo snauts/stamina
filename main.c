@@ -525,6 +525,8 @@ static byte should_move(struct Mob *mob, byte target, int8 delta) {
 
 static void roll_richard(int8 delta) {
     mob_direction(&player, delta);
+    if (activate_bumps(delta)) return;
+
     byte target = player.pos + delta;
     struct Mob *mob = is_mob(target);
     if (should_attack(mob)) {
@@ -535,7 +537,7 @@ static void roll_richard(int8 delta) {
 	move_mob(&player, target);
 	shamble_mobs();
     }
-    else if (!activate_bumps(delta) && stamina == 0) {
+    else if (stamina == 0) {
 	show_message("You feel exausted");
 	swoosh(3, 3, 1);
     }
