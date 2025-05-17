@@ -132,7 +132,7 @@ static const struct Bump bailey_bump[] = {
 };
 
 static const struct Room bailey = {
-    .msg = "Besieged Bailey",
+    .msg = "Flooded Bailey",
     .map = map_of_bailey,
     .bump = bailey_bump,
     .count = SIZE(bailey_bump),
