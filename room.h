@@ -111,6 +111,8 @@ static const struct Room courtyard = {
 static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(7, 11), 16, &change_room, &courtyard, POS(7, 3)),
     MAKE_BUMP(POS(8, 11), 16, &change_room, &courtyard, POS(8, 3)),
+    MAKE_BUMP(POS(1, 3), -1, &change_room, &rampart, POS(1, 11)),
+    MAKE_BUMP(POS(14, 3), 1, &change_room, &rampart, POS(14, 11)),
 };
 
 static void setup_hallway(void);
@@ -153,11 +155,16 @@ static const struct Room cathedral = {
     .setup = NULL,
 };
 
+static const struct Bump rampart_bump[] = {
+    MAKE_BUMP(POS(1, 11), -1, &change_room, &hallway, POS(1, 3)),
+    MAKE_BUMP(POS(14, 11), 1, &change_room, &hallway, POS(14, 3)),
+};
+
 static const struct Room rampart = {
     .msg = "Ravaged Rampart",
     .map = map_of_rampart,
-    .bump = NULL,
-    .count = 0,
+    .bump = rampart_bump,
+    .count = SIZE(rampart_bump),
     .setup = NULL,
 };
 
