@@ -39,8 +39,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(8, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
 
     /* hallway */
-    { .pos = POS(10, 8), .ink = 0x02, .img = IMG(1, 4, FLIP), .var = 3 },
-    { .pos = POS( 5, 4), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 2 },
+    { .pos = POS(10, 9), .ink = 0x02, .img = IMG(1, 4, FLIP), .var = 4 },
+    { .pos = POS( 5, 5), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 3 },
 };
 
 typedef void(*Action)(struct Mob *);
