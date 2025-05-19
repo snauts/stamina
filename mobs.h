@@ -242,7 +242,7 @@ static void animate_attack(struct Mob *mob, struct Mob *victim) {
 }
 
 static byte is_occupied(byte pos) {
-    return !is_walkable(pos) || is_mob(pos) != NULL;
+    return !is_walkable(pos) || pos == player.pos || is_mob(pos) != NULL;
 }
 
 static void animate_mob_shamble(struct Mob *mob) {
