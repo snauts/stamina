@@ -264,7 +264,7 @@ static byte visited(byte *map, byte move, byte head) {
 }
 
 static int8 a_star(byte src, byte dst) {
-    static const int8 deltas[] = { -1, 1, -16, 16 };
+    static const int8 deltas[] = { -16, 16, -1, 1 };
     static byte map[160];
     byte head, tail;
     head = tail = 0;
