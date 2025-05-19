@@ -280,6 +280,13 @@ static int8 a_star(byte src, byte dst) {
     return 0;
 }
 
+static void walk_mob(struct Mob *mob, int8 delta) {
+    if (delta) {
+	mob_direction(mob, delta);
+	move_mob(mob, mob->pos + delta);
+    }
+}
+
 static void shamble_beast(struct Mob *mob) {
     if (is_dead(mob)) return;
     animate_mob_shamble(mob);
@@ -290,12 +297,7 @@ static void shamble_beast(struct Mob *mob) {
 	animate_attack(mob, &player);
     }
     else {
-	int8 delta = a_star(src, dst);
-
-	if (delta) {
-	    mob_direction(mob, delta);
-	    move_mob(mob, src + delta);
-	}
+	walk_mob(mob, a_star(src, dst));
     }
 }
 
@@ -328,6 +330,22 @@ static void shoot_arrow(struct Mob *mob) {
     draw_mob(mob);
 }
 
+static int8 a_star_plus(byte src, byte dst) {
+    return is_occupied(dst) ? 0 : a_star(src, dst);
+}
+
+static int8 ent_movement(byte src, byte dst) {
+    byte p1 = dst + 2;
+    byte l1 = manhattan(src, p1);
+    int8 d1 = a_star_plus(src, p1);
+
+    byte p2 = dst - 2;
+    byte l2 = manhattan(src, p2);
+    int8 d2 = a_star_plus(src, p2);
+
+    return (l1 < l2 && d1) || !d2 ? d1 : d2;
+}
+
 static void shamble_ent(struct Mob *mob) {
     if (is_dead(mob)) return;
 
@@ -341,7 +359,7 @@ static void shamble_ent(struct Mob *mob) {
     }
     else if (diff(src, dst) == 2) {
 	int8 delta = src > dst ? -1 : 1;
-	byte middle = mob->pos + delta;
+	byte middle = src + delta;
 	mob_direction(mob, delta);
 	if (!is_occupied(middle)) {
 	    update_image(mob, TILE(7));
@@ -353,6 +371,6 @@ static void shamble_ent(struct Mob *mob) {
 	}
     }
     else {
-	/* move */
+	walk_mob(mob, ent_movement(src, dst));
     }
 }
