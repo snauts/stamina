@@ -131,12 +131,13 @@ static const struct Bump bailey_bump[] = {
     MAKE_BUMP(POS(9, 2), -16, &change_room, &courtyard, POS(9, 11)),
 };
 
+static void setup_bailey(void);
 static const struct Room bailey = {
     .msg = "Flooded Bailey",
     .map = map_of_bailey,
     .bump = bailey_bump,
     .count = SIZE(bailey_bump),
-    .setup = NULL,
+    .setup = setup_bailey,
 };
 
 static const struct Bump cathedral_bump[] = {
@@ -219,6 +220,10 @@ static void setup_hallway(void) {
     decompress(MOB(1), arrow);
     add_actor(&shoot_arrow, mobs + ARROW1);
     add_actor(&shoot_arrow, mobs + ARROW2);
+}
+
+static void setup_bailey(void) {
+    decompress(MOB(1), ent);
 }
 
 static void setup_courtyard(void) {
