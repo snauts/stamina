@@ -19,6 +19,8 @@ enum {
 
     SKINBARK, /* bailey */
     LEAFLOCK,
+    BREGALAD,
+    BUSHKOPF,
 
     TOTAL_MOBS, /* this should be last */
 };
@@ -46,8 +48,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 5, 5), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 3 },
 
     /* bailey */
-    { .pos = POS(10, 7), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
-    { .pos = POS( 5, 7), .ink = 0x44, .img = IMG(1, 6, RIGHT), },
+    { .pos = POS(11, 6), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
+    { .pos = POS(11, 8), .ink = 0x44, .img = IMG(1, 6, RIGHT),  },
+    { .pos = POS( 4, 6), .ink = 0x44, .img = IMG(1, 6, RIGHT), },
+    { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT), },
 };
 
 typedef void(*Action)(struct Mob *);
