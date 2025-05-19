@@ -331,11 +331,23 @@ static void shoot_arrow(struct Mob *mob) {
 static void shamble_ent(struct Mob *mob) {
     if (is_dead(mob)) return;
 
-    if (is_tile(mob, TILE(6))) {
-	byte src = mob->pos;
-	byte dst = player.pos;
+    byte src = mob->pos;
+    byte dst = player.pos;
+
+    if (is_tile(mob, TILE(RESTED))) {
 	if (manhattan(src, dst) < 5) {
 	    animate_mob_shamble(mob);
 	}
+    }
+    else if (diff(src, dst) == 2) {
+	int8 delta = (dst - src) / 2;
+	mob_direction(mob, delta);
+	update_image(mob, TILE(7));
+	mob->pos += delta;
+
+	animate_raw_attack(mob, &player);
+    }
+    else {
+	/* move */
     }
 }
