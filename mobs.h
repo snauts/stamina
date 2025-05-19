@@ -340,7 +340,7 @@ static void shamble_ent(struct Mob *mob) {
 	}
     }
     else if (diff(src, dst) == 2) {
-	int8 delta = (dst - src) / 2;
+	int8 delta = src > dst ? -1 : 1;
 	mob_direction(mob, delta);
 	update_image(mob, TILE(7));
 	mob->pos += delta;
