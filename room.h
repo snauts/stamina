@@ -224,6 +224,8 @@ static void setup_hallway(void) {
 
 static void setup_bailey(void) {
     decompress(MOB(1), ent);
+    add_actor(&shamble_ent, mobs + SKINBARK);
+    add_actor(&shamble_ent, mobs + LEAFLOCK);
 }
 
 static void setup_courtyard(void) {

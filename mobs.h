@@ -17,6 +17,9 @@ enum {
     ARROW1, /* hallway */
     ARROW2,
 
+    SKINBARK, /* bailey */
+    LEAFLOCK,
+
     TOTAL_MOBS, /* this should be last */
 };
 
@@ -41,6 +44,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* hallway */
     { .pos = POS(10, 9), .ink = 0x02, .img = IMG(1, 4, FLIP), .var = 4 },
     { .pos = POS( 5, 5), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 3 },
+
+    /* bailey */
+    { .pos = POS(10, 7), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
+    { .pos = POS( 5, 7), .ink = 0x44, .img = IMG(1, 6, RIGHT), },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -124,6 +131,14 @@ static struct Mob *is_mob(byte pos) {
 
 static byte is_dead(struct Mob *mob) {
     return (mob->img & 0x18) == TILE(BEATEN);
+}
+
+static byte is_tile(struct Mob *mob, byte tile) {
+    return (mob->img & 0x1c) == tile;
+}
+
+static int8 mob_side(struct Mob *mob) {
+    return mob->img & LEFT ? 1 : -1;
 }
 
 static void activate_mobs(void) {
@@ -292,7 +307,7 @@ static void shoot_arrow(struct Mob *mob) {
     if (mob->var != 0) return;
 
     byte pos = mob->pos;
-    int8 delta = mob->img & LEFT ? 1 : -1;
+    int8 delta = mob_side(mob);
     change_image(mob, TILE(1));
 
     for (;;) {
@@ -311,4 +326,16 @@ static void shoot_arrow(struct Mob *mob) {
     }
     reset_mob(mob);
     draw_mob(mob);
+}
+
+static void shamble_ent(struct Mob *mob) {
+    if (is_dead(mob)) return;
+
+    if (is_tile(mob, TILE(6))) {
+	byte src = mob->pos;
+	byte dst = player.pos;
+	if (manhattan(src, dst) < 5) {
+	    animate_mob_shamble(mob);
+	}
+    }
 }
