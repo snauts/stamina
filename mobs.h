@@ -438,6 +438,14 @@ static void move_rook(struct Mob *mob, byte dst) {
     }
 }
 
+static byte combine(byte p1, byte p2) {
+    return (p1 & 0xf0) | (p2 & 0x0f);
+}
+
+static void add_rook_move(byte dst, byte pos) {
+    if (!is_occupied(pos)) add_choice(-manhattan(dst, pos), pos);
+}
+
 static void shamble_rook(struct Mob *mob) {
     if (is_dead(mob) || mob->var-- > 0) return;
 
@@ -452,5 +460,11 @@ static void shamble_rook(struct Mob *mob) {
     if (dx == 0 || dy == 0) {
 	move_rook(mob, dst);
 	animate_raw_attack(mob, &player);
+    }
+    else {
+	reset_choices();
+	add_rook_move(dst, combine(src, dst));
+	add_rook_move(dst, combine(dst, src));
+	move_rook(mob, pick_choice());
     }
 }
