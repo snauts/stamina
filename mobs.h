@@ -453,6 +453,16 @@ static void add_rook_move(byte dst, byte pos) {
     if (!is_occupied(pos)) add_choice(-manhattan(dst, pos), pos);
 }
 
+static void long_attack(struct Mob *mob, byte dst, byte len) {
+    move_rook(mob, dst);
+    byte src = mob->pos;
+    if (manhattan(src, dst) == len) {
+	mob->pos = dst;
+	player.pos = src;
+	animate_raw_attack(mob, &player);
+    }
+}
+
 static void shamble_rook(struct Mob *mob) {
     if (is_dead(mob) || mob->var-- > 0) return;
 
@@ -465,13 +475,7 @@ static void shamble_rook(struct Mob *mob) {
     byte dy = distance_y(src, dst);
 
     if (dx == 0 || dy == 0) {
-	move_rook(mob, dst);
-	src = mob->pos;
-	if (manhattan(src, dst) == 1) {
-	    mob->pos = dst;
-	    player.pos = src;
-	    animate_raw_attack(mob, &player);
-	}
+	long_attack(mob, dst, 1);
     }
     else {
 	reset_choices();
@@ -482,5 +486,13 @@ static void shamble_rook(struct Mob *mob) {
 }
 
 static void shamble_bishop(struct Mob *mob) {
-    mob;
+    byte src = mob->pos;
+    byte dst = player.pos;
+
+    byte dx = distance_x(src, dst);
+    byte dy = distance_y(src, dst);
+
+    if (dx == dy) {
+	long_attack(mob, dst, 2);
+    }
 }
