@@ -470,7 +470,7 @@ static void you_died(void) {
 }
 
 static void place_richard(byte pos) {
-    player.ink = 5;
+    player.ink = 7;
     player.pos = pos;
     update_image(&player, TILE(MOVING));
 }
