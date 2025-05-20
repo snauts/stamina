@@ -167,7 +167,7 @@ static int encode(void *dst, void *src, struct Node *nodes, int i) {
 
 static int report(int size, int total) {
     int percent = total * 100 / size;
-    fprintf(stderr, "compress from %d to %d (%d%)\n", size, total, percent);
+    fprintf(stderr, "compress %d to %d (%d%)\n", size, total, percent);
     return total;
 }
 
@@ -209,7 +209,7 @@ static void compress_and_save(const char *name, void *buf, int length) {
 static void save_array(const char *file_name, void *data, int size) {
     char name[256];
     remove_extension(name, file_name);
-    fprintf(stderr, "dumping array %s\n", name);
+    fprintf(stderr, "save \"%s\" ", name);
     compress_and_save(name, data, size);
 }
 
