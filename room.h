@@ -177,12 +177,13 @@ static const struct Bump chancel_bump[] = {
     MAKE_BUMP(POS(8, 11), 16, &change_room, &cathedral, POS(8, 7)),
 };
 
+static void setup_chancel(void);
 static const struct Room chancel = {
     .msg = "Chancel of Indirection",
     .map = map_of_chancel,
     .bump = chancel_bump,
     .count = SIZE(chancel_bump),
-    .setup = NULL,
+    .setup = setup_chancel,
 };
 
 static byte door_broken;
@@ -257,6 +258,12 @@ static void setup_rampart(void) {
 	james->pos = oskar->pos;
 	oskar->pos = swaps;
     }
+}
+
+static void setup_chancel(void) {
+    decompress(MOB(1), bishop);
+    add_actor(&shamble_bishop, mobs + ISAAC);
+    add_actor(&shamble_bishop, mobs + DAVID);
 }
 
 static void setup_courtyard(void) {

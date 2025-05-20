@@ -25,6 +25,9 @@ enum {
     OSKAR, /* ramparts */
     JAMES,
 
+    ISAAC, /* chancel */
+    DAVID,
+
     TOTAL_MOBS, /* this should be last */
 };
 
@@ -59,6 +62,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* ramparts */
     { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0 },
     { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 1 },
+
+    /* chancel */
+    { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
+    { .pos = POS(9, 3), .ink = 0x05, .img = IMG(1, 0, LEFT),  .var = 1 },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -472,4 +479,8 @@ static void shamble_rook(struct Mob *mob) {
 	add_rook_move(dst, combine(dst, src));
 	move_rook(mob, pick_choice());
     }
+}
+
+static void shamble_bishop(struct Mob *mob) {
+    mob;
 }
