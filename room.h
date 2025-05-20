@@ -192,7 +192,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
 	respawn = ptr;
 	spawn_pos = pos;
 	advance_tile(POS(8, 7));
-	show_message("Fire of North lit");
+	show_message("Central fire of awakening");
 	swoosh(60, 20, 2);
     }
     return true;
