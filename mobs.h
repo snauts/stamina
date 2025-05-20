@@ -345,16 +345,45 @@ static int8 a_star_plus(byte src, byte dst) {
     return is_occupied(dst) ? 0 : a_star(src, dst);
 }
 
+static byte *choice_ptr;
+static byte choice_data[8];
+static byte pick_choice(void) {
+    byte value = 0;
+    byte best = 255;
+    while (choice_ptr > choice_data) {
+	byte candidate = *choice_ptr--;
+	if (candidate <= best) {
+	    value = *choice_ptr;
+	    best = candidate;
+	}
+	choice_ptr--;
+    }
+    return value;
+}
+
+static void reset_choices(void) {
+    choice_ptr = choice_data - 1;
+}
+
+static void add_choice(byte cost, byte value) {
+    *(++choice_ptr) = value;
+    *(++choice_ptr) = cost;
+}
+
+static void add_ent_move(byte src, byte target) {
+    int8 delta = a_star_plus(src, target);
+    if (delta) add_choice(manhattan(src, target), delta);
+}
+
 static int8 ent_movement(byte src, byte dst) {
-    byte p1 = dst + 2;
-    byte l1 = manhattan(src, p1);
-    int8 d1 = a_star_plus(src, p1);
+    reset_choices();
 
-    byte p2 = dst - 2;
-    byte l2 = manhattan(src, p2);
-    int8 d2 = a_star_plus(src, p2);
+    static const int8 offset[] = { -2, 2 };
+    for (byte i = 0; i < SIZE(offset); i++) {
+	add_ent_move(src, dst + offset[i]);
+    }
 
-    return (l1 < l2 && d1) || !d2 ? d1 : d2;
+    return pick_choice();
 }
 
 static void shamble_ent(struct Mob *mob) {
