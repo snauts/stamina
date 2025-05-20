@@ -459,7 +459,9 @@ static void shamble_rook(struct Mob *mob) {
 
     if (dx == 0 || dy == 0) {
 	move_rook(mob, dst);
-	animate_raw_attack(mob, &player);
+	if (manhattan(mob->pos, dst) == 1) {
+	    animate_raw_attack(mob, &player);
+	}
     }
     else {
 	reset_choices();
