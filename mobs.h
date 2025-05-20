@@ -449,7 +449,7 @@ static void add_rook_move(byte dst, byte pos) {
 static void shamble_rook(struct Mob *mob) {
     if (is_dead(mob) || mob->var-- > 0) return;
 
-    mob->var = 1;
+    mob->var = 2;
 
     byte src = mob->pos;
     byte dst = player.pos;
