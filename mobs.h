@@ -57,8 +57,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT), },
 
     /* ramparts */
-    { .pos = POS( 1, 5), .ink = 0x07, .img = IMG(1, 0, RIGHT),  },
-    { .pos = POS(14, 5), .ink = 0x07, .img = IMG(2, 0, LEFT),  },
+    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0 },
+    { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 1 },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -386,6 +386,42 @@ static void shamble_ent(struct Mob *mob) {
     }
 }
 
+static int8 step(byte src, byte dst) {
+    int8 delta = 0;
+    byte x1 = src & 0x0f;
+    byte x2 = dst & 0x0f;
+    if (x2 > x1) delta += 0x01;
+    if (x2 < x1) delta -= 0x01;
+    byte y1 = src & 0xf0;
+    byte y2 = dst & 0xf0;
+    if (y2 > y1) delta += 0x10;
+    if (y2 < y1) delta -= 0x10;
+    return delta;
+}
+
+static void move_rook(struct Mob *mob, byte dst) {
+    int8 delta = step(mob->pos, dst);
+    while (mob->pos != dst) {
+	byte next = mob->pos + delta;
+	if (is_occupied(next)) break;
+	walk_mob(mob, delta);
+	game_idle(3);
+    }
+}
+
 static void shamble_rook(struct Mob *mob) {
-    mob;
+    if (is_dead(mob) || mob->var-- > 0) return;
+
+    mob->var = 1;
+
+    byte src = mob->pos;
+    byte dst = player.pos;
+
+    byte dx = distance_x(src, dst);
+    byte dy = distance_y(src, dst);
+
+    if (dx == 0 || dy == 0) {
+	move_rook(mob, dst);
+	animate_raw_attack(mob, &player);
+    }
 }
