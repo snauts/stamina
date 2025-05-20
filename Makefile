@@ -28,6 +28,7 @@ pcx:
 	@./pcx-dump -t arrow.pcx >> data.h
 	@./pcx-dump -t glass.pcx >> data.h
 	@./pcx-dump -t tower.pcx >> data.h
+	@./pcx-dump -t rook.pcx >> data.h
 	@./pcx-dump -t ent.pcx >> data.h
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h

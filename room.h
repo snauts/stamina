@@ -161,12 +161,13 @@ static const struct Bump rampart_bump[] = {
     MAKE_BUMP(POS(14, 11), 1, &change_room, &hallway, POS(1, 3)),
 };
 
+static void setup_rampart(void);
 static const struct Room rampart = {
     .msg = "Ravaged Rampart",
     .map = map_of_rampart,
     .bump = rampart_bump,
     .count = SIZE(rampart_bump),
-    .setup = NULL,
+    .setup = setup_rampart,
 };
 
 static byte door_broken;
@@ -228,6 +229,12 @@ static void setup_bailey(void) {
     add_actor(&shamble_ent, mobs + LEAFLOCK);
     add_actor(&shamble_ent, mobs + BREGALAD);
     add_actor(&shamble_ent, mobs + BUSHKOPF);
+}
+
+static void setup_rampart(void) {
+    decompress(MOB(1), rook);
+    add_actor(&shamble_rook, mobs + JAMES);
+    add_actor(&shamble_rook, mobs + OSKAR);
 }
 
 static void setup_courtyard(void) {
