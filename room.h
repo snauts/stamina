@@ -146,6 +146,8 @@ static const struct Bump cathedral_bump[] = {
     MAKE_BUMP(POS(1, 9),  -1, &change_room, &courtyard, POS(14, 7)),
     MAKE_BUMP(POS(1, 10), -1, &change_room, &courtyard, POS(14, 7)),
     MAKE_BUMP(POS(1, 11), -1, &change_room, &courtyard, POS(14, 7)),
+    MAKE_BUMP(POS(7, 7), -16, &change_room, &chancel, POS(7, 11)),
+    MAKE_BUMP(POS(8, 7), -16, &change_room, &chancel, POS(8, 11)),
 };
 
 static const struct Room cathedral = {
@@ -168,6 +170,19 @@ static const struct Room rampart = {
     .bump = rampart_bump,
     .count = SIZE(rampart_bump),
     .setup = setup_rampart,
+};
+
+static const struct Bump chancel_bump[] = {
+    MAKE_BUMP(POS(7, 11), 16, &change_room, &cathedral, POS(7, 7)),
+    MAKE_BUMP(POS(8, 11), 16, &change_room, &cathedral, POS(8, 7)),
+};
+
+static const struct Room chancel = {
+    .msg = "Chancel of Indirection",
+    .map = map_of_chancel,
+    .bump = chancel_bump,
+    .count = SIZE(chancel_bump),
+    .setup = NULL,
 };
 
 static byte door_broken;
