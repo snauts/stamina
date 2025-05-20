@@ -20,6 +20,8 @@ typedef unsigned short word;
 
 #define FRAME(x)	((x) << 5)
 #define POS(x, y)	((byte) ((x) + ((y) << 4)))
+#define X(pos)		((pos) & 0x0f)
+#define Y(pos)		((pos) & 0xf0)
 
 static const struct Room *room;
 static volatile byte vblank;
@@ -417,8 +419,8 @@ static byte flip_bits(byte source) {
 }
 
 static void draw_tile(byte *ptr, byte pos, byte id) {
-    byte x = (pos & 0x0f) << 1;
-    byte y = (pos & 0xf0);
+    byte x = X(pos) << 1;
+    byte y = Y(pos);
     byte flip_h = id & 1;
     byte flip_v = id & 2;
     if (flip_v) y += 15;

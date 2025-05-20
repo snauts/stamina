@@ -80,7 +80,7 @@ static void reset_actors(void) {
 }
 
 static word pos_to_ink(byte pos) {
-    return ((pos & 0x0f) << 1) | ((pos & 0xf0) << 2);
+    return (X(pos) << 1) | (Y(pos) << 2);
 }
 
 static byte diff(byte a, byte b) {
@@ -88,11 +88,11 @@ static byte diff(byte a, byte b) {
 }
 
 static byte distance_x(byte a, byte b) {
-    return diff(a & 0x0f, b & 0xf);
+    return diff(X(a), X(b));
 }
 
 static byte distance_y(byte a, byte b) {
-    return diff(a & 0xf0, b & 0xf0) >> 4;
+    return diff(Y(a), Y(b)) >> 4;
 }
 
 static byte manhattan(byte a, byte b) {
@@ -417,12 +417,12 @@ static void shamble_ent(struct Mob *mob) {
 
 static int8 step(byte src, byte dst) {
     int8 delta = 0;
-    byte x1 = src & 0x0f;
-    byte x2 = dst & 0x0f;
+    byte x1 = X(src);
+    byte x2 = X(dst);
     if (x2 > x1) delta += 0x01;
     if (x2 < x1) delta -= 0x01;
-    byte y1 = src & 0xf0;
-    byte y2 = dst & 0xf0;
+    byte y1 = Y(src);
+    byte y2 = Y(dst);
     if (y2 > y1) delta += 0x10;
     if (y2 < y1) delta -= 0x10;
     return delta;
@@ -439,7 +439,7 @@ static void move_rook(struct Mob *mob, byte dst) {
 }
 
 static byte combine(byte p1, byte p2) {
-    return (p1 & 0xf0) | (p2 & 0x0f);
+    return Y(p1) | X(p2);
 }
 
 static void add_rook_move(byte dst, byte pos) {
