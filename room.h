@@ -233,8 +233,15 @@ static void setup_bailey(void) {
 
 static void setup_rampart(void) {
     decompress(MOB(1), rook);
-    add_actor(&shamble_rook, mobs + JAMES);
-    add_actor(&shamble_rook, mobs + OSKAR);
+    struct Mob *james = mobs + JAMES;
+    struct Mob *oskar = mobs + OSKAR;
+    add_actor(&shamble_rook, james);
+    add_actor(&shamble_rook, oskar);
+    if (player.img & LEFT) {
+	byte swaps = james->pos;
+	james->pos = oskar->pos;
+	oskar->pos = swaps;
+    }
 }
 
 static void setup_courtyard(void) {
