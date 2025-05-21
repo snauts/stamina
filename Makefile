@@ -43,6 +43,7 @@ pcx:
 	@./pcx-dump -l cathedral.pcx special.pcx glass.pcx >> data.h
 	@./pcx-dump -l rampart.pcx special.pcx tower.pcx >> data.h
 	@./pcx-dump -l chancel.pcx diagonal.pcx glass.pcx >> data.h
+	@./pcx-dump -l stables.pcx special.pcx garden.pcx >> data.h
 
 zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg

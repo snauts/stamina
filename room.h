@@ -129,6 +129,9 @@ static const struct Bump bailey_bump[] = {
     MAKE_BUMP(POS(7, 2), -16, &change_room, &courtyard, POS(7, 11)),
     MAKE_BUMP(POS(8, 2), -16, &change_room, &courtyard, POS(8, 11)),
     MAKE_BUMP(POS(9, 2), -16, &change_room, &courtyard, POS(9, 11)),
+    MAKE_BUMP(POS(1, 6), -1, &change_room, &stables, POS(15, 6)),
+    MAKE_BUMP(POS(1, 7), -1, &change_room, &stables, POS(15, 7)),
+    MAKE_BUMP(POS(1, 8), -1, &change_room, &stables, POS(15, 8)),
 };
 
 static void setup_bailey(void);
@@ -184,6 +187,20 @@ static const struct Room chancel = {
     .bump = chancel_bump,
     .count = SIZE(chancel_bump),
     .setup = setup_chancel,
+};
+
+static const struct Bump stables_bump[] = {
+    MAKE_BUMP(POS(15, 6), 1, &change_room, &bailey, POS(1, 6)),
+    MAKE_BUMP(POS(15, 7), 1, &change_room, &bailey, POS(1, 7)),
+    MAKE_BUMP(POS(15, 8), 1, &change_room, &bailey, POS(1, 8)),
+};
+
+static const struct Room stables = {
+    .msg = "Soiled Stables",
+    .map = map_of_stables,
+    .bump = stables_bump,
+    .count = SIZE(stables_bump),
+    .setup = NULL,
 };
 
 static byte door_broken;
