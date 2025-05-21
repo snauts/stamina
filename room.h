@@ -195,12 +195,13 @@ static const struct Bump stables_bump[] = {
     MAKE_BUMP(POS(15, 8), 1, &change_room, &bailey, POS(1, 8)),
 };
 
+static void setup_stables(void);
 static const struct Room stables = {
     .msg = "Soiled Stables",
     .map = map_of_stables,
     .bump = stables_bump,
     .count = SIZE(stables_bump),
-    .setup = NULL,
+    .setup = setup_stables,
 };
 
 static byte door_broken;
@@ -281,6 +282,12 @@ static void setup_chancel(void) {
     decompress(MOB(1), bishop);
     add_actor(&shamble_bishop, mobs + ISAAC);
     add_actor(&shamble_bishop, mobs + DAVID);
+}
+
+static void setup_stables(void) {
+    decompress(MOB(1), horse);
+    add_actor(&shamble_horse, mobs + PERSIJS);
+    add_actor(&shamble_horse, mobs + MARKUSS);
 }
 
 static void setup_courtyard(void) {

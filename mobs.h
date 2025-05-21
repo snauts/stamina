@@ -28,6 +28,9 @@ enum {
     ISAAC, /* chancel */
     DAVID,
 
+    PERSIJS, /* stables */
+    MARKUSS,
+
     TOTAL_MOBS, /* this should be last */
 };
 
@@ -66,6 +69,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* chancel */
     { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
     { .pos = POS(9, 3), .ink = 0x05, .img = IMG(1, 0, LEFT),  .var = 1 },
+
+    /* stables */
+    { .pos = POS(2, 5), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
+    { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT),  .var = 1 },
 };
 
 typedef void(*Action)(struct Mob *);
@@ -495,4 +502,8 @@ static void shamble_bishop(struct Mob *mob) {
     if (dx == dy) {
 	long_attack(mob, dst, 2);
     }
+}
+
+static void shamble_horse(struct Mob *mob) {
+    mob;
 }
