@@ -27,6 +27,7 @@ pcx:
 	@./pcx-dump -t bishop.pcx >> data.h
 	@./pcx-dump -t walls.pcx >> data.h
 	@./pcx-dump -t beast.pcx >> data.h
+	@./pcx-dump -t horse.pcx >> data.h
 	@./pcx-dump -t arrow.pcx >> data.h
 	@./pcx-dump -t glass.pcx >> data.h
 	@./pcx-dump -t tower.pcx >> data.h
