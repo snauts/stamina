@@ -398,7 +398,7 @@ static byte bishop_line(byte src, byte dst) {
 }
 
 static void probe_bishop_direction(byte pos, int8 dir) {
-    for (byte n = 0; n < 10; n++) {
+    for (byte n = 10; n != 0; n--) {
 	pos += dir;
 	if (is_occupied(pos)) return;
 	if (bishop_line(pos, player.pos)) {
