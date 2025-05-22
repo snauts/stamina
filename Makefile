@@ -8,7 +8,7 @@ CFLAGS += --code-loc $(CODE) --data-loc $(DATA)
 
 LFLAGS += -n -m -i -b _CODE=$(CODE) -b _DATA=$(DATA)
 
-SRC := main.c
+SRC := main.c room.c mobs.c
 OBJ := $(subst .c,.o,$(SRC))
 
 all:	msg zxs
@@ -55,11 +55,13 @@ zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
 	@bin2tap -b stamina.bin
 
-%.o: %.c
+room.o: data.h
+
+%.o: %.c main.h
 	@echo compile source file $<
 	@sdcc $(ARCH) $(CFLAGS) $(TYPE) -c $< -o $@
 
-prg: pcx room.h mobs.h $(OBJ)
+prg: pcx $(OBJ)
 	@sdld $(LFLAGS) stamina.ihx $(OBJ)
 	@hex2bin stamina.ihx > /dev/null
 

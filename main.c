@@ -1,59 +1,24 @@
+#include "main.h"
+
 void start_up(void) __naked {
     __asm__("di");
     __asm__("jp _reset");
 }
 
-typedef signed char int8;
-typedef signed short int16;
-typedef unsigned char byte;
-typedef unsigned short word;
-
-#define false		0
-#define true		1
-
-#define NULL		((void *) 0)
-#define ADDR(obj)	((word) (obj))
-#define BYTE(addr)	(* (volatile byte *) (addr))
-#define WORD(addr)	(* (volatile word *) (addr))
-#define SIZE(array)	(sizeof(array) / sizeof(*(array)))
-#define PTR(addr)	((byte *) (addr))
-
-#define FRAME(x)	((x) << 5)
-#define POS(x, y)	((byte) ((x) + ((y) << 4)))
-#define X(pos)		((pos) & 0x0f)
-#define Y(pos)		((pos) & 0xf0)
-
 static const struct Room *room;
 static volatile byte vblank;
 static byte *map_y[192];
 
-static const void *respawn;
-static byte spawn_pos;
+extern const byte bar[];
+extern const byte title[];
+extern const byte richard[];
 
-#if defined(ZXS)
+const void *respawn;
+byte spawn_pos;
+
 #define SETUP_STACK()	__asm__("ld sp, #0xfdfc")
-#define SCREEN(x)	PTR(0x4000 + (x))
-#define COLOUR(x)	PTR(0x5800 + (x))
-#define STAGING_AREA	PTR(0x5b00)
 #define FONT_ADDRESS	PTR(0x3c00)
 #define IRQ_BASE	0xfe00
-#endif
-
-#define INK		(STAGING_AREA)
-#define LEVEL		(INK + 0x260)
-#define  TILE(id)		(id << 2)
-#define  SET(id)		(id << 5)
-#define  RIGHT			0
-#define  LEFT			1
-#define  FLIP			2
-#define EMPTY		(LEVEL + 0xc0)
-#define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
-#define  MOVING			0
-#define  STANCE			1
-#define  ATTACK			2
-#define  BEATEN			4
-#define  KILLED			5
-#define  RESTED			6
 
 #define	CTRL_FIRE	0x10
 #define	CTRL_UP		0x08
@@ -61,34 +26,10 @@ static byte spawn_pos;
 #define	CTRL_LEFT	0x02
 #define	CTRL_RIGHT	0x01
 
-#define MOVE_STAMINA	2
-#define FULL_STAMINA	48
-#define KILL_STAMINA	36
-
-enum { X = 0, Y = 1 };
-
-static void clear_message(void);
-static void game_idle(byte ticks);
-static void beep(word p, word len);
-static void advance_tile(byte pos);
-static byte is_walkable(byte place);
-static byte consume_stamina(byte amount);
-static void show_message(const char *msg);
-static void swoosh(int8 f, int8 n, int8 s);
-static byte load_room(const void *ptr, byte pos);
-static byte bump_msg(const void *text, byte ignore);
-static void draw_tile(byte *ptr, byte pos, byte id);
-static void *decompress(byte *dst, const byte *src);
-static void memcpy(void *dst, const void *src, word len);
-
-static byte bump_msg(const void *text, byte value) {
+byte bump_msg(const void *text, byte value) {
     show_message(text);
     return value;
 }
-
-#include "data.h"
-#include "mobs.h"
-#include "room.h"
 
 static void interrupt(void) __naked {
     __asm__("di");
@@ -115,16 +56,12 @@ static void wait_vblank(void) {
 }
 
 static byte in_key(byte a) {
-#ifdef ZXS
     __asm__("in a, (#0xfe)");
-#endif
     return a;
 }
 
 static byte in_joy(byte a) {
-#ifdef ZXS
     __asm__("in a, (#0x1f)"); a;
-#endif
     return a;
 }
 
@@ -132,11 +69,11 @@ static void out_fe(byte data) {
     __asm__("out (#0xfe), a"); data;
 }
 
-static void __sdcc_call_iy(void) __naked {
+void __sdcc_call_iy(void) __naked {
     __asm__("jp (iy)");
 }
 
-static void __sdcc_call_hl(void) __naked {
+void __sdcc_call_hl(void) __naked {
     __asm__("jp (hl)");
 }
 
@@ -144,7 +81,7 @@ static void memset(byte *ptr, byte data, word len) {
     while (len-- > 0) { *ptr++ = data; }
 }
 
-static void memcpy(void *dst, const void *src, word len) __naked {
+void memcpy(void *dst, const void *src, word len) __naked {
     __asm__("ex de, hl");
     __asm__("pop iy");
     __asm__("pop bc");
@@ -169,12 +106,10 @@ static void setup_system(void) {
 }
 
 static void precalculate(void) {
-#if defined(ZXS)
     for (byte y = 0; y < 192; y++) {
 	byte f = ((y & 7) << 3) | ((y >> 3) & 7) | (y & 0xc0);
 	map_y[y] = SCREEN(f << 5);
     }
-#endif
 }
 
 static void clear_block(byte y, byte h) {
@@ -185,14 +120,12 @@ static void clear_block(byte y, byte h) {
 }
 
 static void clear_screen(void) {
-#if defined(ZXS)
     memset(COLOUR(0), 0x00, 0x300);
     clear_block(0, 192);
     out_fe(0);
-#endif
 }
 
-static void beep(word p, word len) {
+void beep(word p, word len) {
     word c = 0;
     while (len-- != 0) {
 	out_fe((c >> 11) & 0x10);
@@ -201,7 +134,7 @@ static void beep(word p, word len) {
     out_fe(0x00);
 }
 
-static void swoosh(int8 f, int8 n, int8 s) {
+void swoosh(int8 f, int8 n, int8 s) {
     while (n-- > 0) {
 	beep(f << 8, 200);
 	f += s;
@@ -281,21 +214,21 @@ static byte str_offset(const char *msg, byte from) {
 
 static byte has_message;
 
-static void clear_message(void) {
+void clear_message(void) {
     if (has_message) {
 	clear_block(20, 8);
 	has_message = 0;
     }
 }
 
-static void show_message(const char *msg) {
+void show_message(const char *msg) {
     clear_message();
     byte x = str_offset(msg, 128);
     put_str(msg, x, 20);
     has_message = 1;
 }
 
-static void *decompress(byte *dst, const byte *src) {
+void *decompress(byte *dst, const byte *src) {
     while (*src) {
         byte n = *src & 0x7f;
         if (*(src++) & 0x80) {
@@ -371,14 +304,14 @@ static void update_bar(void) {
     }
 }
 
-static void game_idle(byte ticks) {
+void game_idle(byte ticks) {
     for (byte i = 0; i < ticks; i++) {
 	wait_vblank();
 	update_bar();
     }
 }
 
-static byte consume_stamina(byte amount) {
+byte consume_stamina(byte amount) {
     byte enough = (stamina >= amount);
     if (enough) stamina -= amount;
     return enough;
@@ -418,7 +351,7 @@ static byte flip_bits(byte source) {
     return result;
 }
 
-static void draw_tile(byte *ptr, byte pos, byte id) {
+void draw_tile(byte *ptr, byte pos, byte id) {
     byte x = X(pos) << 1;
     byte y = Y(pos);
     byte flip_h = id & 1;
@@ -440,7 +373,7 @@ static void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
-static void advance_tile(byte pos) {
+void advance_tile(byte pos) {
     draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
 }
 
@@ -475,7 +408,7 @@ static void place_richard(byte pos) {
     update_image(&player, TILE(MOVING));
 }
 
-static byte is_walkable(byte place) {
+byte is_walkable(byte place) {
     return place >= 32 && place < 192 && LEVEL[place] == TILE(1);
 }
 
@@ -583,7 +516,7 @@ static void game_loop(void) {
     }
 }
 
-static byte load_room(const void *new_room, byte pos) {
+byte load_room(const void *new_room, byte pos) {
     /* clear previous */
     const void *from = room;
     memset(COLOUR(0x80), 0, 0x280);
@@ -624,15 +557,13 @@ static byte load_room(const void *new_room, byte pos) {
 static void start_game(void) {
     has_message = 0;
     player.img = SET(0);
-    door_broken = false;
     show_block(bar, 0, 24);
     last_input = read_input();
     memset(COLOUR(96), 0x5, 32);
     stamina = slider = FULL_STAMINA;
     decompress(MOB(0), richard);
-    spawn_pos = POS(6, 6);
-    respawn = &prison;
     hourglass(0x0);
+    startup_room();
     reload();
 
     game_loop();

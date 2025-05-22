@@ -1,42 +1,8 @@
-struct Mob {
-    byte pos;
-    byte img;
-    byte ink;
-    byte var;
-};
+#include "main.h"
 
-enum {
-    LARRY, /* dungeon */
-    BARRY,
-    HARRY,
+struct Mob player;
 
-    JURIS, /* corridor */
-    ZIGIS,
-    ROBIS,
-
-    ARROW1, /* hallway */
-    ARROW2,
-
-    SKINBARK, /* bailey */
-    LEAFLOCK,
-    BREGALAD,
-    BUSHKOPF,
-
-    OSKAR, /* ramparts */
-    JAMES,
-
-    ISAAC, /* chancel */
-    DAVID,
-
-    PERSIJS, /* stables */
-    MARKUSS,
-
-    TOTAL_MOBS, /* this should be last */
-};
-
-static struct Mob player;
-
-static struct Mob mobs[TOTAL_MOBS];
+struct Mob mobs[TOTAL_MOBS];
 
 #define IMG(set, tile, rest) \
     SET(set) | TILE(tile) | rest
@@ -75,8 +41,6 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT),  .var = 1 },
 };
 
-typedef void(*Action)(struct Mob *);
-
 struct Actor {
     struct Mob *mob;
     Action fn;
@@ -85,11 +49,11 @@ struct Actor {
 static byte actor_count;
 static struct Actor actors[4];
 
-static void reset_mobs(void) {
+void reset_mobs(void) {
     memcpy(mobs, mobs_reset, sizeof(mobs));
 }
 
-static void reset_actors(void) {
+void reset_actors(void) {
     actor_count = 0;
 }
 
@@ -133,20 +97,20 @@ static void reset_mob(struct Mob *mob) {
     memcpy(mob, src, sizeof(struct Mob));
 }
 
-static void add_actor(Action fn, struct Mob *mob) {
+void add_actor(Action fn, struct Mob *mob) {
     struct Actor *ptr = actors + actor_count;
     ptr->mob = mob;
     ptr->fn = fn;
     actor_count++;
 }
 
-static void place_actors(void) {
+void place_actors(void) {
     for (byte i = 0; i < actor_count; i++) {
 	draw_mob(actors[i].mob);
     }
 }
 
-static struct Mob *is_mob(byte pos) {
+struct Mob *is_mob(byte pos) {
     for (byte i = 0; i < actor_count; i++) {
 	struct Mob *mob = actors[i].mob;
 	if (mob->pos == pos) return mob;
@@ -154,7 +118,7 @@ static struct Mob *is_mob(byte pos) {
     return NULL;
 }
 
-static byte is_dead(struct Mob *mob) {
+byte is_dead(struct Mob *mob) {
     return (mob->img & 0x18) == TILE(BEATEN);
 }
 
@@ -176,12 +140,12 @@ static void activate_mobs(void) {
     }
 }
 
-static void hourglass(byte color) {
+void hourglass(byte color) {
     * COLOUR(0x01) = color;
     * COLOUR(0x21) = color;
 }
 
-static void shamble_mobs(void) {
+void shamble_mobs(void) {
     clear_message();
     hourglass(0x5);
     activate_mobs();
@@ -192,7 +156,7 @@ static void change_image(struct Mob *mob, byte tile) {
     mob->img = (mob->img & 0xE3) | tile;
 }
 
-static void update_image(struct Mob *mob, byte tile) {
+void update_image(struct Mob *mob, byte tile) {
     change_image(mob, tile);
     draw_mob(mob);
 }
@@ -203,7 +167,7 @@ static void change_stance(struct Mob *mob, byte tile) {
     update_image(mob, tile);
 }
 
-static void mob_direction(struct Mob *mob, int8 delta) {
+void mob_direction(struct Mob *mob, int8 delta) {
     if (delta == 1) {
 	mob->img &= ~1;
     }
@@ -237,12 +201,12 @@ static void clear_mob(struct Mob *mob, byte target) {
     }
 }
 
-static void move_mob(struct Mob *mob, byte target) {
+void move_mob(struct Mob *mob, byte target) {
     clear_mob(mob, target);
     change_stance(mob, TILE(MOVING));
 }
 
-static void push_mob(struct Mob *mob, byte target) {
+void push_mob(struct Mob *mob, byte target) {
     clear_mob(mob, target);
     draw_mob(mob);
 }
@@ -261,12 +225,12 @@ static void animate_raw_attack(struct Mob *mob, struct Mob *victim) {
     }
 }
 
-static void animate_attack(struct Mob *mob, struct Mob *victim) {
+void animate_attack(struct Mob *mob, struct Mob *victim) {
     animate_raw_attack(mob, victim);
     update_image(mob, TILE(MOVING));
 }
 
-static byte is_occupied(byte pos) {
+byte is_occupied(byte pos) {
     return !is_walkable(pos) || pos == player.pos || is_mob(pos) != NULL;
 }
 
@@ -312,7 +276,7 @@ static void walk_mob(struct Mob *mob, int8 delta) {
     }
 }
 
-static void shamble_beast(struct Mob *mob) {
+void shamble_beast(struct Mob *mob) {
     if (is_dead(mob)) return;
     animate_mob_shamble(mob);
 
@@ -326,7 +290,7 @@ static void shamble_beast(struct Mob *mob) {
     }
 }
 
-static void shoot_arrow(struct Mob *mob) {
+void shoot_arrow(struct Mob *mob) {
     mob->var--;
     if (mob->var == 1) {
 	update_image(mob, TILE(5));
@@ -400,7 +364,7 @@ static int8 ent_movement(byte src, byte dst) {
     return pick_choice();
 }
 
-static void shamble_ent(struct Mob *mob) {
+void shamble_ent(struct Mob *mob) {
     if (is_dead(mob)) return;
 
     byte src = mob->pos;
@@ -470,7 +434,7 @@ static void long_attack(struct Mob *mob, byte dst, byte len) {
     }
 }
 
-static void shamble_rook(struct Mob *mob) {
+void shamble_rook(struct Mob *mob) {
     if (is_dead(mob) || mob->var-- > 0) return;
 
     mob->var = 2;
@@ -492,7 +456,7 @@ static void shamble_rook(struct Mob *mob) {
     }
 }
 
-static void shamble_bishop(struct Mob *mob) {
+void shamble_bishop(struct Mob *mob) {
     byte src = mob->pos;
     byte dst = player.pos;
 
@@ -504,6 +468,6 @@ static void shamble_bishop(struct Mob *mob) {
     }
 }
 
-static void shamble_horse(struct Mob *mob) {
+void shamble_horse(struct Mob *mob) {
     mob;
 }

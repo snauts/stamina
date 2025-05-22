@@ -201,7 +201,7 @@ static int compress(void *dst, void *src, int size) {
 static void compress_and_save(const char *name, void *buf, int length) {
     unsigned char dst[estimate(length)];
     int size = compress(dst, buf, length);
-    printf("static const byte %s[] = {\n", name);
+    printf("const byte %s[] = {\n", name);
     dump_buffer(dst, size, 1);
     printf("};\n");
 }
@@ -423,7 +423,7 @@ static void build_tileset(unsigned char **tileset, int argc, char **argv) {
 }
 
 static void save_room_data(char *name, int argc, char **argv) {
-    printf("static const void* const map_of_%s[] = {\n", name);
+    printf("const void* const map_of_%s[] = {\n", name);
     printf(" layout_of_%s,", name);
 
     for (int i = 3; i < argc; i++) {
