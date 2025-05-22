@@ -38,7 +38,7 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 
     /* stables */
     { .pos = POS(2, 5), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
-    { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT),  .var = 1 },
+    { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 1 },
 };
 
 struct Actor {
@@ -408,5 +408,16 @@ void shamble_bishop(struct Mob *mob) {
 const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
 
 void shamble_horse(struct Mob *mob) {
-    mob;
+    if (is_dead(mob)) return;
+
+    animate_mob_shamble(mob);
+
+    byte src = mob->pos;
+    byte dst = player.pos;
+
+    walk_mob(mob, a_star_move(horsing, src, dst));
+
+    if (mob->pos == player.pos) {
+	animate_attack(mob, &player);
+    }
 }
