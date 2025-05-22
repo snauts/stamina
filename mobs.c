@@ -211,14 +211,16 @@ void push_mob(struct Mob *mob, byte target) {
     draw_mob(mob);
 }
 
-static void beat_victim(struct Mob *victim, byte frame) {
-    if (victim != NULL) update_image(victim, TILE(BEATEN) + frame);
+static void beat_victim(struct Mob *mob, struct Mob *victim, byte frame) {
+    if (victim != NULL && mob->pos != victim->pos) {
+	update_image(victim, TILE(BEATEN) + frame);
+    }
 }
 
 static void animate_raw_attack(struct Mob *mob, struct Mob *victim) {
-    beat_victim(victim, TILE(0));
+    beat_victim(mob, victim, TILE(0));
     for (byte i = 0; i < 5; i++) {
-	if (i == 1) beat_victim(victim, TILE(1));
+	if (i == 1) beat_victim(mob, victim, TILE(1));
 	change_stance(mob, TILE(ATTACK));
 	beep(i & 1 ? 1500 : 500, 500);
 	game_idle(10);
