@@ -260,7 +260,7 @@ void shamble_beast(struct Mob *mob) {
 	animate_attack(mob, &player);
     }
     else {
-	walk_mob(mob, a_star_near(nearest, src, dst));
+	walk_mob(mob, a_star_move(nearest, src, dst));
     }
 }
 

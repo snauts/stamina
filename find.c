@@ -43,8 +43,12 @@ void reset_a_star(const int8 *move_set) {
     head = 0;
 }
 
+static void add_a_star_dst(byte dst) {
+    map[head++] = dst;
+}
+
 void add_a_star_target(byte dst) {
-    if (!is_occupied(dst)) map[head++] = dst;
+    if (!is_occupied(dst)) add_a_star_dst(dst);
 }
 
 int8 a_star(byte src) {
@@ -67,12 +71,8 @@ int8 a_star(byte src) {
 
 const int8 nearest[] = { -16, 16, -1, 1, 0 };
 
-static void add_delta_targets(byte dst, const int8 *deltas) {
-    do { add_a_star_target(dst + *deltas++); } while (*deltas);
-}
-
-int8 a_star_near(const int8 *move_set, byte src, byte dst) {
+int8 a_star_move(const int8 *move_set, byte src, byte dst) {
     reset_a_star(move_set);
-    add_delta_targets(dst, nearest);
+    add_a_star_dst(dst);
     return a_star(src);
 }
