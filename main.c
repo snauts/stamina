@@ -125,18 +125,20 @@ static void clear_screen(void) {
     out_fe(0);
 }
 
-void beep(word p, word len) {
-    word c = 0;
-    while (len-- != 0) {
-	out_fe((c >> 11) & 0x10);
+static void beep(byte p) {
+    byte c = 0;
+    vblank = 0;
+    while (!vblank) {
+	out_fe((c >> 3) & 0x10);
 	c += p;
     }
     out_fe(0x00);
 }
 
 void swoosh(int8 f, int8 n, int8 s) {
+    wait_vblank();
     while (n-- > 0) {
-	beep(f << 8, 200);
+	beep(f);
 	f += s;
     }
 }
@@ -474,7 +476,7 @@ static void roll_richard(int8 delta) {
     }
     else if (stamina == 0) {
 	show_message("You feel exausted");
-	swoosh(3, 3, 1);
+	swoosh(2, 2, 2);
     }
 }
 

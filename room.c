@@ -23,7 +23,7 @@ static byte break_door(const void *ptr, byte pos) {
 	update_image(&player, TILE(MOVING));
 	advance_tile(POS(10, 6));
 	door_broken = true;
-	swoosh(5, 5, -1);
+	swoosh(3, 3, -1);
     }
     else {
 	show_message("Rest to replenish stamina");
@@ -37,7 +37,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
 	spawn_pos = pos;
 	advance_tile(POS(8, 7));
 	show_message("Central fire of awakening");
-	swoosh(60, 20, 2);
+	swoosh(60, 20, 5);
     }
     return true;
 }

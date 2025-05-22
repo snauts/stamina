@@ -223,7 +223,7 @@ static void animate_raw_attack(struct Mob *mob, struct Mob *victim) {
     for (byte i = 0; i < 5; i++) {
 	if (i == 1) beat_victim(mob, victim, TILE(1));
 	change_stance(mob, TILE(ATTACK));
-	beep(i & 1 ? 1500 : 500, 500);
+	swoosh(i & 1 ? 6 : 2, 1, 0);
 	game_idle(10);
     }
 }

@@ -73,7 +73,6 @@ extern struct Mob player;
 
 void clear_message(void);
 void game_idle(byte ticks);
-void beep(word p, word len);
 void advance_tile(byte pos);
 byte is_walkable(byte place);
 byte consume_stamina(byte amount);
