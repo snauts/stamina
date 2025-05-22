@@ -402,6 +402,8 @@ void shamble_bishop(struct Mob *mob) {
     }
 }
 
+const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
+
 void shamble_horse(struct Mob *mob) {
     mob;
 }
