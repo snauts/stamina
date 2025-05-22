@@ -85,6 +85,12 @@ void draw_tile(byte *ptr, byte pos, byte id);
 void *decompress(byte *dst, const byte *src);
 void memcpy(void *dst, const void *src, word len);
 
+void reset_choices(void);
+void add_choice(byte cost, byte value);
+byte pick_choice(void);
+
+int8 a_star(byte src, byte dst);
+
 void reset_mobs(void);
 void shamble_mobs(void);
 void startup_room(void);

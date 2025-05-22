@@ -8,7 +8,7 @@ CFLAGS += --code-loc $(CODE) --data-loc $(DATA)
 
 LFLAGS += -n -m -i -b _CODE=$(CODE) -b _DATA=$(DATA)
 
-SRC := main.c room.c mobs.c
+SRC := main.c room.c mobs.c find.c
 OBJ := $(subst .c,.o,$(SRC))
 
 all:	msg zxs

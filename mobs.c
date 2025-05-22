@@ -241,34 +241,6 @@ static void animate_mob_shamble(struct Mob *mob) {
     }
 }
 
-static byte visited(byte *map, byte move, byte head) {
-    while (head-- > 0) {
-	if (*map++ == move) return true;
-    }
-    return false;
-}
-
-static int8 a_star(byte src, byte dst) {
-    static const int8 deltas[] = { -16, 16, -1, 1 };
-    static byte map[160];
-    byte head, tail;
-    head = tail = 0;
-
-    map[head++] = dst;
-    while (head > tail) {
-	byte next = map[tail++];
-	for (byte i = 0; i < SIZE(deltas); i++) {
-	    int8 delta = deltas[i];
-	    byte move = next + delta;
-	    if (move == src) return -delta;
-	    if (is_occupied(move)) continue;
-	    if (visited(map, move, head)) continue;
-	    map[head++] = move;
-	}
-    }
-    return 0;
-}
-
 static void walk_mob(struct Mob *mob, int8 delta) {
     if (delta) {
 	mob_direction(mob, delta);
@@ -321,31 +293,6 @@ void shoot_arrow(struct Mob *mob) {
 
 static int8 a_star_plus(byte src, byte dst) {
     return is_occupied(dst) ? 0 : a_star(src, dst);
-}
-
-static byte *choice_ptr;
-static byte choice_data[8];
-static byte pick_choice(void) {
-    byte value = 0;
-    byte best = 255;
-    while (choice_ptr > choice_data) {
-	byte candidate = *choice_ptr--;
-	if (candidate <= best) {
-	    value = *choice_ptr;
-	    best = candidate;
-	}
-	choice_ptr--;
-    }
-    return value;
-}
-
-static void reset_choices(void) {
-    choice_ptr = choice_data - 1;
-}
-
-static void add_choice(byte cost, byte value) {
-    *(++choice_ptr) = value;
-    *(++choice_ptr) = cost;
 }
 
 static void add_ent_move(byte src, byte target) {
