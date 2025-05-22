@@ -212,8 +212,9 @@ void push_mob(struct Mob *mob, byte target) {
 }
 
 static void beat_victim(struct Mob *mob, struct Mob *victim, byte frame) {
-    if (victim != NULL && mob->pos != victim->pos) {
-	update_image(victim, TILE(BEATEN) + frame);
+    if (victim != NULL) {
+	change_image(victim, TILE(BEATEN) + frame);
+	if (mob->pos != victim->pos) draw_mob(victim);
     }
 }
 
