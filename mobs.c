@@ -349,7 +349,7 @@ static void move_rook(struct Mob *mob, byte dst) {
 	byte next = mob->pos + delta;
 	if (is_occupied(next)) break;
 	walk_mob(mob, delta);
-	game_idle(3);
+	game_idle(5);
     }
 }
 
