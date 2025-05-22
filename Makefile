@@ -6,6 +6,11 @@ SIZE := ls -l stamina.tap | cut -d " " -f 5
 CFLAGS += --nostdinc --nostdlib --no-std-crt0
 CFLAGS += --code-loc $(CODE) --data-loc $(DATA)
 
+LFLAGS += -n -m -i -b _CODE=$(CODE) -b _DATA=$(DATA)
+
+SRC := main.c
+OBJ := $(subst .c,.o,$(SRC))
+
 all:	msg zxs
 	@echo stamina build built
 	@echo zxs tape size $(shell $(SIZE))
@@ -50,9 +55,12 @@ zxs:
 	@$(MAKE) CODE=0x8000 DATA=0x7000 TYPE=-DZXS prg
 	@bin2tap -b stamina.bin
 
-prg: pcx room.h mobs.h
-	@echo compiling source code
-	@sdcc $(ARCH) $(CFLAGS) $(TYPE) main.c -o stamina.ihx
+%.o: %.c
+	@echo compile source file $<
+	@sdcc $(ARCH) $(CFLAGS) $(TYPE) -c $< -o $@
+
+prg: pcx room.h mobs.h $(OBJ)
+	@sdld $(LFLAGS) stamina.ihx $(OBJ)
 	@hex2bin stamina.ihx > /dev/null
 
 fuse: zxs
@@ -60,4 +68,4 @@ fuse: zxs
 	@fuse --machine 128 --no-confirm-actions stamina.tap >/dev/null
 
 clean:
-	rm -f pcx-dump data.h stamina*
+	rm -f pcx-dump data.h stamina* *.asm *.lst *.sym *.o

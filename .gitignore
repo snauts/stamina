@@ -1,3 +1,7 @@
 data.h
 stamina*
 pcx-dump
+*.asm
+*.lst
+*.sym
+*.o
