@@ -276,7 +276,7 @@ static const struct Bump chancel_bump[] = {
 };
 
 static const struct Room chancel = {
-    .msg = "Chancel of Indirection",
+    .msg = "Altar of Duality",
     .map = map_of_chancel,
     .bump = chancel_bump,
     .count = SIZE(chancel_bump),
