@@ -374,9 +374,7 @@ static void long_attack(struct Mob *mob, byte dst, byte len) {
 }
 
 void shamble_rook(struct Mob *mob) {
-    if (is_dead(mob) || mob->var-- > 0) return;
-
-    mob->var = 2;
+    if (is_dead(mob) || (mob->var++ & 1)) return;
 
     byte src = mob->pos;
     byte dst = player.pos;
