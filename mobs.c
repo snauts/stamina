@@ -1,8 +1,8 @@
 #include "main.h"
 
-struct Mob player;
+extern const int8 nearest[];
 
-struct Mob mobs[TOTAL_MOBS];
+struct Mob player, mobs[TOTAL_MOBS];
 
 #define IMG(set, tile, rest) \
     SET(set) | TILE(tile) | rest
@@ -258,7 +258,7 @@ void shamble_beast(struct Mob *mob) {
 	animate_attack(mob, &player);
     }
     else {
-	walk_mob(mob, a_star(src, dst));
+	walk_mob(mob, a_star_near(nearest, src, dst));
     }
 }
 
@@ -291,24 +291,11 @@ void shoot_arrow(struct Mob *mob) {
     draw_mob(mob);
 }
 
-static int8 a_star_plus(byte src, byte dst) {
-    return is_occupied(dst) ? 0 : a_star(src, dst);
-}
-
-static void add_ent_move(byte src, byte target) {
-    int8 delta = a_star_plus(src, target);
-    if (delta) add_choice(manhattan(src, target), delta);
-}
-
 static int8 ent_movement(byte src, byte dst) {
-    reset_choices();
-
-    static const int8 offset[] = { -2, 2 };
-    for (byte i = 0; i < SIZE(offset); i++) {
-	add_ent_move(src, dst + offset[i]);
-    }
-
-    return pick_choice();
+    reset_a_star(nearest);
+    add_a_star_target(dst - 2);
+    add_a_star_target(dst + 2);
+    return a_star(src);
 }
 
 void shamble_ent(struct Mob *mob) {

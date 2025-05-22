@@ -26,9 +26,8 @@ byte pick_choice(void) {
     return value;
 }
 
-static const byte *deltas;
+static const int8 *moves;
 static byte map[160];
-static byte count;
 static byte head;
 
 static byte visited(byte move, byte amount) {
@@ -39,24 +38,23 @@ static byte visited(byte move, byte amount) {
     return false;
 }
 
-void reset_a_star(const byte *moves) {
+void reset_a_star(const int8 *move_set) {
+    moves = move_set;
     head = 0;
-    count = 0;
-    deltas = moves;
-    while (deltas[count++]);
 }
 
 void add_a_star_target(byte dst) {
-    map[head++] = dst;
+    if (!is_occupied(dst)) map[head++] = dst;
 }
 
-int8 a_star_search(byte src) {
+int8 a_star(byte src) {
     byte tail = 0;
 
     while (head > tail) {
 	byte next = map[tail++];
-	for (byte i = 0; i < count; i++) {
-	    int8 delta = deltas[i];
+	const int8 *deltas = moves;
+	while (*deltas) {
+	    int8 delta = *deltas++;
 	    byte move = next + delta;
 	    if (move == src) return -delta;
 	    if (is_occupied(move)) continue;
@@ -67,10 +65,14 @@ int8 a_star_search(byte src) {
     return 0;
 }
 
-static const int8 nearest[] = { -16, 16, -1, 1, 0 };
+const int8 nearest[] = { -16, 16, -1, 1, 0 };
 
-int8 a_star(byte src, byte dst) {
-    reset_a_star(nearest);
-    add_a_star_target(dst);
-    return a_star_search(src);
+static void add_delta_targets(byte dst, const int8 *deltas) {
+    do { add_a_star_target(dst + *deltas++); } while (*deltas);
+}
+
+int8 a_star_near(const int8 *move_set, byte src, byte dst) {
+    reset_a_star(move_set);
+    add_delta_targets(dst, nearest);
+    return a_star(src);
 }

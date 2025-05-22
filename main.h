@@ -89,7 +89,11 @@ void reset_choices(void);
 void add_choice(byte cost, byte value);
 byte pick_choice(void);
 
-int8 a_star(byte src, byte dst);
+void reset_a_star(const int8 *moves);
+void add_a_star_target(byte dst);
+int8 a_star(byte src);
+
+int8 a_star_near(const int8 *move_set, byte src, byte dst);
 
 void reset_mobs(void);
 void shamble_mobs(void);
