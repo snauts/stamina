@@ -343,9 +343,9 @@ static int8 step(byte src, byte dst) {
     return delta;
 }
 
-static void move_rook(struct Mob *mob, byte dst) {
+static void move_line(struct Mob *mob, byte dst) {
     int8 delta = step(mob->pos, dst);
-    while (mob->pos != dst) {
+    while (dst && mob->pos != dst) {
 	byte next = mob->pos + delta;
 	if (is_occupied(next)) break;
 	walk_mob(mob, delta);
@@ -362,7 +362,7 @@ static void add_rook_move(byte dst, byte pos) {
 }
 
 static void long_attack(struct Mob *mob, byte dst, byte len) {
-    move_rook(mob, dst);
+    move_line(mob, dst);
     byte src = mob->pos;
     if (manhattan(src, dst) == len) {
 	mob->pos = dst;
@@ -389,7 +389,22 @@ void shamble_rook(struct Mob *mob) {
 	reset_choices();
 	add_rook_move(dst, combine(src, dst));
 	add_rook_move(dst, combine(dst, src));
-	move_rook(mob, pick_choice());
+	move_line(mob, pick_choice());
+    }
+}
+
+static byte bishop_line(byte src, byte dst) {
+    return distance_x(src, dst) == distance_y(src, dst);
+}
+
+static void probe_bishop_direction(byte pos, int8 dir) {
+    for (byte n = 0; n < 10; n++) {
+	pos += dir;
+	if (is_occupied(pos)) return;
+	if (bishop_line(pos, player.pos)) {
+	    add_choice(n, pos);
+	    break;
+	}
     }
 }
 
@@ -397,15 +412,20 @@ void shamble_bishop(struct Mob *mob) {
     byte src = mob->pos;
     byte dst = player.pos;
 
-    byte dx = distance_x(src, dst);
-    byte dy = distance_y(src, dst);
-
-    if (dx == dy) {
+    if (bishop_line(src, dst)) {
 	long_attack(mob, dst, 2);
+    }
+    else {
+	reset_choices();
+	static const int8 bishop_dir[] = { 15, 17, -15, -17 };
+	for (byte i = 0; i < SIZE(bishop_dir); i++) {
+	    probe_bishop_direction(src, bishop_dir[i]);
+	}
+	move_line(mob, pick_choice());
     }
 }
 
-const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
+static const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
 
 void shamble_horse(struct Mob *mob) {
     if (is_dead(mob)) return;
