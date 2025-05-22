@@ -37,6 +37,7 @@ typedef unsigned short word;
 #define  BEATEN			4
 #define  KILLED			5
 #define  RESTED			6
+#define SPRITE(n, i)	(MOB(n) + FRAME(i))
 
 #define MOVE_STAMINA	2
 #define FULL_STAMINA	48
@@ -145,6 +146,8 @@ enum {
 /* chancel */
     ISAAC,
     DAVID,
+    WILLY,
+    TOMMY,
 
 /* stables */
     PERSIJS,

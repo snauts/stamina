@@ -35,6 +35,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* chancel */
     { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
     { .pos = POS(9, 3), .ink = 0x05, .img = IMG(1, 0, LEFT),  .var = 1 },
+    { .pos = POS(6, 5), .ink = 0x05, .img = IMG(2, 4, RIGHT), .var = 0 },
+    { .pos = POS(9, 5), .ink = 0x03, .img = IMG(2, 4, LEFT),  .var = 1 },
 
     /* stables */
     { .pos = POS(2, 5), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
@@ -409,6 +411,8 @@ static void probe_bishop_direction(byte pos, int8 dir) {
 }
 
 void shamble_bishop(struct Mob *mob) {
+    if (is_dead(mob)) return;
+
     byte src = mob->pos;
     byte dst = player.pos;
 

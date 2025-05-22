@@ -89,8 +89,11 @@ static void setup_rampart(void) {
 
 static void setup_chancel(void) {
     decompress(MOB(1), bishop);
+    memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
     add_actor(&shamble_bishop, mobs + ISAAC);
     add_actor(&shamble_bishop, mobs + DAVID);
+    add_actor(&shamble_bishop, mobs + WILLY);
+    add_actor(&shamble_bishop, mobs + TOMMY);
 }
 
 static void setup_stables(void) {
