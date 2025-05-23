@@ -104,6 +104,7 @@ void reset_actors(void);
 void place_actors(void);
 byte is_occupied(byte pos);
 void hourglass(byte color);
+void restore_tile(byte pos);
 byte is_dead(struct Mob *mob);
 void add_actor(Action fn, struct Mob *mob);
 void move_mob(struct Mob *mob, byte target);

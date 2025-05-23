@@ -190,10 +190,7 @@ static void restore_color(byte pos) {
     *dst = *src;
 }
 
-static void clear_mob(struct Mob *mob, byte target) {
-    byte pos = mob->pos;
-    mob->pos = target;
-
+void restore_tile(byte pos) {
     struct Mob *corpse;
     corpse = is_mob(pos);
     if (corpse != NULL) {
@@ -203,6 +200,12 @@ static void clear_mob(struct Mob *mob, byte target) {
 	restore_color(pos);
 	draw_tile(EMPTY, pos, LEVEL[pos]);
     }
+}
+
+static void clear_mob(struct Mob *mob, byte target) {
+    byte pos = mob->pos;
+    mob->pos = target;
+    restore_tile(pos);
 }
 
 void move_mob(struct Mob *mob, byte target) {
