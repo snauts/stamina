@@ -138,7 +138,6 @@ static const struct Room tunnel = {
     .map = map_of_tunnel,
     .bump = tunnel_bump,
     .count = SIZE(tunnel_bump),
-    .setup = NULL,
 };
 
 /*** Dungeon ***/
@@ -250,7 +249,6 @@ static const struct Room cathedral = {
     .map = map_of_cathedral,
     .bump = cathedral_bump,
     .count = SIZE(cathedral_bump),
-    .setup = NULL,
 };
 
 /*** Rampart ***/

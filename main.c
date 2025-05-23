@@ -5,7 +5,8 @@ void start_up(void) __naked {
     __asm__("jp _reset");
 }
 
-static const struct Room *room;
+const struct Room *room;
+
 static volatile byte vblank;
 static byte *map_y[192];
 
@@ -75,6 +76,10 @@ void __sdcc_call_iy(void) __naked {
 
 void __sdcc_call_hl(void) __naked {
     __asm__("jp (hl)");
+}
+
+void call(void (*fn)(void)) {
+    if (fn) fn();
 }
 
 static void memset(byte *ptr, byte data, word len) {
@@ -534,7 +539,7 @@ byte load_room(const void *new_room, byte pos) {
     void *dst = EMPTY;
     while (*map) dst = decompress(dst, *map++);
 
-    if (room->setup) room->setup();
+    call(room->setup);
 
     for (byte pos = 32; pos < 192; pos++) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);

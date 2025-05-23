@@ -1,6 +1,7 @@
 #include "main.h"
 
 extern const int8 nearest[];
+extern const struct Room *room;
 
 struct Mob player, mobs[TOTAL_MOBS];
 
@@ -152,6 +153,7 @@ void shamble_mobs(void) {
     hourglass(0x5);
     activate_mobs();
     hourglass(0x0);
+    call(room->turn);
 }
 
 static void change_image(struct Mob *mob, byte tile) {

@@ -66,6 +66,7 @@ struct Room {
     const char *msg;
     const void **map;
     void (*setup)(void);
+    void (*turn)(void);
     const void *bump;
     byte count;
 };
@@ -74,6 +75,7 @@ extern struct Mob player;
 
 void clear_message(void);
 void game_idle(byte ticks);
+void call(void (*fn)(void));
 void advance_tile(byte pos);
 byte is_walkable(byte place);
 byte consume_stamina(byte amount);
