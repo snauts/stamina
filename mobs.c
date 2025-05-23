@@ -80,9 +80,8 @@ static byte manhattan(byte a, byte b) {
     return distance_x(a, b) + distance_y(a, b);
 }
 
-static void set_mob_ink(struct Mob *mob) {
-    byte ink = mob->ink;
-    byte *ptr = COLOUR(pos_to_ink(mob->pos));
+void set_tile_ink(byte pos, byte ink) {
+    byte *ptr = COLOUR(pos_to_ink(pos));
     *ptr = ink; ptr += 0x01;
     *ptr = ink; ptr += 0x1f;
     *ptr = ink; ptr += 0x01;
@@ -91,7 +90,7 @@ static void set_mob_ink(struct Mob *mob) {
 
 static void draw_mob(struct Mob *mob) {
     draw_tile(MOB(0), mob->pos, mob->img);
-    set_mob_ink(mob);
+    set_tile_ink(mob->pos, mob->ink);
 }
 
 static void reset_mob(struct Mob *mob) {
