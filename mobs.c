@@ -158,8 +158,8 @@ void shamble_mobs(void) {
     clear_message();
     hourglass(0x5);
     activate_mobs();
-    hourglass(0x0);
     call(room->turn);
+    hourglass(0x0);
 }
 
 static void change_image(struct Mob *mob, byte tile) {
@@ -452,5 +452,28 @@ void shamble_horse(struct Mob *mob) {
 
     if (mob->pos == player.pos) {
 	animate_attack(mob, &player);
+    }
+}
+
+static byte lightning_flash(byte eep, byte dst, byte flip) {
+    byte src = POS(X(dst), 2);
+    for (byte pos = src; pos <= dst; pos += POS(0, 1)) {
+	byte tile = pos == dst ? TILE(3) : TILE(2);
+	draw_tile(EMPTY, pos, tile | flip);
+	set_tile_ink(pos, 0x47);
+    }
+    swoosh(eep++, 1, 0);
+    for (byte pos = src; pos <= dst; pos += POS(0, 1)) {
+	restore_tile(pos);
+    }
+    draw_mob(&player);
+    swoosh(eep++, 1, 0);
+    return eep;
+}
+
+static void lightning_strike(byte pos) {
+    byte eep = 5;
+    for (byte i = 0; i < 8; i++) {
+	eep = lightning_flash(eep, pos, i & 1);
     }
 }
