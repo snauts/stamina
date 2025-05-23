@@ -88,7 +88,7 @@ void set_tile_ink(byte pos, byte ink) {
     *ptr = ink;
 }
 
-static void draw_mob(struct Mob *mob) {
+void draw_mob(struct Mob *mob) {
     draw_tile(MOB(0), mob->pos, mob->img);
     set_tile_ink(mob->pos, mob->ink);
 }
