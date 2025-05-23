@@ -6,6 +6,8 @@ extern const void *respawn;
 extern byte spawn_pos;
 
 static byte door_broken;
+static byte rooks_beaten;
+static byte horses_beaten;
 static byte bishops_beaten;
 
 #define MAKE_BUMP(from, dir, action, data, param) \
@@ -76,6 +78,7 @@ static void setup_bailey(void) {
 }
 
 static void setup_rampart(void) {
+    if (rooks_beaten) return;
     decompress(MOB(1), rook);
     struct Mob *james = mobs + JAMES;
     struct Mob *oskar = mobs + OSKAR;
@@ -100,9 +103,18 @@ static void setup_chancel(void) {
 }
 
 static void setup_stables(void) {
+    if (horses_beaten) return;
     decompress(MOB(1), horse);
     add_actor(&shamble_horse, mobs + PERSIJS);
     add_actor(&shamble_horse, mobs + MARKUSS);
+}
+
+static void strike_rooks(void) {
+    rooks_beaten |= strike_boses();
+}
+
+static void strike_horses(void) {
+    horses_beaten |= strike_boses();
 }
 
 static void strike_bishops(void) {
@@ -271,6 +283,7 @@ static const struct Room rampart = {
     .bump = rampart_bump,
     .count = SIZE(rampart_bump),
     .setup = setup_rampart,
+    .turn = strike_rooks,
 };
 
 /*** Chancel ***/
@@ -303,6 +316,7 @@ static const struct Room stables = {
     .bump = stables_bump,
     .count = SIZE(stables_bump),
     .setup = setup_stables,
+    .turn = strike_horses,
 };
 
 static void setup_courtyard(void) {
@@ -311,6 +325,8 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     door_broken = false;
+    rooks_beaten = false;
+    horses_beaten = false;
     bishops_beaten = false;
     spawn_pos = POS(6, 6);
     respawn = &prison;
