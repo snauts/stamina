@@ -477,3 +477,19 @@ static void lightning_strike(byte pos) {
 	eep = lightning_flash(eep, pos, i & 1);
     }
 }
+
+byte strike_boses(void) {
+    byte struck = 0;
+    if (all_dead()) {
+	for (byte i = 0; i < actor_count; i++) {
+	    struct Mob *mob = actors[i].mob;
+	    if ((mob->img & SET(0xf)) == SET(1)) {
+		lightning_strike(mob->pos);
+		game_idle(20);
+		struck++;
+	    }
+	}
+	actor_count -= struck;
+    }
+    return struck;
+}
