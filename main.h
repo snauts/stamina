@@ -106,8 +106,6 @@ byte is_occupied(byte pos);
 void hourglass(byte color);
 void restore_tile(byte pos);
 byte is_dead(struct Mob *mob);
-void draw_mob(struct Mob *mob);
-void set_tile_ink(byte pos, byte ink);
 void add_actor(Action fn, struct Mob *mob);
 void move_mob(struct Mob *mob, byte target);
 void push_mob(struct Mob *mob, byte target);

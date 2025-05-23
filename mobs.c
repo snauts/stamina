@@ -80,7 +80,7 @@ static byte manhattan(byte a, byte b) {
     return distance_x(a, b) + distance_y(a, b);
 }
 
-void set_tile_ink(byte pos, byte ink) {
+static void set_tile_ink(byte pos, byte ink) {
     byte *ptr = COLOUR(pos_to_ink(pos));
     *ptr = ink; ptr += 0x01;
     *ptr = ink; ptr += 0x1f;
@@ -88,7 +88,7 @@ void set_tile_ink(byte pos, byte ink) {
     *ptr = ink;
 }
 
-void draw_mob(struct Mob *mob) {
+static void draw_mob(struct Mob *mob) {
     draw_tile(MOB(0), mob->pos, mob->img);
     set_tile_ink(mob->pos, mob->ink);
 }
@@ -122,6 +122,13 @@ struct Mob *is_mob(byte pos) {
 
 byte is_dead(struct Mob *mob) {
     return (mob->img & 0x18) == TILE(BEATEN);
+}
+
+static byte all_dead(void) {
+    for (byte i = 0; i < actor_count; i++) {
+	if (!is_dead(actors[i].mob)) return 0;
+    }
+    return 1;
 }
 
 static byte is_tile(struct Mob *mob, byte tile) {
