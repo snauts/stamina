@@ -44,6 +44,7 @@ pcx:
 	@./pcx-dump -l dungeon.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l corridor.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l bailey.pcx special.pcx walls.pcx garden.pcx >> data.h
+	@./pcx-dump -l training.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l cathedral.pcx special.pcx glass.pcx >> data.h
 	@./pcx-dump -l rampart.pcx special.pcx tower.pcx >> data.h

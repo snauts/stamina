@@ -241,6 +241,9 @@ static const struct Bump bailey_bump[] = {
     MAKE_BUMP(POS(1, 6), -1, &change_room, &stables, POS(15, 6)),
     MAKE_BUMP(POS(1, 7), -1, &change_room, &stables, POS(15, 7)),
     MAKE_BUMP(POS(1, 8), -1, &change_room, &stables, POS(15, 8)),
+    MAKE_BUMP(POS(14, 6), 1, &change_room, &training, POS(0, 6)),
+    MAKE_BUMP(POS(14, 7), 1, &change_room, &training, POS(0, 7)),
+    MAKE_BUMP(POS(14, 8), 1, &change_room, &training, POS(0, 8)),
 };
 
 static const struct Room bailey = {
@@ -317,6 +320,21 @@ static const struct Room stables = {
     .count = SIZE(stables_bump),
     .setup = setup_stables,
     .turn = strike_horses,
+};
+
+/*** Training ***/
+
+static const struct Bump training_bump[] = {
+    MAKE_BUMP(POS(0, 6), -1, &change_room, &bailey, POS(14, 6)),
+    MAKE_BUMP(POS(0, 7), -1, &change_room, &bailey, POS(14, 7)),
+    MAKE_BUMP(POS(0, 8), -1, &change_room, &bailey, POS(14, 8)),
+};
+
+static const struct Room training = {
+    .msg = "Training Grounds",
+    .map = map_of_training,
+    .bump = training_bump,
+    .count = SIZE(training_bump),
 };
 
 static void setup_courtyard(void) {
