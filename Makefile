@@ -26,6 +26,7 @@ pcx:
 
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h
+	@./pcx-dump -t soldier.pcx >> data.h
 	@./pcx-dump -t bricks.pcx >> data.h
 	@./pcx-dump -t garden.pcx >> data.h
 	@./pcx-dump -t bishop.pcx >> data.h
