@@ -484,7 +484,10 @@ byte strike_boses(void) {
 	for (byte i = 0; i < actor_count; i++) {
 	    struct Mob *mob = actors[i].mob;
 	    if ((mob->img & SET(7)) == SET(1)) {
-		lightning_strike(mob->pos);
+		byte pos = mob->pos;
+		lightning_strike(pos);
+		mob->pos = POS(0, 0);
+		restore_tile(pos);
 		game_idle(20);
 		struck++;
 	    }
