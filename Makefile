@@ -27,6 +27,7 @@ pcx:
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h
 	@./pcx-dump -t soldier.pcx >> data.h
+	@./pcx-dump -t inside.pcx >> data.h
 	@./pcx-dump -t bricks.pcx >> data.h
 	@./pcx-dump -t garden.pcx >> data.h
 	@./pcx-dump -t bishop.pcx >> data.h
@@ -47,6 +48,7 @@ pcx:
 	@./pcx-dump -l bailey.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l training.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
+	@./pcx-dump -l bedroom.pcx special.pcx walls.pcx inside.pcx >> data.h
 	@./pcx-dump -l cathedral.pcx special.pcx glass.pcx >> data.h
 	@./pcx-dump -l rampart.pcx special.pcx tower.pcx >> data.h
 	@./pcx-dump -l chancel.pcx special.pcx glass.pcx >> data.h
