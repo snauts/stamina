@@ -221,6 +221,7 @@ static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(8, 11), 16, &change_room, &courtyard, POS(8, 3)),
     MAKE_BUMP(POS(1, 3), -1, &change_room, &rampart, POS(14, 11)),
     MAKE_BUMP(POS(14, 3), 1, &change_room, &rampart, POS(1, 11)),
+    MAKE_BUMP(POS(5, 7), -1, &change_room, &bedroom, POS(12, 7)),
 };
 
 static const struct Room hallway = {
@@ -335,6 +336,19 @@ static const struct Room training = {
     .map = map_of_training,
     .bump = training_bump,
     .count = SIZE(training_bump),
+};
+
+/*** Bedroom ***/
+
+static const struct Bump bedroom_bump[] = {
+    MAKE_BUMP(POS(12, 7), 1, &change_room, &hallway, POS(5, 7)),
+};
+
+static const struct Room bedroom = {
+    .msg = "Queen's Boudoir",
+    .map = map_of_bedroom,
+    .bump = bedroom_bump,
+    .count = SIZE(bedroom_bump),
 };
 
 static void setup_courtyard(void) {
