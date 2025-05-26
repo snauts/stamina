@@ -281,7 +281,7 @@ void shamble_beast(struct Mob *mob) {
     }
 }
 
-void shoot_arrow(struct Mob *mob) {
+void shamble_arrow(struct Mob *mob) {
     mob->var--;
     if (mob->var == 1) {
 	update_image(mob, TILE(5));

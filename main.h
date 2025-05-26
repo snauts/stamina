@@ -114,7 +114,7 @@ void mob_direction(struct Mob *mob, int8 delta);
 void animate_attack(struct Mob *mob, struct Mob *victim);
 struct Mob *is_mob(byte pos);
 
-void shoot_arrow(struct Mob *mob);
+void shamble_arrow(struct Mob *mob);
 void shamble_beast(struct Mob *mob);
 void shamble_ent(struct Mob *mob);
 void shamble_rook(struct Mob *mob);

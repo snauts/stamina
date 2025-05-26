@@ -66,8 +66,8 @@ static void setup_corridor(void) {
 
 static void setup_hallway(void) {
     decompress(MOB(1), arrow);
-    add_actor(&shoot_arrow, mobs + ARROW1);
-    add_actor(&shoot_arrow, mobs + ARROW2);
+    add_actor(&shamble_arrow, mobs + ARROW1);
+    add_actor(&shamble_arrow, mobs + ARROW2);
 }
 
 static void setup_bailey(void) {
