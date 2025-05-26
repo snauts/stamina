@@ -20,8 +20,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(8, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
 
     /* hallway */
-    { .pos = POS(10, 9), .ink = 0x02, .img = IMG(1, 4, FLIP), .var = 4 },
-    { .pos = POS( 5, 5), .ink = 0x02, .img = IMG(1, 4, LEFT), .var = 3 },
+    { .pos = POS(10, 9), .ink = 0x02, .img = IMG(1, 4, BOTH),  .var = 4 },
+    { .pos = POS( 5, 5), .ink = 0x02, .img = IMG(1, 4, RIGHT), .var = 3 },
 
     /* bailey */
     { .pos = POS(11, 6), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
@@ -149,7 +149,7 @@ static byte is_tile(struct Mob *mob, byte tile) {
 }
 
 static int8 mob_side(struct Mob *mob) {
-    return mob->img & LEFT ? 1 : -1;
+    return mob->img & LEFT ? -1 : 1;
 }
 
 static void activate_mobs(void) {

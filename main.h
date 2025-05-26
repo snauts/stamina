@@ -29,6 +29,7 @@ typedef unsigned short word;
 #define  RIGHT			0
 #define  LEFT			1
 #define  FLIP			2
+#define  BOTH			3
 #define EMPTY		(LEVEL + 0xc0)
 #define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
 #define  MOVING			0
