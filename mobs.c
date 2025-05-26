@@ -411,20 +411,21 @@ static int8 bishop_line(byte src, byte dst) {
     return distance_x(src, dst) == distance_y(src, dst);
 }
 
-static void probe_direction(Probe probe, byte pos, int8 dir) {
+static int8 (*line_of_sight)(byte, byte);
+static void probe_direction(byte pos, int8 dir) {
     pos = pos + dir;
     while (!is_occupied(pos)) {
-	if (probe(pos, player.pos)) {
+	if (line_of_sight(pos, player.pos)) {
 	    add_choice(-manhattan(pos, player.pos), pos);
 	}
 	pos += dir;
     }
 }
 
-static void move_direction(Probe probe, struct Mob *mob, const int8 *dir) {
+static void move_direction(struct Mob *mob, const int8 *dir) {
     reset_choices();
     while (*dir) {
-	probe_direction(probe, mob->pos, *dir++);
+	probe_direction(mob->pos, *dir++);
     }
     move_line(mob, pick_choice());
 }
@@ -440,7 +441,8 @@ void shamble_bishop(struct Mob *mob) {
     }
     else {
 	static const int8 bishop_dir[] = { 15, 17, -15, -17, 0 };
-	move_direction(&bishop_line, mob, bishop_dir);
+	line_of_sight = &bishop_line;
+	move_direction(mob, bishop_dir);
     }
 }
 
@@ -479,7 +481,8 @@ void shamble_queen(struct Mob *mob) {
 	static const int8 queen_dir[] = {
 	    -1, 1, -16, 16, -15, 15, -17, 17, 0,
 	};
-	move_direction(&queen_line, mob, queen_dir);
+	line_of_sight = &queen_line;
+	move_direction(mob, queen_dir);
     }
 }
 
