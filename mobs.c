@@ -492,14 +492,10 @@ void shamble_queen(struct Mob *mob) {
     shamble_direction(mob, dir, 0);
 }
 
-static byte is_empty_row(byte src, byte dst) {
-    struct Mob *mob, **ptr = actors;
-    while (*ptr) {
-	mob = *ptr++;
-	byte pos = mob->pos;
-	if (!is_dead(mob) && pos != src && Y(pos) == Y(dst)) {
-	    return false;
-	}
+static byte is_empty_row(byte dst) {
+    byte y = Y(dst);
+    for (byte x = 0; x < 16; x++) {
+	if (is_mob(x | y)) return false;
     }
     return true;
 }
@@ -540,7 +536,7 @@ void shamble_soldier(struct Mob *mob) {
 	if (manhattan(src, player.pos) < 5) {
 	    dir = -dir;
 	}
-	else if (!is_empty_row(src, src + dir)) {
+	else if (!is_empty_row(src + dir)) {
 	    return;
 	}
 	if (!is_occupied(src + dir)) walk_mob(mob, dir);
