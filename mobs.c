@@ -292,6 +292,17 @@ void shamble_beast(struct Mob *mob) {
     }
 }
 
+static byte is_other(struct Mob *self) {
+    struct Mob **ptr = actors;
+    while (*ptr) {
+	struct Mob *mob = *ptr++;
+	if (mob->pos == self->pos && mob != self) {
+	    return true;
+	}
+    }
+    return false;
+}
+
 static void fly_arrow(struct Mob *mob, int8 delta) {
     for (;;) {
 	byte pos = mob->pos;
@@ -299,7 +310,7 @@ static void fly_arrow(struct Mob *mob, int8 delta) {
 	    animate_raw_attack(mob, &player);
 	    return;
 	}
-	if (!is_walkable(pos)) {
+	if (!is_walkable(pos) || is_other(mob)) {
 	    return;
 	}
 	draw_mob(mob);
