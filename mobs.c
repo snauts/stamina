@@ -537,8 +537,8 @@ void strike_bosses(void) {
 		mob->pos = POS(0, 0);
 		restore_tile(pos);
 		game_idle(20);
+		*struck = true;
 		*ptr = NULL;
-		(*struck)++;
 	    }
 	}
     }
