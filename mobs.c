@@ -45,6 +45,12 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 
     /* bedroom */
     { .pos = POS(5, 8), .ink = 0x42, .img = IMG(1, 0, RIGHT) },
+
+    /* training */
+    { .pos = POS( 3, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 6, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 9, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(12, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
 };
 
 struct Actor {
@@ -463,6 +469,10 @@ void shamble_queen(struct Mob *mob) {
     static const int8 dir[] = { -1, 1, -16, 16, -15, 15, -17, 17, 0 };
     line_of_sight = &queen_line;
     shamble_direction(mob, dir, 0);
+}
+
+void shamble_soldier(struct Mob *mob) {
+    mob;
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {

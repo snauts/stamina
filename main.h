@@ -121,6 +121,7 @@ void shamble_rook(struct Mob *mob);
 void shamble_bishop(struct Mob *mob);
 void shamble_horse(struct Mob *mob);
 void shamble_queen(struct Mob *mob);
+void shamble_soldier(struct Mob *mob);
 
 enum {
 /* dungeon */
@@ -159,6 +160,12 @@ enum {
 
 /* bedroom */
     JEZEBEL,
+
+/* training */
+    JOE,
+    BOB,
+    SID,
+    UDO,
 
 /* last entry */
     TOTAL_MOBS,

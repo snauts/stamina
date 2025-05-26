@@ -8,6 +8,7 @@ extern byte spawn_pos;
 static byte door_broken;
 static byte queen_beaten;
 static byte rooks_beaten;
+static byte pawns_beaten;
 static byte horses_beaten;
 static byte bishops_beaten;
 
@@ -116,12 +117,25 @@ static void setup_bedroom(void) {
     add_actor(&shamble_queen, mobs + JEZEBEL);
 }
 
+static void setup_training(void) {
+    if (pawns_beaten) return;
+    decompress(MOB(1), soldier);
+    add_actor(&shamble_soldier, mobs + JOE);
+    add_actor(&shamble_soldier, mobs + BOB);
+    add_actor(&shamble_soldier, mobs + SID);
+    add_actor(&shamble_soldier, mobs + UDO);
+}
+
 static void strike_queen(void) {
     queen_beaten |= strike_boses();
 }
 
 static void strike_rooks(void) {
     rooks_beaten |= strike_boses();
+}
+
+static void strike_pawns(void) {
+    pawns_beaten |= strike_boses();
 }
 
 static void strike_horses(void) {
@@ -347,6 +361,8 @@ static const struct Room training = {
     .map = map_of_training,
     .bump = training_bump,
     .count = SIZE(training_bump),
+    .setup = setup_training,
+    .turn = strike_pawns,
 };
 
 /*** Bedroom ***/
@@ -364,6 +380,7 @@ static const struct Room bedroom = {
     .bump = bedroom_bump,
     .count = SIZE(bedroom_bump),
     .setup = setup_bedroom,
+    .turn = strike_queen,
 };
 
 static void setup_courtyard(void) {
@@ -374,6 +391,7 @@ void startup_room(void) {
     door_broken = false;
     queen_beaten = false;
     rooks_beaten = false;
+    pawns_beaten = false;
     horses_beaten = false;
     bishops_beaten = false;
     spawn_pos = POS(6, 6);
