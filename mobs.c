@@ -366,6 +366,15 @@ static void move_line(struct Mob *mob, byte dst) {
     }
 }
 
+static int8 probe_line(byte src, byte dst) {
+    int8 delta = step(src, dst);
+    do {
+	src = src + delta;
+	if (src == dst) return delta;
+    } while (!is_occupied(src));
+    return 0;
+}
+
 static byte combine(byte p1, byte p2) {
     return Y(p1) | X(p2);
 }
