@@ -52,9 +52,9 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 
     /* training */
     { .pos = POS( 3, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
-    { .pos = POS( 6, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 6, 9), .ink = 0x5, .img = IMG(1, 1, LEFT) },
     { .pos = POS( 9, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
-    { .pos = POS(12, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(12, 9), .ink = 0x5, .img = IMG(1, 1, LEFT) },
 };
 
 static struct Mob *actors[8];
@@ -488,22 +488,29 @@ static byte is_empty_row(byte src, byte dst) {
     return true;
 }
 
+void soldier_shoot(struct Mob *mob) {
+    mob;
+}
+
 void shamble_soldier(struct Mob *mob) {
     if (is_dead(mob)) return;
-
-    animate_mob_shamble(mob);
-
     byte src = mob->pos;
-    int8 dir = Y(src) > Y(player.pos) ? -16 : 16;
+    byte y1 = Y(src);
+    byte y2 = Y(player.pos);
 
-    if (manhattan(src, player.pos) < 6) {
-	dir = -dir;
+    if (y1 == y2) {
+	soldier_shoot(mob);
     }
-    else if (!is_empty_row(src, src + dir)) {
-	return;
+    else {
+	int8 dir = y1 > y2 ? -16 : 16;
+	if (manhattan(src, player.pos) < 6) {
+	    dir = -dir;
+	}
+	else if (!is_empty_row(src, src + dir)) {
+	    return;
+	}
+	if (!is_occupied(src + dir)) walk_mob(mob, dir);
     }
-
-    if (!is_occupied(src + dir)) walk_mob(mob, dir);
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {
