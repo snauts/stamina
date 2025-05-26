@@ -135,6 +135,7 @@ static void setup_training(void) {
     if (pawns_beaten) return;
     struck = &pawns_beaten;
     decompress(MOB(1), soldier);
+    decompress(MOB(2), arrow);
     add_actor(mobs + JOE);
     add_actor(mobs + BOB);
     add_actor(mobs + SID);

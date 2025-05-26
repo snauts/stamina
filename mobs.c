@@ -292,6 +292,23 @@ void shamble_beast(struct Mob *mob) {
     }
 }
 
+static void fly_arrow(struct Mob *mob, int8 delta) {
+    for (;;) {
+	byte pos = mob->pos;
+	if (player.pos == pos) {
+	    animate_raw_attack(mob, &player);
+	    return;
+	}
+	if (!is_walkable(pos)) {
+	    return;
+	}
+	draw_mob(mob);
+	game_idle(5);
+	mob->pos = pos + delta;
+	restore_tile(pos);
+    }
+}
+
 void shamble_arrow(struct Mob *mob) {
     mob->var--;
     if (mob->var == 1) {
@@ -302,21 +319,9 @@ void shamble_arrow(struct Mob *mob) {
     byte pos = mob->pos;
     int8 delta = mob_side(mob);
     change_image(mob, TILE(1));
-
-    for (;;) {
-	pos += delta;
-	if (!is_walkable(pos)) {
-	    clear_mob(mob, pos);
-	    break;
-	}
-
-	push_mob(mob, pos);
-	if (player.pos == pos) {
-	    animate_raw_attack(mob, &player);
-	    return;
-	}
-	game_idle(5);
-    }
+    mob->pos = pos + delta;
+    restore_tile(pos);
+    fly_arrow(mob, delta);
     reset_mob(mob);
     draw_mob(mob);
 }
@@ -488,22 +493,40 @@ static byte is_empty_row(byte src, byte dst) {
     return true;
 }
 
-void soldier_shoot(struct Mob *mob) {
-    mob;
+static void update_set(struct Mob *mob, byte ink, byte set) {
+    mob->img = (mob->img & 1) | set;
+    mob->ink = ink;
+}
+
+void soldier_shoot(struct Mob *mob, int8 dir) {
+    byte old = mob->pos;
+    update_image(mob, TILE(2));
+    game_idle(20);
+    update_image(mob, TILE(3));
+    update_set(mob, 2, SET(2) | TILE(1));
+    mob->pos += dir;
+    fly_arrow(mob, dir);
+    mob->pos = old;
+    update_set(mob, 5, SET(1) | TILE(0));
 }
 
 void shamble_soldier(struct Mob *mob) {
     if (is_dead(mob)) return;
     byte src = mob->pos;
+    byte x1 = X(src);
     byte y1 = Y(src);
+    byte x2 = X(player.pos);
     byte y2 = Y(player.pos);
+    int8 side = x1 > x2 ? -1 : 1;
+
+    mob_direction(mob, side);
 
     if (y1 == y2) {
-	soldier_shoot(mob);
+	soldier_shoot(mob, side);
     }
     else {
 	int8 dir = y1 > y2 ? -16 : 16;
-	if (manhattan(src, player.pos) < 6) {
+	if (manhattan(src, player.pos) < 5) {
 	    dir = -dir;
 	}
 	else if (!is_empty_row(src, src + dir)) {
