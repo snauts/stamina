@@ -67,6 +67,7 @@ struct Room {
     void (*setup)(void);
     void (*turn)(void);
     const void *bump;
+    Action shamble;
     byte count;
 };
 
@@ -106,7 +107,7 @@ byte is_occupied(byte pos);
 void hourglass(byte color);
 void restore_tile(byte pos);
 byte is_dead(struct Mob *mob);
-void add_actor(Action fn, struct Mob *mob);
+void add_actor(struct Mob *mob);
 void move_mob(struct Mob *mob, byte target);
 void push_mob(struct Mob *mob, byte target);
 void update_image(struct Mob *mob, byte tile);

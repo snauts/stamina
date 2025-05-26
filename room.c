@@ -53,30 +53,30 @@ static void setup_prison(void) {
 
 static void setup_dungeon(void) {
     decompress(MOB(1), beast);
-    add_actor(&shamble_beast, mobs + BARRY);
-    add_actor(&shamble_beast, mobs + LARRY);
-    add_actor(&shamble_beast, mobs + HARRY);
+    add_actor(mobs + BARRY);
+    add_actor(mobs + LARRY);
+    add_actor(mobs + HARRY);
 }
 
 static void setup_corridor(void) {
     decompress(MOB(1), beast);
-    add_actor(&shamble_beast, mobs + JURIS);
-    add_actor(&shamble_beast, mobs + ZIGIS);
-    add_actor(&shamble_beast, mobs + ROBIS);
+    add_actor(mobs + JURIS);
+    add_actor(mobs + ZIGIS);
+    add_actor(mobs + ROBIS);
 }
 
 static void setup_hallway(void) {
     decompress(MOB(1), arrow);
-    add_actor(&shamble_arrow, mobs + ARROW1);
-    add_actor(&shamble_arrow, mobs + ARROW2);
+    add_actor(mobs + ARROW1);
+    add_actor(mobs + ARROW2);
 }
 
 static void setup_bailey(void) {
     decompress(MOB(1), ent);
-    add_actor(&shamble_ent, mobs + SKINBARK);
-    add_actor(&shamble_ent, mobs + LEAFLOCK);
-    add_actor(&shamble_ent, mobs + BREGALAD);
-    add_actor(&shamble_ent, mobs + BUSHKOPF);
+    add_actor(mobs + SKINBARK);
+    add_actor(mobs + LEAFLOCK);
+    add_actor(mobs + BREGALAD);
+    add_actor(mobs + BUSHKOPF);
 }
 
 static void setup_rampart(void) {
@@ -84,8 +84,8 @@ static void setup_rampart(void) {
     decompress(MOB(1), rook);
     struct Mob *james = mobs + JAMES;
     struct Mob *oskar = mobs + OSKAR;
-    add_actor(&shamble_rook, james);
-    add_actor(&shamble_rook, oskar);
+    add_actor(james);
+    add_actor(oskar);
     if (player.img & LEFT) {
 	byte swaps = james->pos;
 	james->pos = oskar->pos;
@@ -96,34 +96,34 @@ static void setup_rampart(void) {
 static void setup_chancel(void) {
     decompress(MOB(1), bishop);
     memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
-    add_actor(&shamble_bishop, mobs + WILLY);
-    add_actor(&shamble_bishop, mobs + TOMMY);
+    add_actor(mobs + WILLY);
+    add_actor(mobs + TOMMY);
     if (!bishops_beaten) {
-	add_actor(&shamble_bishop, mobs + ISAAC);
-	add_actor(&shamble_bishop, mobs + DAVID);
+	add_actor(mobs + ISAAC);
+	add_actor(mobs + DAVID);
     }
 }
 
 static void setup_stables(void) {
     if (horses_beaten) return;
     decompress(MOB(1), horse);
-    add_actor(&shamble_horse, mobs + PERSIJS);
-    add_actor(&shamble_horse, mobs + MARKUSS);
+    add_actor(mobs + PERSIJS);
+    add_actor(mobs + MARKUSS);
 }
 
 static void setup_bedroom(void) {
     if (queen_beaten) return;
     decompress(MOB(1), queen);
-    add_actor(&shamble_queen, mobs + JEZEBEL);
+    add_actor(mobs + JEZEBEL);
 }
 
 static void setup_training(void) {
     if (pawns_beaten) return;
     decompress(MOB(1), soldier);
-    add_actor(&shamble_soldier, mobs + JOE);
-    add_actor(&shamble_soldier, mobs + BOB);
-    add_actor(&shamble_soldier, mobs + SID);
-    add_actor(&shamble_soldier, mobs + UDO);
+    add_actor(mobs + JOE);
+    add_actor(mobs + BOB);
+    add_actor(mobs + SID);
+    add_actor(mobs + UDO);
 }
 
 static void strike_queen(void) {
@@ -198,6 +198,7 @@ static const struct Room dungeon = {
     .bump = dungeon_bump,
     .count = SIZE(dungeon_bump),
     .setup = &setup_dungeon,
+    .shamble = shamble_beast,
 };
 
 /*** Corridor ***/
@@ -214,6 +215,7 @@ static const struct Room corridor = {
     .bump = corridor_bump,
     .count = SIZE(corridor_bump),
     .setup = &setup_corridor,
+    .shamble = shamble_beast,
 };
 
 /*** Courtyard ***/
@@ -255,6 +257,7 @@ static const struct Room hallway = {
     .bump = hallway_bump,
     .count = SIZE(hallway_bump),
     .setup = &setup_hallway,
+    .shamble = shamble_arrow,
 };
 
 /*** Bailey ***/
@@ -278,6 +281,7 @@ static const struct Room bailey = {
     .bump = bailey_bump,
     .count = SIZE(bailey_bump),
     .setup = setup_bailey,
+    .shamble = shamble_ent,
 };
 
 /*** Cathedral ***/
@@ -312,6 +316,7 @@ static const struct Room rampart = {
     .bump = rampart_bump,
     .count = SIZE(rampart_bump),
     .setup = setup_rampart,
+    .shamble = shamble_rook,
     .turn = strike_rooks,
 };
 
@@ -328,6 +333,7 @@ static const struct Room chancel = {
     .bump = chancel_bump,
     .count = SIZE(chancel_bump),
     .setup = setup_chancel,
+    .shamble = shamble_bishop,
     .turn = strike_bishops,
 };
 
@@ -345,6 +351,7 @@ static const struct Room stables = {
     .bump = stables_bump,
     .count = SIZE(stables_bump),
     .setup = setup_stables,
+    .shamble = shamble_horse,
     .turn = strike_horses,
 };
 
@@ -362,6 +369,7 @@ static const struct Room training = {
     .bump = training_bump,
     .count = SIZE(training_bump),
     .setup = setup_training,
+    .shamble = shamble_soldier,
     .turn = strike_pawns,
 };
 
@@ -380,6 +388,7 @@ static const struct Room bedroom = {
     .bump = bedroom_bump,
     .count = SIZE(bedroom_bump),
     .setup = setup_bedroom,
+    .shamble = shamble_queen,
     .turn = strike_queen,
 };
 

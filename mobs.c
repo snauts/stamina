@@ -25,9 +25,9 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 
     /* bailey */
     { .pos = POS(11, 6), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
-    { .pos = POS(11, 8), .ink = 0x44, .img = IMG(1, 6, RIGHT),  },
+    { .pos = POS(11, 8), .ink = 0x44, .img = IMG(1, 6, RIGHT), },
     { .pos = POS( 4, 6), .ink = 0x44, .img = IMG(1, 6, RIGHT), },
-    { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT), },
+    { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
 
     /* ramparts */
     { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0 },
@@ -53,20 +53,14 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(12, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
 };
 
-struct Actor {
-    struct Mob *mob;
-    Action fn;
-};
-
-static byte actor_count;
-static struct Actor actors[4];
+static struct Mob *actors[8];
 
 void reset_mobs(void) {
     memcpy(mobs, mobs_reset, sizeof(mobs));
 }
 
 void reset_actors(void) {
-    actor_count = 0;
+    *actors = NULL;
 }
 
 static word pos_to_ink(byte pos) {
@@ -108,22 +102,22 @@ static void reset_mob(struct Mob *mob) {
     memcpy(mob, src, sizeof(struct Mob));
 }
 
-void add_actor(Action fn, struct Mob *mob) {
-    struct Actor *ptr = actors + actor_count;
-    ptr->mob = mob;
-    ptr->fn = fn;
-    actor_count++;
+void add_actor(struct Mob *mob) {
+    struct Mob **ptr = actors;
+    while (*ptr) ptr++;
+    *ptr++ = mob;
+    *ptr = NULL;
 }
 
 void place_actors(void) {
-    for (byte i = 0; i < actor_count; i++) {
-	draw_mob(actors[i].mob);
-    }
+    struct Mob **ptr = actors;
+    while (*ptr) { draw_mob(*ptr++); }
 }
 
 struct Mob *is_mob(byte pos) {
-    for (byte i = 0; i < actor_count; i++) {
-	struct Mob *mob = actors[i].mob;
+    struct Mob **ptr = actors;
+    while (*ptr) {
+	struct Mob *mob = *ptr++;
 	if (mob->pos == pos) return mob;
     }
     return NULL;
@@ -134,8 +128,9 @@ byte is_dead(struct Mob *mob) {
 }
 
 static byte all_dead(void) {
-    for (byte i = 0; i < actor_count; i++) {
-	if (!is_dead(actors[i].mob)) return 0;
+    struct Mob **ptr = actors;
+    while (*ptr) {
+	if (!is_dead(*ptr++)) return 0;
     }
     return 1;
 }
@@ -149,9 +144,10 @@ static int8 mob_side(struct Mob *mob) {
 }
 
 static void activate_mobs(void) {
-    for (byte i = 0; i < actor_count; i++) {
-	struct Mob *mob = actors[i].mob;
-	actors[i].fn(mob);
+    Action shamble = room->shamble;
+    struct Mob **ptr = actors;
+    while (*ptr) {
+	shamble(*ptr++);
 	if (is_dead(&player)) {
 	    break;
 	}
@@ -501,18 +497,21 @@ static void lightning_strike(byte pos) {
 byte strike_boses(void) {
     byte struck = 0;
     if (all_dead()) {
-	for (byte i = 0; i < actor_count; i++) {
-	    struct Mob *mob = actors[i].mob;
+	struct Mob **ptr = actors;
+
+	while (*ptr) {
+	    struct Mob *mob = *ptr;
 	    if ((mob->img & SET(7)) == SET(1)) {
 		byte pos = mob->pos;
 		lightning_strike(pos);
 		mob->pos = POS(0, 0);
 		restore_tile(pos);
 		game_idle(20);
+		*ptr = NULL;
 		struck++;
 	    }
+	    ptr++;
 	}
-	actor_count -= struck;
     }
     return struck;
 }
