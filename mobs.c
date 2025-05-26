@@ -42,6 +42,9 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* stables */
     { .pos = POS(2, 5), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
     { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 1 },
+
+    /* bedroom */
+    { .pos = POS(5, 8), .ink = 0x42, .img = IMG(1, 0, RIGHT) },
 };
 
 struct Actor {
@@ -462,6 +465,10 @@ void shamble_horse(struct Mob *mob) {
     if (mob->pos == player.pos) {
 	animate_attack(mob, &player);
     }
+}
+
+void shamble_queen(struct Mob *mob) {
+    mob;
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {

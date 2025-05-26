@@ -6,6 +6,7 @@ extern const void *respawn;
 extern byte spawn_pos;
 
 static byte door_broken;
+static byte queen_beaten;
 static byte rooks_beaten;
 static byte horses_beaten;
 static byte bishops_beaten;
@@ -107,6 +108,16 @@ static void setup_stables(void) {
     decompress(MOB(1), horse);
     add_actor(&shamble_horse, mobs + PERSIJS);
     add_actor(&shamble_horse, mobs + MARKUSS);
+}
+
+static void setup_bedroom(void) {
+    if (queen_beaten) return;
+    decompress(MOB(1), queen);
+    add_actor(&shamble_queen, mobs + JEZEBEL);
+}
+
+static void strike_queen(void) {
+    queen_beaten |= strike_boses();
 }
 
 static void strike_rooks(void) {
@@ -352,6 +363,7 @@ static const struct Room bedroom = {
     .map = map_of_bedroom,
     .bump = bedroom_bump,
     .count = SIZE(bedroom_bump),
+    .setup = setup_bedroom,
 };
 
 static void setup_courtyard(void) {
@@ -360,6 +372,7 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     door_broken = false;
+    queen_beaten = false;
     rooks_beaten = false;
     horses_beaten = false;
     bishops_beaten = false;
