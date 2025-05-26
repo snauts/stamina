@@ -132,14 +132,19 @@ static void setup_bedroom(void) {
 }
 
 static void setup_training(void) {
-    if (pawns_beaten) return;
     struck = &pawns_beaten;
-    decompress(MOB(1), soldier);
-    decompress(MOB(2), arrow);
-    add_actor(mobs + JOE);
-    add_actor(mobs + BOB);
-    add_actor(mobs + SID);
-    add_actor(mobs + UDO);
+    setup_furniture(soldier);
+    decompress(MOB(3), arrow);
+    add_actor(mobs + DUMMY1);
+    add_actor(mobs + DUMMY2);
+    add_actor(mobs + DUMMY3);
+    add_actor(mobs + DUMMY4);
+    if (!pawns_beaten) {
+	add_actor(mobs + JOE);
+	add_actor(mobs + BOB);
+	add_actor(mobs + SID);
+	add_actor(mobs + UDO);
+    }
 }
 
 /*** Prison ***/

@@ -51,10 +51,14 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(10, 4), .ink = 0x02, .img = IMG(2, 4, LEFT) },
 
     /* training */
-    { .pos = POS( 3, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
-    { .pos = POS( 6, 9), .ink = 0x5, .img = IMG(1, 1, LEFT) },
-    { .pos = POS( 9, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },
-    { .pos = POS(12, 9), .ink = 0x5, .img = IMG(1, 1, LEFT) },
+    { .pos = POS( 3, 4), .ink = 0x03, .img = IMG(2, 4, LEFT) },
+    { .pos = POS( 6, 4), .ink = 0x03, .img = IMG(2, 4, RIGHT) },
+    { .pos = POS( 9, 4), .ink = 0x43, .img = IMG(2, 4, LEFT) },
+    { .pos = POS(12, 4), .ink = 0x03, .img = IMG(2, 4, RIGHT) },
+    { .pos = POS( 3, 9), .ink = 0x05, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 6, 9), .ink = 0x05, .img = IMG(1, 1, LEFT) },
+    { .pos = POS( 9, 9), .ink = 0x05, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(12, 9), .ink = 0x05, .img = IMG(1, 1, LEFT) },
 };
 
 static struct Mob *actors[8];
@@ -510,7 +514,7 @@ void soldier_shoot(struct Mob *mob, int8 dir) {
     update_image(mob, TILE(2));
     game_idle(20);
     update_image(mob, TILE(3));
-    update_set(mob, 2, SET(2) | TILE(1));
+    update_set(mob, 2, SET(3) | TILE(1));
     mob->pos += dir;
     fly_arrow(mob, dir);
     mob->pos = old;
