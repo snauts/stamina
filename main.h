@@ -43,8 +43,6 @@ typedef unsigned short word;
 #define FULL_STAMINA	48
 #define KILL_STAMINA	36
 
-typedef byte(*Caller)(const void *, byte);
-
 struct Mob {
     byte pos;
     byte img;
@@ -52,7 +50,9 @@ struct Mob {
     byte var;
 };
 
+typedef byte(*Caller)(const void *, byte);
 typedef void(*Action)(struct Mob *);
+typedef void(*Probe)(byte, int8);
 
 struct Bump {
     byte pos;

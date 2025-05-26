@@ -431,6 +431,14 @@ static void probe_bishop_direction(byte pos, int8 dir) {
     }
 }
 
+static void move_direction(struct Mob *mob, const int8 *dir, Probe probe) {
+    reset_choices();
+    while (*dir) {
+	probe(mob->pos, *dir++);
+    }
+    move_line(mob, pick_choice());
+}
+
 void shamble_bishop(struct Mob *mob) {
     if (is_dead(mob)) return;
 
@@ -441,12 +449,8 @@ void shamble_bishop(struct Mob *mob) {
 	long_attack(mob, dst, 2);
     }
     else {
-	reset_choices();
-	static const int8 bishop_dir[] = { 15, 17, -15, -17 };
-	for (byte i = 0; i < SIZE(bishop_dir); i++) {
-	    probe_bishop_direction(src, bishop_dir[i]);
-	}
-	move_line(mob, pick_choice());
+	static const int8 bishop_dir[] = { 15, 17, -15, -17, 0 };
+	move_direction(mob, bishop_dir, &probe_bishop_direction);
     }
 }
 
@@ -483,14 +487,10 @@ void shamble_queen(struct Mob *mob) {
 	long_attack(mob, dst, 0);
     }
     else {
-	reset_choices();
 	static const int8 queen_dir[] = {
-	    -1, 1, -16, 16, -15, 15, -17, 17,
+	    -1, 1, -16, 16, -15, 15, -17, 17, 0,
 	};
-	for (byte i = 0; i < SIZE(queen_dir); i++) {
-	    probe_queen_direction(mob->pos, queen_dir[i]);
-	}
-	move_line(mob, pick_choice());
+	move_direction(mob, queen_dir, &probe_queen_direction);
     }
 }
 
