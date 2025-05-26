@@ -430,20 +430,22 @@ static void move_direction(struct Mob *mob, const int8 *dir) {
     move_line(mob, pick_choice());
 }
 
-void shamble_bishop(struct Mob *mob) {
+void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
     if (is_dead(mob)) return;
 
-    byte src = mob->pos;
     byte dst = player.pos;
-
-    if (bishop_line(src, dst)) {
-	long_attack(mob, dst, 2);
+    if (line_of_sight(mob->pos, dst)) {
+	long_attack(mob, dst, len);
     }
     else {
-	static const int8 bishop_dir[] = { 15, 17, -15, -17, 0 };
-	line_of_sight = &bishop_line;
-	move_direction(mob, bishop_dir);
+	move_direction(mob, dir);
     }
+}
+
+void shamble_bishop(struct Mob *mob) {
+    static const int8 dir[] = { 15, 17, -15, -17, 0 };
+    line_of_sight = &bishop_line;
+    shamble_direction(mob, dir, 2);
 }
 
 static const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
@@ -473,17 +475,9 @@ static int8 queen_line(byte src, byte dst) {
 }
 
 void shamble_queen(struct Mob *mob) {
-    byte dst = player.pos;
-    if (queen_line(mob->pos, dst)) {
-	long_attack(mob, dst, 0);
-    }
-    else {
-	static const int8 queen_dir[] = {
-	    -1, 1, -16, 16, -15, 15, -17, 17, 0,
-	};
-	line_of_sight = &queen_line;
-	move_direction(mob, queen_dir);
-    }
+    static const int8 dir[] = { -1, 1, -16, 16, -15, 15, -17, 17, 0 };
+    line_of_sight = &queen_line;
+    shamble_direction(mob, dir, 0);
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {
