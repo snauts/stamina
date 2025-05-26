@@ -416,25 +416,24 @@ void shamble_rook(struct Mob *mob) {
     }
 }
 
-static byte bishop_line(byte src, byte dst) {
+static int8 bishop_line(byte src, byte dst) {
     return distance_x(src, dst) == distance_y(src, dst);
 }
 
-static void probe_bishop_direction(byte pos, int8 dir) {
-    for (byte n = 10; n != 0; n--) {
-	pos += dir;
-	if (is_occupied(pos)) return;
-	if (bishop_line(pos, player.pos)) {
-	    add_choice(n, pos);
-	    break;
+static void probe_direction(Probe probe, byte pos, int8 dir) {
+    pos = pos + dir;
+    while (!is_occupied(pos)) {
+	if (probe(pos, player.pos)) {
+	    add_choice(-manhattan(pos, player.pos), pos);
 	}
+	pos += dir;
     }
 }
 
-static void move_direction(struct Mob *mob, const int8 *dir, Probe probe) {
+static void move_direction(Probe probe, struct Mob *mob, const int8 *dir) {
     reset_choices();
     while (*dir) {
-	probe(mob->pos, *dir++);
+	probe_direction(probe, mob->pos, *dir++);
     }
     move_line(mob, pick_choice());
 }
@@ -450,7 +449,7 @@ void shamble_bishop(struct Mob *mob) {
     }
     else {
 	static const int8 bishop_dir[] = { 15, 17, -15, -17, 0 };
-	move_direction(mob, bishop_dir, &probe_bishop_direction);
+	move_direction(&bishop_line, mob, bishop_dir);
     }
 }
 
@@ -471,16 +470,6 @@ void shamble_horse(struct Mob *mob) {
     }
 }
 
-static void probe_queen_direction(byte pos, int8 dir) {
-    pos = pos + dir;
-    while (!is_occupied(pos)) {
-	if (probe_line(pos, player.pos)) {
-	    add_choice(-manhattan(pos, player.pos), pos);
-	}
-	pos += dir;
-    }
-}
-
 void shamble_queen(struct Mob *mob) {
     byte dst = player.pos;
     if (probe_line(mob->pos, dst)) {
@@ -490,7 +479,7 @@ void shamble_queen(struct Mob *mob) {
 	static const int8 queen_dir[] = {
 	    -1, 1, -16, 16, -15, 15, -17, 17, 0,
 	};
-	move_direction(mob, queen_dir, &probe_queen_direction);
+	move_direction(&probe_line, mob, queen_dir);
     }
 }
 

@@ -52,7 +52,7 @@ struct Mob {
 
 typedef byte(*Caller)(const void *, byte);
 typedef void(*Action)(struct Mob *);
-typedef void(*Probe)(byte, int8);
+typedef int8(*Probe)(byte, byte);
 
 struct Bump {
     byte pos;
