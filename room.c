@@ -340,8 +340,11 @@ static const struct Room training = {
 
 /*** Bedroom ***/
 
+static const char queen_line[] = "Looks like queen does all kinds of lines";
+
 static const struct Bump bedroom_bump[] = {
     MAKE_BUMP(POS(12, 7), 1, &change_room, &hallway, POS(5, 7)),
+    MAKE_BUMP(POS(5, 8), -1, &bump_msg, &queen_line, true),
 };
 
 static const struct Room bedroom = {
