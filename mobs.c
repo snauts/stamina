@@ -102,11 +102,16 @@ static void reset_mob(struct Mob *mob) {
     memcpy(mob, src, sizeof(struct Mob));
 }
 
-void add_actor(struct Mob *mob) {
+struct Mob **last(void) {
     struct Mob **ptr = actors;
     while (*ptr) ptr++;
-    *ptr++ = mob;
-    *ptr = NULL;
+    return ptr;
+}
+
+void add_actor(struct Mob *mob) {
+    struct Mob **ptr = last();
+    ptr[0] = mob;
+    ptr[1] = NULL;
 }
 
 void place_actors(void) {
@@ -523,9 +528,8 @@ static void lightning_strike(byte pos) {
 byte *struck;
 void strike_bosses(void) {
     if (all_dead()) {
-	struct Mob **ptr = actors;
-
-	while (*ptr) {
+	struct Mob **ptr = last();
+	while (ptr-- != actors) {
 	    struct Mob *mob = *ptr;
 	    if ((mob->img & SET(7)) == SET(1)) {
 		byte pos = mob->pos;
@@ -536,7 +540,6 @@ void strike_bosses(void) {
 		*ptr = NULL;
 		(*struck)++;
 	    }
-	    ptr++;
 	}
     }
 }
