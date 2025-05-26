@@ -120,10 +120,15 @@ static void setup_stables(void) {
 }
 
 static void setup_bedroom(void) {
-    if (queen_beaten) return;
     struck = &queen_beaten;
     setup_furniture(queen);
-    add_actor(mobs + JEZEBEL);
+    add_actor(mobs + CHAIR1);
+    add_actor(mobs + CHAIR2);
+    add_actor(mobs + CHAIR3);
+    add_actor(mobs + CHAIR4);
+    if (!queen_beaten) {
+	add_actor(mobs + JEZEBEL);
+    }
 }
 
 static void setup_training(void) {

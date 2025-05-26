@@ -44,7 +44,11 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(2, 8), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 1 },
 
     /* bedroom */
-    { .pos = POS(5, 8), .ink = 0x42, .img = IMG(1, 0, RIGHT) },
+    { .pos = POS( 5, 8), .ink = 0x42, .img = IMG(1, 0, RIGHT) },
+    { .pos = POS( 7, 4), .ink = 0x02, .img = IMG(2, 4, RIGHT) },
+    { .pos = POS( 7, 5), .ink = 0x02, .img = IMG(2, 4, RIGHT) },
+    { .pos = POS(10, 5), .ink = 0x02, .img = IMG(2, 4, LEFT) },
+    { .pos = POS(10, 4), .ink = 0x02, .img = IMG(2, 4, LEFT) },
 
     /* training */
     { .pos = POS( 3, 9), .ink = 0x5, .img = IMG(1, 0, LEFT) },

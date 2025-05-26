@@ -161,6 +161,10 @@ enum {
 
 /* bedroom */
     JEZEBEL,
+    CHAIR1,
+    CHAIR2,
+    CHAIR3,
+    CHAIR4,
 
 /* training */
     JOE,
