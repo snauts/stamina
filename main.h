@@ -168,7 +168,8 @@ enum {
     CHAIR4,
 
 /* training */
-    DUMMY,
+    DUMMY1,
+    DUMMY2,
     JOE,
     BOB,
     SID,

@@ -51,6 +51,7 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS(10, 4), .ink = 0x02, .img = IMG(2, 4, LEFT) },
 
     /* training */
+    { .pos = POS( 3, 4), .ink = 0x03, .img = IMG(2, 4, LEFT) },
     { .pos = POS( 9, 4), .ink = 0x43, .img = IMG(2, 4, LEFT) },
     { .pos = POS( 3, 9), .ink = 0x05, .img = IMG(1, 0, LEFT) },
     { .pos = POS( 6, 9), .ink = 0x05, .img = IMG(1, 1, LEFT) },
@@ -494,9 +495,13 @@ void shamble_queen(struct Mob *mob) {
 }
 
 static byte is_empty_row(byte dst) {
-    byte y = Y(dst);
-    for (byte x = 0; x < 16; x++) {
-	if (is_mob(x | y)) return false;
+    struct Mob *mob, **ptr = actors;
+    while (*ptr) {
+	mob = *ptr++;
+	byte pos = mob->pos;
+	if (!is_dead(mob) && Y(pos) == Y(dst)) {
+	    return false;
+	}
     }
     return true;
 }
