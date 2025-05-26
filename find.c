@@ -1,7 +1,7 @@
 #include "main.h"
 
 static byte *ptr;
-static byte data[8];
+static byte data[64];
 
 void reset_choices(void) {
     ptr = data - 1;
