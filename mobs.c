@@ -389,7 +389,7 @@ static void add_rook_move(byte dst, byte pos) {
 static void long_attack(struct Mob *mob, byte dst, byte len) {
     move_line(mob, dst);
     byte src = mob->pos;
-    if (manhattan(src, dst) == len) {
+    if (!len || manhattan(src, dst) == len) {
 	mob->pos = dst;
 	player.pos = src;
 	animate_raw_attack(mob, &player);
@@ -468,7 +468,10 @@ void shamble_horse(struct Mob *mob) {
 }
 
 void shamble_queen(struct Mob *mob) {
-    mob;
+    byte dst = player.pos;
+    if (probe_line(mob->pos, dst)) {
+	long_attack(mob, dst, 0);
+    }
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {
