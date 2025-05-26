@@ -80,6 +80,11 @@ static void setup_bailey(void) {
     add_actor(mobs + BUSHKOPF);
 }
 
+static void setup_furniture(const byte *mob_sprites) {
+    decompress(MOB(1), mob_sprites);
+    memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
+}
+
 static void setup_rampart(void) {
     if (rooks_beaten) return;
     struck = &rooks_beaten;
@@ -96,8 +101,7 @@ static void setup_rampart(void) {
 }
 
 static void setup_chancel(void) {
-    decompress(MOB(1), bishop);
-    memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
+    setup_furniture(bishop);
     add_actor(mobs + WILLY);
     add_actor(mobs + TOMMY);
     struck = &bishops_beaten;
@@ -118,7 +122,7 @@ static void setup_stables(void) {
 static void setup_bedroom(void) {
     if (queen_beaten) return;
     struck = &queen_beaten;
-    decompress(MOB(1), queen);
+    setup_furniture(queen);
     add_actor(mobs + JEZEBEL);
 }
 
