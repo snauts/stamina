@@ -369,14 +369,6 @@ static void move_line(struct Mob *mob, byte dst) {
     }
 }
 
-static byte combine(byte p1, byte p2) {
-    return Y(p1) | X(p2);
-}
-
-static void add_rook_move(byte dst, byte pos) {
-    if (!is_occupied(pos)) add_choice(-manhattan(dst, pos), pos);
-}
-
 static void long_attack(struct Mob *mob, byte dst, byte len) {
     move_line(mob, dst);
     byte src = mob->pos;
@@ -387,31 +379,8 @@ static void long_attack(struct Mob *mob, byte dst, byte len) {
     }
 }
 
-void shamble_rook(struct Mob *mob) {
-    if (is_dead(mob) || (mob->var++ & 1)) return;
-
-    byte src = mob->pos;
-    byte dst = player.pos;
-
-    byte dx = distance_x(src, dst);
-    byte dy = distance_y(src, dst);
-
-    if (dx == 0 || dy == 0) {
-	long_attack(mob, dst, 1);
-    }
-    else {
-	reset_choices();
-	add_rook_move(dst, combine(src, dst));
-	add_rook_move(dst, combine(dst, src));
-	move_line(mob, pick_choice());
-    }
-}
-
-static int8 bishop_line(byte src, byte dst) {
-    return distance_x(src, dst) == distance_y(src, dst);
-}
-
 static int8 (*line_of_sight)(byte, byte);
+
 static void probe_direction(byte pos, int8 dir) {
     pos = pos + dir;
     while (!is_occupied(pos)) {
@@ -430,7 +399,7 @@ static void move_direction(struct Mob *mob, const int8 *dir) {
     move_line(mob, pick_choice());
 }
 
-void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
+static void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
     if (is_dead(mob)) return;
 
     byte dst = player.pos;
@@ -442,10 +411,26 @@ void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
     }
 }
 
+static int8 bishop_line(byte src, byte dst) {
+    return distance_x(src, dst) == distance_y(src, dst);
+}
+
 void shamble_bishop(struct Mob *mob) {
     static const int8 dir[] = { 15, 17, -15, -17, 0 };
     line_of_sight = &bishop_line;
     shamble_direction(mob, dir, 2);
+}
+
+static int8 rook_line(byte src, byte dst) {
+    return distance_x(src, dst) == 0 || distance_y(src, dst) == 0;
+}
+
+void shamble_rook(struct Mob *mob) {
+    if (mob->var++ & 1) return;
+
+    static const int8 dir[] = { -1, 1, -16, 16, 0 };
+    line_of_sight = &rook_line;
+    shamble_direction(mob, dir, 1);
 }
 
 static const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
