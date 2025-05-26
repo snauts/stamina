@@ -467,10 +467,30 @@ void shamble_horse(struct Mob *mob) {
     }
 }
 
+static void probe_queen_direction(byte pos, int8 dir) {
+    pos = pos + dir;
+    while (!is_occupied(pos)) {
+	if (probe_line(pos, player.pos)) {
+	    add_choice(-manhattan(pos, player.pos), pos);
+	}
+	pos += dir;
+    }
+}
+
 void shamble_queen(struct Mob *mob) {
     byte dst = player.pos;
     if (probe_line(mob->pos, dst)) {
 	long_attack(mob, dst, 0);
+    }
+    else {
+	reset_choices();
+	static const int8 queen_dir[] = {
+	    -1, 1, -16, 16, -15, 15, -17, 17,
+	};
+	for (byte i = 0; i < SIZE(queen_dir); i++) {
+	    probe_queen_direction(mob->pos, queen_dir[i]);
+	}
+	move_line(mob, pick_choice());
     }
 }
 
