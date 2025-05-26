@@ -467,8 +467,34 @@ void shamble_queen(struct Mob *mob) {
     shamble_direction(mob, dir, 0);
 }
 
+static byte is_empty_row(byte src, byte dst) {
+    struct Mob *mob, **ptr = actors;
+    while (*ptr) {
+	mob = *ptr++;
+	byte pos = mob->pos;
+	if (!is_dead(mob) && pos != src && Y(pos) == Y(dst)) {
+	    return false;
+	}
+    }
+    return true;
+}
+
 void shamble_soldier(struct Mob *mob) {
-    mob;
+    if (all_dead()) return;
+
+    animate_mob_shamble(mob);
+
+    byte src = mob->pos;
+    int8 dir = Y(src) > Y(player.pos) ? -16 : 16;
+
+    if (manhattan(src, player.pos) < 6) {
+	dir = -dir;
+    }
+    else if (!is_empty_row(src, src + dir)) {
+	return;
+    }
+
+    if (!is_occupied(src + dir)) walk_mob(mob, dir);
 }
 
 static byte lightning_flash(byte eep, byte dst, byte flip) {
