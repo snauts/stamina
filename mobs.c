@@ -489,7 +489,7 @@ static byte is_empty_row(byte src, byte dst) {
 }
 
 void shamble_soldier(struct Mob *mob) {
-    if (all_dead()) return;
+    if (is_dead(mob)) return;
 
     animate_mob_shamble(mob);
 
