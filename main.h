@@ -98,11 +98,11 @@ int8 a_star(byte src);
 int8 a_star_move(const int8 *move_set, byte src, byte dst);
 
 void reset_mobs(void);
-byte strike_boses(void);
 void shamble_mobs(void);
 void startup_room(void);
 void reset_actors(void);
 void place_actors(void);
+void strike_bosses(void);
 byte is_occupied(byte pos);
 void hourglass(byte color);
 void restore_tile(byte pos);

@@ -494,8 +494,8 @@ static void lightning_strike(byte pos) {
     }
 }
 
-byte strike_boses(void) {
-    byte struck = 0;
+byte *struck;
+void strike_bosses(void) {
     if (all_dead()) {
 	struct Mob **ptr = actors;
 
@@ -508,10 +508,9 @@ byte strike_boses(void) {
 		restore_tile(pos);
 		game_idle(20);
 		*ptr = NULL;
-		struck++;
+		(*struck)++;
 	    }
 	    ptr++;
 	}
     }
-    return struck;
 }

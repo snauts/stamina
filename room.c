@@ -4,6 +4,7 @@
 extern struct Mob mobs[];
 extern const void *respawn;
 extern byte spawn_pos;
+extern byte *struck;
 
 static byte door_broken;
 static byte queen_beaten;
@@ -81,6 +82,7 @@ static void setup_bailey(void) {
 
 static void setup_rampart(void) {
     if (rooks_beaten) return;
+    struck = &rooks_beaten;
     decompress(MOB(1), rook);
     struct Mob *james = mobs + JAMES;
     struct Mob *oskar = mobs + OSKAR;
@@ -98,6 +100,7 @@ static void setup_chancel(void) {
     memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
     add_actor(mobs + WILLY);
     add_actor(mobs + TOMMY);
+    struck = &bishops_beaten;
     if (!bishops_beaten) {
 	add_actor(mobs + ISAAC);
 	add_actor(mobs + DAVID);
@@ -106,6 +109,7 @@ static void setup_chancel(void) {
 
 static void setup_stables(void) {
     if (horses_beaten) return;
+    struck = &horses_beaten;
     decompress(MOB(1), horse);
     add_actor(mobs + PERSIJS);
     add_actor(mobs + MARKUSS);
@@ -113,37 +117,19 @@ static void setup_stables(void) {
 
 static void setup_bedroom(void) {
     if (queen_beaten) return;
+    struck = &queen_beaten;
     decompress(MOB(1), queen);
     add_actor(mobs + JEZEBEL);
 }
 
 static void setup_training(void) {
     if (pawns_beaten) return;
+    struck = &pawns_beaten;
     decompress(MOB(1), soldier);
     add_actor(mobs + JOE);
     add_actor(mobs + BOB);
     add_actor(mobs + SID);
     add_actor(mobs + UDO);
-}
-
-static void strike_queen(void) {
-    queen_beaten |= strike_boses();
-}
-
-static void strike_rooks(void) {
-    rooks_beaten |= strike_boses();
-}
-
-static void strike_pawns(void) {
-    pawns_beaten |= strike_boses();
-}
-
-static void strike_horses(void) {
-    horses_beaten |= strike_boses();
-}
-
-static void strike_bishops(void) {
-    bishops_beaten |= strike_boses();
 }
 
 /*** Prison ***/
@@ -317,7 +303,7 @@ static const struct Room rampart = {
     .count = SIZE(rampart_bump),
     .setup = setup_rampart,
     .shamble = shamble_rook,
-    .turn = strike_rooks,
+    .turn = strike_bosses,
 };
 
 /*** Chancel ***/
@@ -334,7 +320,7 @@ static const struct Room chancel = {
     .count = SIZE(chancel_bump),
     .setup = setup_chancel,
     .shamble = shamble_bishop,
-    .turn = strike_bishops,
+    .turn = strike_bosses,
 };
 
 /*** Stables ***/
@@ -352,7 +338,7 @@ static const struct Room stables = {
     .count = SIZE(stables_bump),
     .setup = setup_stables,
     .shamble = shamble_horse,
-    .turn = strike_horses,
+    .turn = strike_bosses,
 };
 
 /*** Training ***/
@@ -370,7 +356,7 @@ static const struct Room training = {
     .count = SIZE(training_bump),
     .setup = setup_training,
     .shamble = shamble_soldier,
-    .turn = strike_pawns,
+    .turn = strike_bosses,
 };
 
 /*** Bedroom ***/
@@ -389,7 +375,7 @@ static const struct Room bedroom = {
     .count = SIZE(bedroom_bump),
     .setup = setup_bedroom,
     .shamble = shamble_queen,
-    .turn = strike_queen,
+    .turn = strike_bosses,
 };
 
 static void setup_courtyard(void) {
