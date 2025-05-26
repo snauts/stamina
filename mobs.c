@@ -253,7 +253,7 @@ byte is_occupied(byte pos) {
 static void animate_mob_shamble(struct Mob *mob) {
     for (byte i = 0; i < 2; i++) {
 	change_stance(mob, TILE(MOVING));
-	game_idle(10);
+	game_idle(5);
     }
 }
 
