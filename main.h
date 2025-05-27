@@ -147,6 +147,8 @@ enum {
     BUSHKOPF,
 
 /* ramparts */
+    PILE1,
+    PILE2,
     OSKAR,
     JAMES,
 

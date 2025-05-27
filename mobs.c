@@ -30,8 +30,10 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
 
     /* ramparts */
-    { .pos = POS( 3, 7), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 0x02 },
-    { .pos = POS(12, 7), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x80 },
+    { .pos = POS( 6, 7), .ink = 0x05, .img = IMG(2, 4, RIGHT), },
+    { .pos = POS( 9, 7), .ink = 0x03, .img = IMG(2, 4, LEFT),  },
+    { .pos = POS( 5, 7), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 0x02 },
+    { .pos = POS(10, 7), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x80 },
 
     /* chancel */
     { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
@@ -484,13 +486,19 @@ static int8 rook_line(byte src) {
     return check_line(slide(src, player.pos), src, player.pos);
 }
 
+static byte food(struct Mob *mob, byte pos) {
+    struct Mob *food = is_mob(pos);
+    return food && food->ink == mob->ink;
+}
+
 static byte rook_move(struct Mob *mob, int8 dir) {
     byte pos = mob->pos;
     byte dst = 0;
     do {
 	pos += dir;
+	if (is_occupied(pos)) return dst;
+	if (food(mob, pos + dir)) return pos;
 	if (range(pos) < 3) continue;
-	if (is_occupied(pos)) break;
 	dst = pos;
     } while (!rook_line(dst));
     return dst;

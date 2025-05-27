@@ -88,6 +88,8 @@ static void setup_furniture(const byte *mob_sprites) {
 static void setup_rampart(void) {
     struck = &rooks_beaten;
     setup_furniture(rook);
+    add_actor(mobs + PILE1);
+    add_actor(mobs + PILE2);
     if (!rooks_beaten) {
 	add_actor(mobs + JAMES);
 	add_actor(mobs + OSKAR);
