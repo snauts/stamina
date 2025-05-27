@@ -152,20 +152,33 @@ static void open_seal(void) {
     INK[0xEE] = INK[0xEF] = 5;
 }
 
+static byte total_beaten;
+static byte sealed_room(const void *new_room, byte pos) {
+    if (total_beaten == ALL) {
+	show_message("Hurrah, work in progress..."); new_room;
+    }
+    else {
+	show_message("Alas, curse holds this door locked");
+    }
+    return pos;
+}
+
 static void setup_passage(void) {
-    byte done = 0;
+    total_beaten = 0;
     byte pos = POS(1, 3);
     byte frame = 64 - ALL;
     for (byte i = 0; i < ALL; i++) {
 	setup_furniture(i);
 	if (*struck) {
 	    painting(pos, frame);
-	    done++;
+	    total_beaten++;
 	}
 	pos += POS(3, 0);
 	frame++;
     }
-    if (done == ALL) open_seal();
+    if (total_beaten == ALL) {
+	open_seal();
+    }
 }
 
 /*** Prison ***/
@@ -419,6 +432,7 @@ static const struct Room bedroom = {
 
 static const struct Bump passage_bump[] = {
     MAKE_BUMP(POS(1, 8), -1, &change_room, &hallway, POS(10, 7)),
+    MAKE_BUMP(POS(7, 7), -16, &sealed_room, NULL, true),
 };
 
 static const struct Room passage = {
