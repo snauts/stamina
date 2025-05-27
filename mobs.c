@@ -89,6 +89,10 @@ static byte manhattan(byte a, byte b) {
     return distance_x(a, b) + distance_y(a, b);
 }
 
+static byte range(byte target) {
+    return manhattan(target, player.pos);
+}
+
 static void set_tile_ink(byte pos, byte ink) {
     byte *ptr = COLOUR(pos_to_ink(pos));
     *ptr = ink; ptr += 0x01;
@@ -286,7 +290,7 @@ void shamble_beast(struct Mob *mob) {
 
     byte src = mob->pos;
     byte dst = player.pos;
-    if (manhattan(src, dst) == 1) {
+    if (range(src) == 1) {
 	animate_attack(mob, &player);
     }
     else {
@@ -353,7 +357,7 @@ void shamble_ent(struct Mob *mob) {
     byte dst = player.pos;
 
     if (is_tile(mob, TILE(RESTED))) {
-	if (manhattan(src, dst) < 5) {
+	if (range(src) < 5) {
 	    animate_mob_shamble(mob);
 	}
     }
@@ -410,10 +414,11 @@ static void move_line(struct Mob *mob, byte dst) {
     }
 }
 
-static void long_attack(struct Mob *mob, byte dst, byte len) {
+static void long_attack(struct Mob *mob, byte len) {
+    byte dst = player.pos;
     move_line(mob, dst);
     byte src = mob->pos;
-    if (!len || manhattan(src, dst) == len) {
+    if (!len || range(src) == len) {
 	mob->pos = dst;
 	player.pos = src;
 	animate_raw_attack(mob, &player);
@@ -426,7 +431,7 @@ static void probe_direction(byte pos, int8 dir) {
     pos = pos + dir;
     while (!is_occupied(pos)) {
 	if (line_of_sight(pos, player.pos)) {
-	    add_choice(-manhattan(pos, player.pos), pos);
+	    add_choice(-range(pos), pos);
 	}
 	pos += dir;
     }
@@ -445,7 +450,7 @@ static void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
 
     byte dst = player.pos;
     if (line_of_sight(mob->pos, dst)) {
-	long_attack(mob, dst, len);
+	long_attack(mob, len);
     }
     else {
 	move_direction(mob, dir);
@@ -484,7 +489,7 @@ static byte rook_move(struct Mob *mob, int8 dir) {
     byte dst = 0;
     do {
 	pos += dir;
-	if (manhattan(pos, player.pos) == 1) continue;
+	if (range(pos) == 1) continue;
 	if (is_occupied(pos)) break;
 	dst = pos;
     } while (!rook_line(dst));
@@ -512,7 +517,7 @@ static void rook_carousel(struct Mob *mob) {
 void shamble_rook(struct Mob *mob) {
     if (should_rook_move(mob)) {
 	if (rook_line(mob->pos)) {
-	    long_attack(mob, player.pos, 1);
+	    long_attack(mob, 1);
 	}
 	else {
 	    rook_carousel(mob);
@@ -592,7 +597,7 @@ void shamble_soldier(struct Mob *mob) {
     }
     else {
 	int8 dir = y1 > y2 ? -16 : 16;
-	if (manhattan(src, player.pos) < 5) {
+	if (range(src) < 5) {
 	    dir = -dir;
 	}
 	else if (!is_empty_row(src + dir)) {
