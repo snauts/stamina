@@ -244,6 +244,7 @@ static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(1, 3), -1, &change_room, &rampart, POS(14, 11)),
     MAKE_BUMP(POS(14, 3), 1, &change_room, &rampart, POS(1, 11)),
     MAKE_BUMP(POS(5, 7), -1, &change_room, &bedroom, POS(12, 7)),
+    MAKE_BUMP(POS(10, 7), 1, &change_room, &passage, POS(1, 8)),
 };
 
 static const struct Room hallway = {
@@ -385,6 +386,19 @@ static const struct Room bedroom = {
     .setup = setup_bedroom,
     .shamble = shamble_queen,
     .turn = strike_bosses,
+};
+
+/*** Passage ***/
+
+static const struct Bump passage_bump[] = {
+    MAKE_BUMP(POS(1, 8), -1, &change_room, &hallway, POS(10, 7)),
+};
+
+static const struct Room passage = {
+    .msg = "Passage of Progress",
+    .map = map_of_passage,
+    .bump = passage_bump,
+    .count = SIZE(passage_bump),
 };
 
 static void setup_courtyard(void) {
