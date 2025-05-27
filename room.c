@@ -149,7 +149,7 @@ static void open_seal(void) {
     LEVEL[POS(6, 6)] += TILE(1);
     LEVEL[POS(7, 6)] += TILE(1);
     LEVEL[POS(8, 6)] += TILE(1);
-    memset(INK + 0xEE, 5, 2);
+    INK[0xEE] = INK[0xEF] = 5;
 }
 
 static void setup_passage(void) {
