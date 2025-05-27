@@ -375,17 +375,24 @@ void shamble_ent(struct Mob *mob) {
     }
 }
 
-static int8 step(byte src, byte dst) {
-    int8 delta = 0;
+static int8 step_x(byte src, byte dst) {
     byte x1 = X(src);
     byte x2 = X(dst);
-    if (x2 > x1) delta += 0x01;
-    if (x2 < x1) delta -= 0x01;
+    if (x2 > x1) return  0x01;
+    if (x2 < x1) return -0x01;
+    return 0x00;
+}
+
+static int8 step_y(byte src, byte dst) {
     byte y1 = Y(src);
     byte y2 = Y(dst);
-    if (y2 > y1) delta += 0x10;
-    if (y2 < y1) delta -= 0x10;
-    return delta;
+    if (y2 > y1) return  0x10;
+    if (y2 < y1) return -0x10;
+    return 0x00;
+}
+
+static int8 step(byte src, byte dst) {
+    return step_x(src, dst) + step_y(src, dst);
 }
 
 static void move_line(struct Mob *mob, byte dst) {
@@ -440,6 +447,14 @@ static void shamble_direction(struct Mob *mob, const int8 *dir, byte len) {
     }
 }
 
+static int8 check_line(int8 delta, byte src, byte dst) {
+    do {
+	src = src + delta;
+	if (src == dst) return delta;
+    } while (!is_occupied(src));
+    return 0;
+}
+
 static int8 bishop_line(byte src, byte dst) {
     return distance_x(src, dst) == distance_y(src, dst);
 }
@@ -480,12 +495,7 @@ void shamble_horse(struct Mob *mob) {
 }
 
 static int8 queen_line(byte src, byte dst) {
-    int8 delta = step(src, dst);
-    do {
-	src = src + delta;
-	if (src == dst) return delta;
-    } while (!is_occupied(src));
-    return 0;
+    return check_line(step(src, dst), src, dst);
 }
 
 void shamble_queen(struct Mob *mob) {
