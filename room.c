@@ -144,15 +144,28 @@ static void painting(byte pos, byte frame) {
     LEVEL[pos] = frame << 2;
 }
 
+static void open_seal(void) {
+    LEVEL[POS(7, 5)] += TILE(1);
+    LEVEL[POS(6, 6)] += TILE(1);
+    LEVEL[POS(7, 6)] += TILE(1);
+    LEVEL[POS(8, 6)] += TILE(1);
+    memset(INK + 0xEE, 5, 2);
+}
+
 static void setup_passage(void) {
+    byte done = 0;
     byte pos = POS(1, 3);
     byte frame = 64 - ALL;
     for (byte i = 0; i < ALL; i++) {
 	setup_furniture(i);
-	if (*struck) painting(pos, frame);
+	if (*struck) {
+	    painting(pos, frame);
+	    done++;
+	}
 	pos += POS(3, 0);
 	frame++;
     }
+    if (done == ALL) open_seal();
 }
 
 /*** Prison ***/
