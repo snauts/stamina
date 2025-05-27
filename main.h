@@ -74,7 +74,6 @@ struct Room {
 
 extern struct Mob player;
 
-void clear_message(void);
 void game_idle(byte ticks);
 void call(void (*fn)(void));
 void advance_tile(byte pos);

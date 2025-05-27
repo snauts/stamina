@@ -219,20 +219,15 @@ static byte str_offset(const char *msg, byte from) {
     return from - (str_len(msg) >> 1);
 }
 
-static byte has_message;
-
-void clear_message(void) {
-    if (has_message) {
-	clear_block(20, 8);
-	has_message = 0;
-    }
-}
+static const char *has_message;
 
 void show_message(const char *msg) {
-    clear_message();
-    byte x = str_offset(msg, 128);
-    put_str(msg, x, 20);
-    has_message = 1;
+    if (msg != has_message) {
+	if (has_message) clear_block(20, 8);
+	byte x = str_offset(msg, 128);
+	put_str(msg, x, 20);
+	has_message = msg;
+    }
 }
 
 void *decompress(byte *dst, const byte *src) {
@@ -562,7 +557,7 @@ byte load_room(const void *new_room, byte pos) {
 }
 
 static void start_game(void) {
-    has_message = 0;
+    has_message = NULL;
     player.img = SET(0);
     show_block(bar, 0, 24);
     last_input = read_input();

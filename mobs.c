@@ -177,7 +177,7 @@ void hourglass(byte color) {
 }
 
 void shamble_mobs(void) {
-    clear_message();
+    show_message(room->msg);
     hourglass(0x5);
     activate_mobs();
     call(room->turn);
