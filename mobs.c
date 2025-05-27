@@ -30,8 +30,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
 
     /* ramparts */
-    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 0x00 },
-    { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x81 },
+    { .pos = POS( 3, 7), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 0x02 },
+    { .pos = POS(12, 7), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x80 },
 
     /* chancel */
     { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
@@ -489,7 +489,7 @@ static byte rook_move(struct Mob *mob, int8 dir) {
     byte dst = 0;
     do {
 	pos += dir;
-	if (range(pos) == 1) continue;
+	if (range(pos) < 3) continue;
 	if (is_occupied(pos)) break;
 	dst = pos;
     } while (!rook_line(dst));
