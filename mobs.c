@@ -477,7 +477,7 @@ void shamble_bishop(struct Mob *mob) {
 
 static byte should_rook_move(struct Mob *mob) {
     mob->var ^= 0x80;
-    return (mob->var & 0x80) && !is_dead(mob);
+    return (mob->var & 0x80);
 }
 
 static int8 rook_line(byte src) {
@@ -512,16 +512,20 @@ static void rook_carousel(struct Mob *mob) {
 	    mob->var = (var & ~3) | ((var + 1) & 3);
 	}
     }
+    update_image(mob, mob->img & ~TILE(STANCE));
 }
 
 void shamble_rook(struct Mob *mob) {
-    if (should_rook_move(mob)) {
-	if (rook_line(mob->pos)) {
-	    long_attack(mob, 1);
-	}
-	else {
-	    rook_carousel(mob);
-	}
+    if (is_dead(mob)) return;
+
+    if (!should_rook_move(mob)) {
+	update_image(mob, mob->img | TILE(STANCE));
+    }
+    else if (rook_line(mob->pos)) {
+	long_attack(mob, 1);
+    }
+    else {
+	rook_carousel(mob);
     }
 }
 
