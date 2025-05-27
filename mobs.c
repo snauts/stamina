@@ -518,14 +518,14 @@ static void rook_carousel(struct Mob *mob) {
 void shamble_rook(struct Mob *mob) {
     if (is_dead(mob)) return;
 
-    if (!should_rook_move(mob)) {
-	update_image(mob, mob->img | TILE(STANCE));
-    }
-    else if (rook_line(mob->pos)) {
+    if (rook_line(mob->pos)) {
 	long_attack(mob, 1);
     }
-    else {
+    else if (should_rook_move(mob)) {
 	rook_carousel(mob);
+    }
+    else {
+	update_image(mob, mob->img | TILE(STANCE));
     }
 }
 
