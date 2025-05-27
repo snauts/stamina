@@ -7,11 +7,12 @@ extern byte spawn_pos;
 extern byte *struck;
 
 static byte door_broken;
-static byte queen_beaten;
-static byte rooks_beaten;
-static byte pawns_beaten;
-static byte horses_beaten;
-static byte bishops_beaten;
+
+enum { SOLDIER, HORSE, BISHOP, ROOK, QUEEN, ALL };
+static const void* const lieutenants[] = {
+    soldier, horse, bishop, rook, queen,
+};
+static byte beaten[ALL];
 
 #define MAKE_BUMP(from, dir, action, data, param) \
     { .pos = from, .delta = dir, .fn = action, .ptr = data, .arg = param }
@@ -80,60 +81,57 @@ static void setup_bailey(void) {
     add_actor(mobs + BUSHKOPF);
 }
 
-static void setup_furniture(const byte *mob_sprites) {
-    decompress(MOB(1), mob_sprites);
+static void setup_furniture(byte i) {
+    decompress(MOB(1), lieutenants[i]);
     memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
+    struck = beaten + i;
 }
 
 static void setup_rampart(void) {
-    struck = &rooks_beaten;
-    setup_furniture(rook);
+    setup_furniture(ROOK);
     add_actor(mobs + PILE1);
     add_actor(mobs + PILE2);
-    if (!rooks_beaten) {
+    if (!beaten[ROOK]) {
 	add_actor(mobs + JAMES);
 	add_actor(mobs + OSKAR);
     }
 }
 
 static void setup_chancel(void) {
-    setup_furniture(bishop);
+    setup_furniture(BISHOP);
     add_actor(mobs + WILLY);
     add_actor(mobs + TOMMY);
-    struck = &bishops_beaten;
-    if (!bishops_beaten) {
+    if (!beaten[BISHOP]) {
 	add_actor(mobs + ISAAC);
 	add_actor(mobs + DAVID);
     }
 }
 
 static void setup_stables(void) {
-    if (horses_beaten) return;
-    struck = &horses_beaten;
-    decompress(MOB(1), horse);
-    add_actor(mobs + PERSIJS);
-    add_actor(mobs + MARKUSS);
+    setup_furniture(HORSE);
+    if (!beaten[HORSE]) {
+	add_actor(mobs + PERSIJS);
+	add_actor(mobs + MARKUSS);
+    }
 }
 
 static void setup_bedroom(void) {
-    struck = &queen_beaten;
-    setup_furniture(queen);
+    setup_furniture(QUEEN);
     add_actor(mobs + CHAIR1);
     add_actor(mobs + CHAIR2);
     add_actor(mobs + CHAIR3);
     add_actor(mobs + CHAIR4);
-    if (!queen_beaten) {
+    if (!beaten[QUEEN]) {
 	add_actor(mobs + JEZEBEL);
     }
 }
 
 static void setup_training(void) {
-    struck = &pawns_beaten;
-    setup_furniture(soldier);
+    setup_furniture(SOLDIER);
     decompress(MOB(3), arrow);
     add_actor(mobs + DUMMY1);
     add_actor(mobs + DUMMY2);
-    if (!pawns_beaten) {
+    if (!beaten[SOLDIER]) {
 	add_actor(mobs + JOE);
 	add_actor(mobs + BOB);
 	add_actor(mobs + SID);
@@ -141,27 +139,19 @@ static void setup_training(void) {
     }
 }
 
-static void painting(const byte *mob_sprites, byte frame, byte pos) {
-    decompress(MOB(1), mob_sprites);
-    memcpy(EMPTY + FRAME(frame >> 2), MOB(1), 32);
-    LEVEL[pos] = frame;
+static void painting(byte pos, byte frame) {
+    memcpy(EMPTY + FRAME(frame), MOB(1), 32);
+    LEVEL[pos] = frame << 2;
 }
 
 static void setup_passage(void) {
-    if (pawns_beaten) {
-	painting(soldier, TILE(59), POS(1, 3));
-    }
-    if (horses_beaten) {
-	painting(horse, TILE(60), POS(4, 3));
-    }
-    if (queen_beaten) {
-	painting(queen, TILE(61), POS(7, 3));
-    }
-    if (bishops_beaten) {
-	painting(bishop, TILE(62) | LEFT, POS(10, 3));
-    }
-    if (rooks_beaten) {
-	painting(rook, TILE(63) | LEFT, POS(13, 3));
+    byte pos = POS(1, 3);
+    byte frame = 64 - ALL;
+    for (byte i = 0; i < ALL; i++) {
+	setup_furniture(i);
+	if (*struck) painting(pos, frame);
+	pos += POS(3, 0);
+	frame++;
     }
 }
 
@@ -432,11 +422,7 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     door_broken = false;
-    queen_beaten = false;
-    rooks_beaten = false;
-    pawns_beaten = false;
-    horses_beaten = false;
-    bishops_beaten = false;
+    memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
     respawn = &prison;
 }

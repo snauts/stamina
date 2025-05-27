@@ -82,7 +82,7 @@ void call(void (*fn)(void)) {
     if (fn) fn();
 }
 
-static void memset(byte *ptr, byte data, word len) {
+void memset(byte *ptr, byte data, word len) {
     while (len-- > 0) { *ptr++ = data; }
 }
 

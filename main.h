@@ -86,6 +86,7 @@ byte bump_msg(const void *text, byte ignore);
 void draw_tile(byte *ptr, byte pos, byte id);
 void *decompress(byte *dst, const byte *src);
 void memcpy(void *dst, const void *src, word len);
+void memset(byte *ptr, byte data, word len);
 
 void reset_choices(void);
 void add_choice(byte cost, byte value);
