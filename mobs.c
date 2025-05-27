@@ -30,7 +30,7 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
 
     /* ramparts */
-    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0x00 },
+    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 1, RIGHT), .var = 0x00 },
     { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x81 },
 
     /* chancel */

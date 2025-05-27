@@ -86,7 +86,7 @@ static void setup_furniture(const byte *mob_sprites) {
 }
 
 static void rampart_actor(struct Mob *mob, byte flip) {
-    mob->var = flip ? (mob->var | 4) ^ 0x80 : (mob->var & ~4);
+    mob->var = flip ? (mob->var | 4) : (mob->var & ~4);
     add_actor(mob);
 }
 
