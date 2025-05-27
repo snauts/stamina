@@ -486,9 +486,15 @@ static int8 rook_line(byte src) {
     return check_line(slide(src, player.pos), src, player.pos);
 }
 
-static byte food(struct Mob *mob, byte pos) {
-    struct Mob *food = is_mob(pos);
-    return food && food->ink == mob->ink;
+static const int8 around[] = { 1, 16, -1, -16 };
+
+static byte food(struct Mob *self, byte pos) {
+    byte ink = self->ink;
+    for (byte i = 0; i < SIZE(around); i++) {
+	struct Mob *mob = is_mob(pos + around[i]);
+	if (mob && mob != self && mob->ink == ink) return true;
+    }
+    return false;
 }
 
 static byte rook_move(struct Mob *mob, int8 dir) {
@@ -497,7 +503,7 @@ static byte rook_move(struct Mob *mob, int8 dir) {
     do {
 	pos += dir;
 	if (is_occupied(pos)) return dst;
-	if (food(mob, pos + dir)) return pos;
+	if (food(mob, pos)) return pos;
 	if (range(pos) < 3) continue;
 	dst = pos;
     } while (!rook_line(dst));
@@ -505,9 +511,8 @@ static byte rook_move(struct Mob *mob, int8 dir) {
 }
 
 static void rook_carousel(struct Mob *mob) {
-    static const int8 round[] = { 1, 16, -1, -16 };
-    for (byte i = 0; i < 4; i++) {
-	int8 dir = round[mob->var & 3];
+    for (byte i = 0; i < SIZE(around); i++) {
+	int8 dir = around[mob->var & 3];
 	byte pos = rook_move(mob, dir);
 	if (pos) {
 	    move_line(mob, pos);
