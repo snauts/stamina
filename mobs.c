@@ -30,8 +30,8 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 8), .ink = 0x44, .img = IMG(1, 6, LEFT),  },
 
     /* ramparts */
-    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0 },
-    { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 1 },
+    { .pos = POS( 1, 5), .ink = 0x05, .img = IMG(1, 0, RIGHT), .var = 0x00 },
+    { .pos = POS(14, 5), .ink = 0x03, .img = IMG(1, 0, LEFT),  .var = 0x81 },
 
     /* chancel */
     { .pos = POS(6, 3), .ink = 0x03, .img = IMG(1, 0, RIGHT), .var = 0 },
@@ -395,6 +395,11 @@ static int8 step(byte src, byte dst) {
     return step_x(src, dst) + step_y(src, dst);
 }
 
+static int8 slide(byte src, byte dst) {
+    int8 dx = step_x(src, dst);
+    return dx ? dx : step_y(src, dst);
+}
+
 static void move_line(struct Mob *mob, byte dst) {
     int8 delta = step(mob->pos, dst);
     while (dst && mob->pos != dst) {
@@ -465,16 +470,54 @@ void shamble_bishop(struct Mob *mob) {
     shamble_direction(mob, dir, 2);
 }
 
-static int8 rook_line(byte src, byte dst) {
-    return distance_x(src, dst) == 0 || distance_y(src, dst) == 0;
+static byte should_rook_move(struct Mob *mob) {
+    mob->var ^= 0x80;
+    return (mob->var & 0x80) && !is_dead(mob);
+}
+
+static int8 rook_line(byte src) {
+    return check_line(slide(src, player.pos), src, player.pos);
+}
+
+static byte rook_move(struct Mob *mob, int8 dir) {
+    byte pos = mob->pos;
+    byte dst = 0;
+    do {
+	pos += dir;
+	if (manhattan(pos, player.pos) == 1) continue;
+	if (is_occupied(pos)) break;
+	dst = pos;
+    } while (!rook_line(dst));
+    return dst;
+}
+
+static void rook_carousel(struct Mob *mob) {
+    static const int8 round[] = {
+	1, 16, -1, -16, -1, 16, 1, -16, 0
+    };
+    for (byte i = 0; i < 4; i++) {
+	int8 dir = round[mob->var & 7];
+	byte pos = rook_move(mob, dir);
+	if (pos) {
+	    move_line(mob, pos);
+	    break;
+	}
+	else {
+	    byte var = mob->var;
+	    mob->var = (var & ~3) | ((var + 1) & 3);
+	}
+    }
 }
 
 void shamble_rook(struct Mob *mob) {
-    if (mob->var++ & 1) return;
-
-    static const int8 dir[] = { -1, 1, -16, 16, 0 };
-    line_of_sight = &rook_line;
-    shamble_direction(mob, dir, 1);
+    if (should_rook_move(mob)) {
+	if (rook_line(mob->pos)) {
+	    long_attack(mob, player.pos, 1);
+	}
+	else {
+	    rook_carousel(mob);
+	}
+    }
 }
 
 static const int8 horsing[] = { -33, 33, -31, 31, -18, 18, -14, 14, 0 };
