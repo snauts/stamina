@@ -85,18 +85,12 @@ static void setup_furniture(const byte *mob_sprites) {
     memcpy(SPRITE(2, 4), SPRITE(1, 6), 32);
 }
 
-static void rampart_actor(struct Mob *mob, byte flip) {
-    mob->var = flip ? (mob->var | 4) : (mob->var & ~4);
-    add_actor(mob);
-}
-
 static void setup_rampart(void) {
     struck = &rooks_beaten;
     setup_furniture(rook);
     if (!rooks_beaten) {
-	byte flip = player.img & LEFT;
-	rampart_actor(mobs + JAMES, flip);
-	rampart_actor(mobs + OSKAR, flip);
+	add_actor(mobs + JAMES);
+	add_actor(mobs + OSKAR);
     }
 }
 

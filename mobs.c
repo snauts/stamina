@@ -497,11 +497,9 @@ static byte rook_move(struct Mob *mob, int8 dir) {
 }
 
 static void rook_carousel(struct Mob *mob) {
-    static const int8 round[] = {
-	1, 16, -1, -16, -1, 16, 1, -16, 0
-    };
+    static const int8 round[] = { 1, 16, -1, -16 };
     for (byte i = 0; i < 4; i++) {
-	int8 dir = round[mob->var & 7];
+	int8 dir = round[mob->var & 3];
 	byte pos = rook_move(mob, dir);
 	if (pos) {
 	    move_line(mob, pos);
