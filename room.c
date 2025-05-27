@@ -141,6 +141,30 @@ static void setup_training(void) {
     }
 }
 
+static void painting(const byte *mob_sprites, byte frame, byte pos) {
+    decompress(MOB(1), mob_sprites);
+    memcpy(EMPTY + FRAME(frame >> 2), MOB(1), 32);
+    LEVEL[pos] = frame;
+}
+
+static void setup_passage(void) {
+    if (pawns_beaten) {
+	painting(soldier, TILE(59), POS(1, 3));
+    }
+    if (horses_beaten) {
+	painting(horse, TILE(60), POS(4, 3));
+    }
+    if (queen_beaten) {
+	painting(queen, TILE(61), POS(7, 3));
+    }
+    if (bishops_beaten) {
+	painting(bishop, TILE(62) | LEFT, POS(10, 3));
+    }
+    if (rooks_beaten) {
+	painting(rook, TILE(63) | LEFT, POS(13, 3));
+    }
+}
+
 /*** Prison ***/
 
 static const struct Bump prison_bump[] = {
@@ -399,6 +423,7 @@ static const struct Room passage = {
     .map = map_of_passage,
     .bump = passage_bump,
     .count = SIZE(passage_bump),
+    .setup = setup_passage,
 };
 
 static void setup_courtyard(void) {

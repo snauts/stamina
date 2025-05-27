@@ -24,8 +24,8 @@ typedef unsigned short word;
 
 #define INK		(STAGING_AREA)
 #define LEVEL		(INK + 0x260)
-#define  TILE(id)		(id << 2)
-#define  SET(id)		(id << 5)
+#define  TILE(id)		((byte) id << 2)
+#define  SET(id)		((byte) id << 5)
 #define  RIGHT			0
 #define  LEFT			1
 #define  FLIP			2
