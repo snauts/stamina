@@ -1,3 +1,7 @@
+#include "main.h"
+
+#ifdef AY
+
 /* =============================================================================
    SDCC Vortex Tracker II PT3 player for MSX
 
@@ -59,8 +63,6 @@ mvac7 version:
  Adaptation to C (SDCC) of the SapphiRe version.
 
 ============================================================================= */
-
-#include "main.h"
 
 #define AY_ToneA      0 //Channel A Tone Period (12 bits)
 #define AY_ToneB      2 //Channel B Tone Period (12 bits)
@@ -467,7 +469,7 @@ __endasm;
  Input:       -
  Output:      -
 ----------------------------------------------------------------------------- */
-static void Player_Decode(void) __naked
+void Player_Decode(void) __naked
 {
 __asm
   push IX
@@ -1168,7 +1170,7 @@ __endasm;
 /* -----------------------------------------------------------------------------
  Player_CopyAY
 ----------------------------------------------------------------------------- */
-static void Player_CopyAY(void) __naked
+void Player_CopyAY(void) __naked
 {
 __asm
 	LD   HL,#_PT3_state
@@ -1258,3 +1260,46 @@ LOUT:
 
 __endasm;
 }
+
+byte enable_AY;
+
+void start_music(void) {
+    Player_Resume();
+    enable_AY = 1;
+}
+
+void stop_music(void) {
+    enable_AY = 0;
+    Player_Pause();
+}
+
+void silence_music(void) {
+    PT3_state |= (1 << 2);
+}
+
+void resume_music(void) {
+    __asm__("di");
+    memset(AYREGS, 0, 14);
+    PT3_state &= ~(1 << 2);
+    __asm__("ei");
+}
+
+void select_music(void *ptr) {
+    static void *current;
+    if (enable_AY) {
+	if (ptr == current) {
+	    return; /* already playing */
+	}
+	else {
+	    stop_music();
+	}
+    }
+    Player_Init();
+    Player_InitSong((word) ptr);
+    Player_Loop(1);
+
+    current = ptr;
+    start_music();
+}
+
+#endif // AY

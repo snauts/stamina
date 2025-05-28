@@ -3,6 +3,8 @@ typedef signed short int16;
 typedef unsigned char byte;
 typedef unsigned short word;
 
+// #define AY
+
 #define false		0
 #define true		1
 
@@ -124,6 +126,14 @@ void shamble_bishop(struct Mob *mob);
 void shamble_horse(struct Mob *mob);
 void shamble_queen(struct Mob *mob);
 void shamble_soldier(struct Mob *mob);
+
+#ifdef AY
+void stop_music(void);
+void start_music(void);
+void resume_music(void);
+void silence_music(void);
+void select_music(void *ptr);
+#endif
 
 enum {
 /* dungeon */

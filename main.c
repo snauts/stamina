@@ -39,6 +39,27 @@ static void interrupt(void) __naked {
     __asm__("ld a, #1");
     __asm__("ld (_vblank), a");
 
+#if defined(AY)
+    __asm__("ld a, (_enable_AY)");
+    __asm__("and a");
+    __asm__("jp z, skip_AY");
+
+    __asm__("push bc");
+    __asm__("push hl");
+    __asm__("push de");
+    __asm__("push ix");
+    __asm__("push iy");
+    __asm__("call _Player_Decode");
+    __asm__("call _Player_CopyAY");
+    __asm__("pop iy");
+    __asm__("pop ix");
+    __asm__("pop de");
+    __asm__("pop hl");
+    __asm__("pop bc");
+
+    __asm__("skip_AY:");
+#endif
+
     __asm__("pop af");
     __asm__("ei");
     __asm__("reti");
