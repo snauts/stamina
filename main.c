@@ -518,10 +518,28 @@ static void game_loop(void) {
     }
 }
 
+static byte fade_out(byte src) {
+    if ((src & 0x07) > 0) src -= 0x01;
+    if ((src & 0x38) > 0) src -= 0x08;
+    if ((src & 0x40) > 0) src -= 0x40;
+    return src;
+}
+
+static void fade_out_attributes(void) {
+    clear_block(20, 8);
+    for (byte i = 0; i < 7; i++) {
+	byte *ptr = COLOUR(0x80);
+	while (ptr < COLOUR(0x300)) {
+	    *ptr++ = fade_out(*ptr);
+	}
+	game_idle(1);
+    }
+}
+
 byte load_room(const void *new_room, byte pos) {
     /* clear previous */
     const void *from = room;
-    memset(COLOUR(0x80), 0, 0x280);
+    fade_out_attributes();
     clear_block(32, 160);
     reset_actors();
 
