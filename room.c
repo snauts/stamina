@@ -278,6 +278,8 @@ static const struct Room courtyard = {
 
 /*** Hallway ***/
 
+static const char elephant_notice[] = "Elephants stop by their favorite food";
+
 static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(7, 11), 16, &change_room, &courtyard, POS(7, 3)),
     MAKE_BUMP(POS(8, 11), 16, &change_room, &courtyard, POS(8, 3)),
@@ -285,6 +287,7 @@ static const struct Bump hallway_bump[] = {
     MAKE_BUMP(POS(14, 3), 1, &change_room, &rampart, POS(1, 11)),
     MAKE_BUMP(POS(5, 7), -1, &change_room, &bedroom, POS(12, 7)),
     MAKE_BUMP(POS(10, 7), 1, &change_room, &passage, POS(1, 8)),
+    MAKE_BUMP(POS(8, 3), -16, &bump_msg, elephant_notice, true),
 };
 
 static const struct Room hallway = {
