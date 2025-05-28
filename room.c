@@ -155,12 +155,12 @@ static void open_seal(void) {
 static byte total_beaten;
 static byte sealed_room(const void *new_room, byte pos) {
     if (total_beaten == ALL) {
-	show_message("Hurrah, work in progress..."); new_room;
+	return change_room(new_room, pos);
     }
     else {
 	show_message("Alas, curse holds this door locked");
     }
-    return pos;
+    return true;
 }
 
 static void setup_passage(void) {
@@ -432,7 +432,7 @@ static const struct Room bedroom = {
 
 static const struct Bump passage_bump[] = {
     MAKE_BUMP(POS(1, 8), -1, &change_room, &hallway, POS(10, 7)),
-    MAKE_BUMP(POS(7, 7), -16, &sealed_room, NULL, true),
+    MAKE_BUMP(POS(7, 7), -16, &sealed_room, &throne, POS(1, 11)),
 };
 
 static const struct Room passage = {
@@ -441,6 +441,19 @@ static const struct Room passage = {
     .bump = passage_bump,
     .count = SIZE(passage_bump),
     .setup = setup_passage,
+};
+
+/*** Throne ***/
+
+static const struct Bump throne_bump[] = {
+    MAKE_BUMP(POS(1, 11), 16, &change_room, &passage, POS(7, 7)),
+};
+
+static const struct Room throne = {
+    .msg = "Throne of Thorns",
+    .map = map_of_throne,
+    .bump = throne_bump,
+    .count = SIZE(throne_bump),
 };
 
 static void setup_courtyard(void) {
