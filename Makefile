@@ -39,6 +39,7 @@ pcx:
 	@./pcx-dump -t tower.pcx >> data.h
 	@./pcx-dump -t queen.pcx >> data.h
 	@./pcx-dump -t rook.pcx >> data.h
+	@./pcx-dump -t king.pcx >> data.h
 	@./pcx-dump -t ent.pcx >> data.h
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
