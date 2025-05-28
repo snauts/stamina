@@ -213,7 +213,7 @@ static const struct Bump tunnel_bump[] = {
 };
 
 static const struct Room tunnel = {
-    .msg = "Tunnel of Advices",
+    .msg = "Tunnel of Advice",
     .map = map_of_tunnel,
     .bump = tunnel_bump,
     .count = SIZE(tunnel_bump),
