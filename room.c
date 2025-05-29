@@ -185,7 +185,9 @@ static void setup_passage(void) {
 
 static void update_tile(byte pos, byte change) {
     LEVEL[pos] -= change;
-    if (!no_actors()) restore_tile(pos);
+    if (has_actors()) {
+	restore_tile(pos);
+    }
 }
 
 static void king_leaves_throne(void) {

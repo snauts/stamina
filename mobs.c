@@ -74,8 +74,8 @@ void reset_actors(void) {
     *actors = NULL;
 }
 
-byte no_actors(void) {
-    return *actors == NULL;
+byte has_actors(void) {
+    return *actors != NULL;
 }
 
 static word pos_to_ink(byte pos) {
