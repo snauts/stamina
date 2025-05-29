@@ -425,15 +425,15 @@ static void you_died(void) {
     reload();
 }
 
-void ending(const char **text) {
-    byte y = 8;
+void ending(const char **text, const byte *img) {
+    byte y = 16;
     clear_screen();
+    show_block(img, 0, 72);
     while (*text) {
 	put_str(*text, 8, y);
 	text++;
-	y += 8;
+	y += 10;
     }
-    memset(COLOUR(0), 2, 0x300);
     wait_space();
     start_up();
 }

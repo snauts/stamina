@@ -80,7 +80,6 @@ void game_idle(byte ticks);
 void call(void (*fn)(void));
 void advance_tile(byte pos);
 byte is_walkable(byte place);
-void ending(const char **text);
 byte consume_stamina(byte amount);
 void show_message(const char *msg);
 void swoosh(int8 f, int8 n, int8 s);
@@ -88,6 +87,7 @@ byte load_room(const void *ptr, byte pos);
 byte bump_msg(const void *text, byte ignore);
 void draw_tile(byte *ptr, byte pos, byte id);
 void *decompress(byte *dst, const byte *src);
+void ending(const char **text, const byte *img);
 void memcpy(void *dst, const void *src, word len);
 void memset(byte *ptr, byte data, word len);
 

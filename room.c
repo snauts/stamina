@@ -294,7 +294,7 @@ static void setup_throne(void) {
 }
 
 static const char * const ascend[] = {
-    "  As you ascend the throne, you start",
+    "As you ascend the throne, you start",
     "to feel strange numbness in your limbs.",
     "Life itself leaves your body. You become",
     "undead. By inheriting power you also",
@@ -303,7 +303,7 @@ static const char * const ascend[] = {
 };
 
 static const char * const leave[] = {
-    "  As you behold the scene of carnage,",
+    "As you behold the scene of carnage,",
     "revulsion strikes your heart. You",
     "condemn your ambition and abandon",
     "this cursed place.",
@@ -311,7 +311,7 @@ static const char * const leave[] = {
 };
 
 static byte end_game(const void *ptr, byte done) {
-    ending(ptr);
+    ending(ptr, leaving);
     return done;
 }
 
