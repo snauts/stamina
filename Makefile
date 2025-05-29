@@ -24,6 +24,7 @@ pcx:
 	@./pcx-dump -c bar.pcx > data.h
 	@./pcx-dump -c title.pcx >> data.h
 	@./pcx-dump -c leaving.pcx >> data.h
+	@./pcx-dump -c ascension.pcx >> data.h
 
 	@./pcx-dump -t richard.pcx >> data.h
 	@./pcx-dump -t special.pcx >> data.h

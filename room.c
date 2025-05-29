@@ -295,10 +295,10 @@ static void setup_throne(void) {
 
 static const char * const ascend[] = {
     "As you ascend the throne, you start",
-    "to feel strange numbness in your limbs.",
-    "Life itself leaves your body. You become",
-    "undead. By inheriting power you also",
-    "inherit the curse.",
+    "to feel strange numbness in your",
+    "limbs. Life itself leaves your body.",
+    "You become undead. By inheriting",
+    "power you also inherit the curse.",
     NULL,
 };
 
@@ -311,8 +311,8 @@ static const char * const leave[] = {
 };
 
 static byte end_game(const void *ptr, byte done) {
-    ending(ptr, leaving);
-    return done;
+    ending(ptr, done ? ascension : leaving);
+    return true;
 }
 
 /*** Prison ***/
