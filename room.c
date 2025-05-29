@@ -7,6 +7,7 @@ extern byte spawn_pos;
 extern byte *struck;
 
 static byte door_broken;
+static byte king_progress;
 
 enum { SOLDIER, HORSE, BISHOP, ROOK, QUEEN, ALL };
 static const void* const lieutenants[] = {
@@ -179,6 +180,21 @@ static void setup_passage(void) {
     if (total_beaten == ALL) {
 	open_seal();
     }
+}
+
+static const char * const king_dialogue[] = {
+    "Prince Richard...",
+    "Suprised to see you so far up North",
+    "This ill-conceived journey of yours ends here",
+};
+
+static byte king_cutscene(const void *ptr, byte pos) {
+    if (king_progress < SIZE(king_dialogue)) {
+	show_message(king_dialogue[king_progress]);
+	king_progress++;
+	return true;
+    }
+    return false; ptr; pos;
 }
 
 /*** Prison ***/
@@ -449,6 +465,8 @@ static const struct Room passage = {
 /*** Throne ***/
 
 static const struct Bump throne_bump[] = {
+    MAKE_BUMP(POS(1, 11), 1, &king_cutscene, NULL, 0),
+    MAKE_BUMP(POS(1, 11), -16, &king_cutscene, NULL, 0),
     MAKE_BUMP(POS(1, 11), 16, &change_room, &passage, POS(7, 7)),
 };
 
@@ -464,6 +482,7 @@ static void setup_courtyard(void) {
 }
 
 void startup_room(void) {
+    king_progress = 0;
     door_broken = false;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
