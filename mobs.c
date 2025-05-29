@@ -647,7 +647,7 @@ static byte lightning_flash(byte eep, byte dst, byte flip) {
     return eep;
 }
 
-static void lightning_strike(byte pos) {
+void lightning_strike(byte pos) {
     byte eep = 5;
     for (byte i = 0; i < 8; i++) {
 	eep = lightning_flash(eep, pos, i & 1);
