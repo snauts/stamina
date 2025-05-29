@@ -104,6 +104,7 @@ static void set_tile_ink(byte pos, byte ink) {
 }
 
 static void draw_mob(struct Mob *mob) {
+    if (mob->pos == POS(0, 0)) return;
     draw_tile(MOB(0), mob->pos, mob->img);
     set_tile_ink(mob->pos, mob->ink);
 }
