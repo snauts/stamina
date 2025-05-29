@@ -504,6 +504,9 @@ static void roll_richard(int8 delta) {
 static void rest_richard(void) {
     update_image(&player, TILE(RESTED));
     replenish_stamina(FULL_STAMINA);
+    if (!activate_bumps(0)) {
+	shamble_mobs();
+    }
 }
 
 static void move_richard(void) {
@@ -511,7 +514,6 @@ static void move_richard(void) {
 
     if (change & CTRL_FIRE) {
 	rest_richard();
-	shamble_mobs();
     }
     else if (change & CTRL_UP) {
 	roll_richard(-16);

@@ -465,6 +465,7 @@ static const struct Room passage = {
 /*** Throne ***/
 
 static const struct Bump throne_bump[] = {
+    MAKE_BUMP(POS(1, 11), 0, &king_cutscene, NULL, 0),
     MAKE_BUMP(POS(1, 11), 1, &king_cutscene, NULL, 0),
     MAKE_BUMP(POS(1, 11), -16, &king_cutscene, NULL, 0),
     MAKE_BUMP(POS(1, 11), 16, &change_room, &passage, POS(7, 7)),
