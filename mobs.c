@@ -501,6 +501,11 @@ static byte food(struct Mob *self, byte pos) {
     return false;
 }
 
+static byte rook_range(byte pos) {
+    /* avoid player only on ramparts */
+    return range(pos) < 3 && mobs[FERDINAND].var == 0;
+}
+
 static byte rook_move(struct Mob *mob, int8 dir) {
     byte pos = mob->pos;
     byte dst = 0;
@@ -508,7 +513,7 @@ static byte rook_move(struct Mob *mob, int8 dir) {
 	pos += dir;
 	if (is_occupied(pos)) return dst;
 	if (food(mob, pos)) return pos;
-	if (range(pos) < 3) continue;
+	if (rook_range(pos)) continue;
 	dst = pos;
     } while (!rook_line(dst));
     return dst;
