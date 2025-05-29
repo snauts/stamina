@@ -574,10 +574,11 @@ static int8 queen_line(byte src, byte dst) {
     return check_line(step(src, dst), src, dst);
 }
 
+static const int8 all_direction[] = { -1, 1, -16, 16, -15, 15, -17, 17, 0 };
+
 void shamble_queen(struct Mob *mob) {
-    static const int8 dir[] = { -1, 1, -16, 16, -15, 15, -17, 17, 0 };
     line_of_sight = &queen_line;
-    shamble_direction(mob, dir, 0);
+    shamble_direction(mob, all_direction, 0);
 }
 
 static byte is_empty_row(byte dst) {
@@ -697,6 +698,34 @@ byte free_spot(void) {
     return choice;
 }
 
+static byte blockedness(byte pos) {
+    byte value = 0;
+    const int8 *delta = all_direction;
+    while (*delta) {
+	byte next = pos + *delta++;
+	if (is_occupied(next)) value++;
+    }
+    return value;
+}
+
+static void king_move_choice(byte pos, byte delta) {
+    byte next = pos + delta;
+    byte distance = range(next);
+
+    if (!is_occupied(next) && distance > 1) {
+	add_choice((blockedness(next) << 5) - distance, delta);
+    }
+}
+
 void shamble_king(struct Mob *mob) {
     if (is_dead(mob)) return;
+
+    reset_choices();
+
+    byte pos = mob->pos;
+    const int8 *delta = all_direction;
+    while (*delta) {
+	king_move_choice(pos, *delta++);
+    }
+    walk_mob(mob, pick_choice());
 }
