@@ -3,6 +3,7 @@
 
 extern struct Mob mobs[];
 extern const void *respawn;
+extern const struct Room *room;
 extern byte spawn_pos;
 extern byte *struck;
 
@@ -263,12 +264,18 @@ static void next_henchman(void) {
     add_henchman(free_spot());
 }
 
+static void switch_to_final_room(void);
+
 static void throne_turn(void) {
     if (is_dead(henchman)) {
 	int8 index = current_henchman();
 	if (index >= 0 && index < ALL) {
 	    KING_PROGRESS++;
 	    next_henchman();
+	}
+	else if (index >= ALL) {
+	    switch_to_final_room();
+	    show_message(room->msg);
 	}
     }
 }
@@ -284,6 +291,16 @@ static void setup_throne(void) {
 	add_actor(defenders[i]);
 	decompress(MOB(set), lieutenants[i]);
     }
+}
+
+static byte end_game(const void *ptr, byte choice) {
+    if (choice) {
+	show_message("ASCEND");
+    }
+    else {
+	show_message("LEAVE");
+    }
+    return true; ptr;
 }
 
 /*** Prison ***/
@@ -569,6 +586,27 @@ static const struct Room throne = {
     .setup = setup_throne,
     .turn = throne_turn,
 };
+
+/*** Final ***/
+
+static const struct Bump final_bump[] = {
+    MAKE_BUMP(POS(1, 11), 16, &end_game, NULL, false),
+    MAKE_BUMP(POS(6, 5), -16, &end_game, NULL, true),
+    MAKE_BUMP(POS(7, 5), -16, &end_game, NULL, true),
+    MAKE_BUMP(POS(8, 5), -16, &end_game, NULL, true),
+    MAKE_BUMP(POS(9, 5), -16, &end_game, NULL, true),
+};
+
+static const struct Room final = {
+    .msg = "Choose your destiny: ascend or leave",
+    .bump = final_bump,
+    .count = SIZE(final_bump),
+    .shamble = shamble_king,
+};
+
+static void switch_to_final_room(void) {
+    room = &final;
+}
 
 static void setup_courtyard(void) {
     if (respawn != &courtyard) LEVEL[POS(8, 7)] -= TILE(1);
