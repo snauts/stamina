@@ -672,3 +672,23 @@ void strike_bosses(void) {
 	}
     }
 }
+
+static byte free_around(byte pos) {
+    for (byte i = 0; i < SIZE(around); i++) {
+	if (is_occupied(pos + around[i])) return false;
+    }
+    return !is_occupied(pos);
+}
+
+byte free_spot(void) {
+    byte choice = 0;
+    byte distance = 0;
+    for (byte pos = 32; pos < 192; pos++) {
+	byte len = range(pos);
+	if (len > distance && free_around(pos)) {
+	    distance = len;
+	    choice = pos;
+	}
+    }
+    return choice;
+}

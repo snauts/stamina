@@ -256,7 +256,7 @@ static byte king_cutscene(const void *ptr, byte pos) {
 static void throne_turn(void) {
     if (KING_PROGRESS >= SIZE(king_dialogue) && is_dead(henchman)) {
 	KING_PROGRESS++;
-	add_henchman(POS(6, 6));
+	add_henchman(free_spot());
     }
 }
 
