@@ -209,6 +209,14 @@ static const Action shamblers[] = {
     shamble_queen,
 };
 
+static const struct Mob * const defenders[] = {
+    mobs + JOE,
+    mobs + PERSIJS,
+    mobs + ISAAC,
+    mobs + OSKAR,
+    mobs + JEZEBEL,
+};
+
 static byte current_henchman(void) {
     return KING_PROGRESS - SIZE(king_dialogue);
 }
@@ -217,12 +225,19 @@ static void shamble_throne(struct Mob *mob) {
     shamblers[current_henchman()](mob);
 }
 
-static void add_henchman(struct Mob *mob, byte pos) {
-    byte i = current_henchman() + 1;
-    decompress(MOB(i), (lieutenants - 1)[i]);
-    mob->img = SET(i) | (X(player.pos) < X(pos) ? LEFT : 0);
-    mob->pos = pos;
-    add_actor(mob);
+static struct Mob *henchman;
+static void add_henchman(byte pos) {
+    byte i = current_henchman();
+
+    henchman = (void *) defenders[i];
+    henchman->pos = pos;
+
+    byte set = i + 1;
+    decompress(MOB(set), lieutenants[i]);
+    henchman->img = SET(set) | (X(player.pos) < X(pos) ? LEFT : 0);
+    henchman->ink = 0x2;
+    add_actor(henchman);
+
     lightning_strike(pos);
 }
 
@@ -230,12 +245,19 @@ static byte king_cutscene(const void *ptr, byte pos) {
     if (KING_PROGRESS < SIZE(king_dialogue)) {
 	show_message(king_dialogue[KING_PROGRESS]);
 	if (++KING_PROGRESS == SIZE(king_dialogue)) {
-	    add_henchman(mobs + JOE, POS(14, 9));
+	    add_henchman(POS(14, 9));
 	    decompress(MOB(3), arrow);
 	}
 	return true;
     }
     return false; ptr; pos;
+}
+
+static void throne_turn(void) {
+    if (KING_PROGRESS >= SIZE(king_dialogue) && is_dead(henchman)) {
+	KING_PROGRESS++;
+	add_henchman(POS(6, 6));
+    }
 }
 
 /*** Prison ***/
@@ -518,6 +540,7 @@ static const struct Room throne = {
     .bump = throne_bump,
     .count = SIZE(throne_bump),
     .shamble = shamble_throne,
+    .turn = throne_turn,
 };
 
 static void setup_courtyard(void) {
