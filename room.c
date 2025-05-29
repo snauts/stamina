@@ -185,7 +185,7 @@ static void setup_passage(void) {
 
 static void update_tile(byte pos, byte change) {
     LEVEL[pos] -= change;
-    restore_tile(pos);
+    if (!no_actors()) restore_tile(pos);
 }
 
 static void king_leaves_throne(void) {
@@ -210,7 +210,7 @@ static const Action shamblers[] = {
     shamble_king,
 };
 
-static const struct Mob * const defenders[] = {
+static struct Mob * const defenders[] = {
     mobs + JOE,
     mobs + PERSIJS,
     mobs + ISAAC,
@@ -231,7 +231,7 @@ static struct Mob *henchman;
 static void add_henchman(byte pos) {
     byte i = current_henchman();
 
-    henchman = (void *) defenders[i];
+    henchman = defenders[i];
     henchman->pos = pos;
 
     byte set = i + 1;
@@ -269,6 +269,14 @@ static void throne_turn(void) {
 	    next_henchman();
 	}
     }
+}
+
+static void setup_throne(void) {
+    int8 done = current_henchman();
+    for (int8 i = 0; i <= done; i++) {
+	add_actor(defenders[i]);
+    }
+    if (done == ALL) king_leaves_throne();
 }
 
 /*** Prison ***/
@@ -551,6 +559,7 @@ static const struct Room throne = {
     .bump = throne_bump,
     .count = SIZE(throne_bump),
     .shamble = shamble_throne,
+    .setup = setup_throne,
     .turn = throne_turn,
 };
 

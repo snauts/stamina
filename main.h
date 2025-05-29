@@ -100,6 +100,7 @@ int8 a_star(byte src);
 
 int8 a_star_move(const int8 *move_set, byte src, byte dst);
 
+byte no_actors(void);
 byte free_spot(void);
 void reset_mobs(void);
 void shamble_mobs(void);
