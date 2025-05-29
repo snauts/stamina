@@ -235,7 +235,6 @@ static void add_henchman(byte pos) {
     byte set = i + 1;
     decompress(MOB(set), lieutenants[i]);
     henchman->img = SET(set) | (X(player.pos) < X(pos) ? LEFT : 0);
-    henchman->ink = 0x2;
     add_actor(henchman);
 
     lightning_strike(pos);
