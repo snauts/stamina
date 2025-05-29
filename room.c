@@ -254,19 +254,20 @@ static byte king_cutscene(const void *ptr, byte pos) {
     return false; ptr; pos;
 }
 
-static void throne_turn(void) {
-    int8 index = current_henchman();
-    if (index > ALL) {
-	/* end game */
+static void next_henchman(void) {
+    if (current_henchman() == ALL) {
+	king_leaves_throne();
     }
-    else if (index >= 0 && is_dead(henchman)) {
-	if (index < ALL) {
+    add_henchman(free_spot());
+}
+
+static void throne_turn(void) {
+    if (is_dead(henchman)) {
+	int8 index = current_henchman();
+	if (index >= 0 && index < ALL) {
 	    KING_PROGRESS++;
+	    next_henchman();
 	}
-	else {
-	    king_leaves_throne();
-	}
-	add_henchman(free_spot());
     }
 }
 
@@ -559,6 +560,7 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     door_broken = false;
+    henchman = mobs + JOE;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
     respawn = &prison;
