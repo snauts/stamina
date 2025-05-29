@@ -293,14 +293,17 @@ static void setup_throne(void) {
     }
 }
 
-static byte end_game(const void *ptr, byte choice) {
-    if (choice) {
-	show_message("ASCEND");
-    }
-    else {
-	show_message("LEAVE");
-    }
-    return true; ptr;
+static const char * const ascend[] = {
+    "Ascend", "ASCEND", NULL,
+};
+
+static const char * const leave[] = {
+    "Leave", "LEAVE", NULL,
+};
+
+static byte end_game(const void *ptr, byte done) {
+    ending(ptr);
+    return done;
 }
 
 /*** Prison ***/
@@ -590,11 +593,11 @@ static const struct Room throne = {
 /*** Final ***/
 
 static const struct Bump final_bump[] = {
-    MAKE_BUMP(POS(1, 11), 16, &end_game, NULL, false),
-    MAKE_BUMP(POS(6, 5), -16, &end_game, NULL, true),
-    MAKE_BUMP(POS(7, 5), -16, &end_game, NULL, true),
-    MAKE_BUMP(POS(8, 5), -16, &end_game, NULL, true),
-    MAKE_BUMP(POS(9, 5), -16, &end_game, NULL, true),
+    MAKE_BUMP(POS(1, 11), 16, &end_game, leave, false),
+    MAKE_BUMP(POS(6, 5), -16, &end_game, ascend, true),
+    MAKE_BUMP(POS(7, 5), -16, &end_game, ascend, true),
+    MAKE_BUMP(POS(8, 5), -16, &end_game, ascend, true),
+    MAKE_BUMP(POS(9, 5), -16, &end_game, ascend, true),
 };
 
 static const struct Room final = {

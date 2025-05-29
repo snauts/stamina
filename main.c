@@ -425,6 +425,19 @@ static void you_died(void) {
     reload();
 }
 
+void ending(const char **text) {
+    byte y = 8;
+    clear_screen();
+    while (*text) {
+	put_str(*text, 8, y);
+	text++;
+	y += 8;
+    }
+    memset(COLOUR(0), 2, 0x300);
+    wait_space();
+    start_up();
+}
+
 static void place_richard(byte pos) {
     player.ink = 7;
     player.pos = pos;

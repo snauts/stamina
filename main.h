@@ -80,6 +80,7 @@ void game_idle(byte ticks);
 void call(void (*fn)(void));
 void advance_tile(byte pos);
 byte is_walkable(byte place);
+void ending(const char **text);
 byte consume_stamina(byte amount);
 void show_message(const char *msg);
 void swoosh(int8 f, int8 n, int8 s);
