@@ -182,6 +182,18 @@ static void setup_passage(void) {
     }
 }
 
+static void update_tile(byte pos, byte change) {
+    LEVEL[pos] -= change;
+    restore_tile(pos);
+}
+
+static void king_leaves_throne(void) {
+    update_tile(POS(7, 2), TILE(1));
+    update_tile(POS(7, 3), TILE(1));
+    update_tile(POS(8, 2), TILE(2));
+    update_tile(POS(8, 3), TILE(2));
+}
+
 static const char * const king_dialogue[] = {
     "Prince Richard...",
     "Suprised to see you so far up North",
