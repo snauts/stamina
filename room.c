@@ -304,7 +304,7 @@ static const char * const ascend[] = {
 
 static const char * const leave[] = {
     "  As you behold the scene of carnage,",
-    "revulsion strikes your heart. You ",
+    "revulsion strikes your heart. You",
     "condemn your ambition and abandon",
     "this cursed place.",
     NULL,
