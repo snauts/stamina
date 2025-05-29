@@ -187,6 +187,9 @@ enum {
     SID,
     UDO,
 
+/* throne */
+    FERDINAND,
+
 /* last entry */
     TOTAL_MOBS,
 };

@@ -59,6 +59,9 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 6, 9), .ink = 0x05, .img = IMG(1, 1, LEFT) },
     { .pos = POS( 9, 9), .ink = 0x05, .img = IMG(1, 0, LEFT) },
     { .pos = POS(12, 9), .ink = 0x05, .img = IMG(1, 1, LEFT) },
+
+    /* throne */
+    { .pos = POS( 0, 0), .ink = 0x07, .img = IMG(1, 0, LEFT), .var = 0 },
 };
 
 static struct Mob *actors[8];

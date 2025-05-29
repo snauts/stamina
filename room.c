@@ -7,7 +7,8 @@ extern byte spawn_pos;
 extern byte *struck;
 
 static byte door_broken;
-static byte king_progress;
+
+#define KING_PROGRESS mobs[FERDINAND].var
 
 enum { SOLDIER, HORSE, BISHOP, ROOK, QUEEN, ALL };
 static const void* const lieutenants[] = {
@@ -201,9 +202,10 @@ static const char * const king_dialogue[] = {
 };
 
 static byte king_cutscene(const void *ptr, byte pos) {
-    if (king_progress < SIZE(king_dialogue)) {
-	show_message(king_dialogue[king_progress]);
-	king_progress++;
+    if (KING_PROGRESS < SIZE(king_dialogue)) {
+	show_message(king_dialogue[KING_PROGRESS]);
+	if (++KING_PROGRESS == SIZE(king_dialogue)) {
+	}
 	return true;
     }
     return false; ptr; pos;
@@ -495,7 +497,6 @@ static void setup_courtyard(void) {
 }
 
 void startup_room(void) {
-    king_progress = 0;
     door_broken = false;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
