@@ -201,10 +201,37 @@ static const char * const king_dialogue[] = {
     "This ill-conceived journey of yours ends here",
 };
 
+static const Action shamblers[] = {
+    shamble_soldier,
+    shamble_horse,
+    shamble_bishop,
+    shamble_rook,
+    shamble_queen,
+};
+
+static byte current_henchman(void) {
+    return KING_PROGRESS - SIZE(king_dialogue);
+}
+
+static void shamble_throne(struct Mob *mob) {
+    shamblers[current_henchman()](mob);
+}
+
+static void add_henchman(struct Mob *mob, byte pos) {
+    byte i = current_henchman() + 1;
+    decompress(MOB(i), (lieutenants - 1)[i]);
+    mob->img = SET(i) | (X(player.pos) < X(pos) ? LEFT : 0);
+    mob->pos = pos;
+    add_actor(mob);
+    lightning_strike(pos);
+}
+
 static byte king_cutscene(const void *ptr, byte pos) {
     if (KING_PROGRESS < SIZE(king_dialogue)) {
 	show_message(king_dialogue[KING_PROGRESS]);
 	if (++KING_PROGRESS == SIZE(king_dialogue)) {
+	    add_henchman(mobs + JOE, POS(14, 9));
+	    decompress(MOB(3), arrow);
 	}
 	return true;
     }
@@ -490,6 +517,7 @@ static const struct Room throne = {
     .map = map_of_throne,
     .bump = throne_bump,
     .count = SIZE(throne_bump),
+    .shamble = shamble_throne,
 };
 
 static void setup_courtyard(void) {
