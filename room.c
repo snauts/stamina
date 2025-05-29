@@ -274,7 +274,9 @@ static void throne_turn(void) {
 static void setup_throne(void) {
     int8 done = current_henchman();
     for (int8 i = 0; i <= done; i++) {
+	byte set = i + 1;
 	add_actor(defenders[i]);
+	decompress(MOB(set), lieutenants[i]);
     }
     if (done == ALL) king_leaves_throne();
 }
