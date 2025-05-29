@@ -692,3 +692,7 @@ byte free_spot(void) {
     }
     return choice;
 }
+
+void shamble_king(struct Mob *mob) {
+    if (is_dead(mob)) return;
+}

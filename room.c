@@ -12,7 +12,7 @@ static byte door_broken;
 
 enum { SOLDIER, HORSE, BISHOP, ROOK, QUEEN, ALL };
 static const void* const lieutenants[] = {
-    soldier, horse, bishop, rook, queen,
+    soldier, horse, bishop, rook, queen, king,
 };
 static byte beaten[ALL];
 
@@ -207,6 +207,7 @@ static const Action shamblers[] = {
     shamble_bishop,
     shamble_rook,
     shamble_queen,
+    shamble_king,
 };
 
 static const struct Mob * const defenders[] = {
@@ -215,9 +216,10 @@ static const struct Mob * const defenders[] = {
     mobs + ISAAC,
     mobs + OSKAR,
     mobs + JEZEBEL,
+    mobs + FERDINAND,
 };
 
-static byte current_henchman(void) {
+static int8 current_henchman(void) {
     return KING_PROGRESS - SIZE(king_dialogue);
 }
 
@@ -253,8 +255,17 @@ static byte king_cutscene(const void *ptr, byte pos) {
 }
 
 static void throne_turn(void) {
-    if (KING_PROGRESS >= SIZE(king_dialogue) && is_dead(henchman)) {
-	KING_PROGRESS++;
+    int8 index = current_henchman();
+    if (index > ALL) {
+	/* end game */
+    }
+    else if (index >= 0 && is_dead(henchman)) {
+	if (index < ALL) {
+	    KING_PROGRESS++;
+	}
+	else {
+	    king_leaves_throne();
+	}
 	add_henchman(free_spot());
     }
 }
