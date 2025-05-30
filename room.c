@@ -24,19 +24,31 @@ static byte change_room(const void *new_room, byte pos) {
     return consume_stamina(MOVE_STAMINA) && load_room(new_room, pos);
 }
 
+static void replenish_stamina_msg(void) {
+    show_message("Rest to replenish stamina");
+}
+
+static void prison_door_open(void) {
+    update_tile(POS(10, 6), TILE(1));
+}
+
+static void thud_sound_and_msg(const char *msg) {
+    update_image(&player, TILE(MOVING));
+    show_message(msg);
+    swoosh(3, 3, -1);
+}
+
 static byte break_door(const void *ptr, byte pos) {
     if (door_broken) {
 	return change_room(ptr, pos);
     }
     else if (consume_stamina(FULL_STAMINA)) {
-	show_message("You break down the door");
-	update_image(&player, TILE(MOVING));
-	advance_tile(POS(10, 6));
+	thud_sound_and_msg("You break down the door");
+	prison_door_open();
 	door_broken = true;
-	swoosh(3, 3, -1);
     }
     else {
-	show_message("Rest to replenish stamina");
+	replenish_stamina_msg();
     }
     return true;
 }
@@ -45,7 +57,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
     if (respawn != ptr) {
 	respawn = ptr;
 	spawn_pos = pos;
-	advance_tile(POS(8, 7));
+	update_tile(POS(8, 7), TILE(1));
 	show_message("Central fire of awakening");
 	swoosh(60, 20, 5);
     }
@@ -53,7 +65,7 @@ static byte set_bonfire(const void *ptr, byte pos) {
 }
 
 static void setup_prison(void) {
-    if (door_broken) LEVEL[POS(10, 6)] += TILE(1);
+    if (door_broken) prison_door_open();
 }
 
 static void setup_dungeon(void) {
@@ -148,10 +160,10 @@ static void painting(byte pos, byte frame) {
 }
 
 static void open_seal(void) {
-    LEVEL[POS(7, 5)] += TILE(1);
-    LEVEL[POS(6, 6)] += TILE(1);
-    LEVEL[POS(7, 6)] += TILE(1);
-    LEVEL[POS(8, 6)] += TILE(1);
+    update_tile(POS(7, 5), TILE(1));
+    update_tile(POS(6, 6), TILE(1));
+    update_tile(POS(7, 6), TILE(1));
+    update_tile(POS(8, 6), TILE(1));
     INK[0xEE] = INK[0xEF] = 5;
 }
 
@@ -184,18 +196,11 @@ static void setup_passage(void) {
     }
 }
 
-static void update_tile(byte pos, byte change) {
-    LEVEL[pos] -= change;
-    if (has_actors()) {
-	restore_tile(pos);
-    }
-}
-
 static void king_leaves_throne(void) {
-    update_tile(POS(7, 2), TILE(1));
-    update_tile(POS(7, 3), TILE(1));
-    update_tile(POS(8, 2), TILE(2));
-    update_tile(POS(8, 3), TILE(2));
+    update_tile(POS(7, 2), -TILE(1));
+    update_tile(POS(7, 3), -TILE(1));
+    update_tile(POS(8, 2), -TILE(2));
+    update_tile(POS(8, 3), -TILE(2));
 }
 
 static const char * const king_dialogue[] = {
@@ -628,7 +633,7 @@ static void switch_to_final_room(void) {
 }
 
 static void setup_courtyard(void) {
-    if (respawn != &courtyard) LEVEL[POS(8, 7)] -= TILE(1);
+    if (respawn != &courtyard) update_tile(POS(8, 7), -TILE(1));
 }
 
 void startup_room(void) {

@@ -396,8 +396,10 @@ void draw_tile(byte *ptr, byte pos, byte id) {
     }
 }
 
-void advance_tile(byte pos) {
-    draw_tile(EMPTY, pos, LEVEL[pos] + TILE(1));
+static byte in_setup;
+void update_tile(byte pos, int8 change) {
+    LEVEL[pos] += change;
+    if (!in_setup) restore_tile(pos);
 }
 
 static void horizontal_line(byte y) {
@@ -591,7 +593,9 @@ byte load_room(const void *new_room, byte pos) {
     void *dst = EMPTY;
     while (*map) dst = decompress(dst, *map++);
 
+    in_setup = true;
     call(room->setup);
+    in_setup = false;
 
     for (byte pos = 32; pos < 192; pos++) {
 	draw_tile(EMPTY, pos, LEVEL[pos]);
@@ -614,6 +618,7 @@ byte load_room(const void *new_room, byte pos) {
 }
 
 static void start_game(void) {
+    in_setup = false;
     has_message = NULL;
     player.img = SET(0);
     show_block(bar, 0, 24);
