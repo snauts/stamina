@@ -339,7 +339,7 @@ static byte smash_wall(const void *ptr, byte pos) {
 	hole_in_sewer_wall();
 	wall_broken = true;
     }
-    return true;
+    return true; ptr; pos;
 }
 
 static void setup_sewer(void) {
