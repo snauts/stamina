@@ -426,9 +426,9 @@ static void you_died(void) {
 }
 
 void ending(const char **text, const byte *img) {
-    byte y = 16;
+    byte y = 48;
     clear_screen();
-    show_block(img, 0, 72);
+    show_block(img, 32, 72);
     while (*text) {
 	put_str(*text, 8, y);
 	text++;
