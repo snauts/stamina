@@ -616,6 +616,13 @@ static const struct Room final = {
     .shamble = shamble_king,
 };
 
+/*** Sewers ***/
+
+static const struct Room sewers = {
+    .msg = "Sewers of Surprise",
+    .map = map_of_sewers,
+};
+
 static void switch_to_final_room(void) {
     room = &final;
 }
