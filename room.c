@@ -8,6 +8,7 @@ extern byte spawn_pos;
 extern byte *struck;
 
 static byte door_broken;
+static byte wall_broken;
 
 #define KING_PROGRESS mobs[FERDINAND].var
 
@@ -320,6 +321,31 @@ static byte end_game(const void *ptr, byte done) {
     return true;
 }
 
+static void hole_in_sewer_wall(void) {
+    update_tile(POS(10, 2), TILE(1));
+    update_tile(POS(11, 2), -TILE(14));
+    update_tile(POS(12, 2), TILE(2));
+}
+
+static byte smash_wall(const void *ptr, byte pos) {
+    if (wall_broken) {
+	return false;
+    }
+    else if (!consume_stamina(FULL_STAMINA)) {
+	replenish_stamina_msg();
+    }
+    else {
+	thud_sound_and_msg("You smash the wall");
+	hole_in_sewer_wall();
+	wall_broken = true;
+    }
+    return true;
+}
+
+static void setup_sewer(void) {
+    if (wall_broken) hole_in_sewer_wall();
+}
+
 /*** Prison ***/
 
 static const struct Bump prison_bump[] = {
@@ -623,9 +649,17 @@ static const struct Room final = {
 
 /*** Sewers ***/
 
+static const struct Bump sewer_bump[] = {
+    MAKE_BUMP(POS(11, 3), -16, &smash_wall, NULL, true),
+    MAKE_BUMP(POS(11, 2), -16, &change_room, &corridor, POS(10, 9)),
+};
+
 static const struct Room sewers = {
     .msg = "Sewers of Surprise",
     .map = map_of_sewers,
+    .bump = sewer_bump,
+    .count = SIZE(sewer_bump),
+    .setup = setup_sewer,
 };
 
 static void switch_to_final_room(void) {
@@ -638,6 +672,7 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     door_broken = false;
+    wall_broken = false;
     henchman = mobs + JOE;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
