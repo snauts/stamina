@@ -54,6 +54,7 @@ pcx:
 	@./pcx-dump -l courtyard.pcx special.pcx walls.pcx garden.pcx >> data.h
 	@./pcx-dump -l bedroom.pcx special.pcx walls.pcx inside.pcx >> data.h
 	@./pcx-dump -l passage.pcx special.pcx walls.pcx inside.pcx >> data.h
+	@./pcx-dump -l sewers.pcx special.pcx bricks.pcx garden.pcx >> data.h
 	@./pcx-dump -l cathedral.pcx special.pcx glass.pcx >> data.h
 	@./pcx-dump -l rampart.pcx special.pcx tower.pcx >> data.h
 	@./pcx-dump -l chancel.pcx special.pcx glass.pcx >> data.h
