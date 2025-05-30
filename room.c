@@ -81,6 +81,11 @@ static void setup_corridor(void) {
     add_actor(mobs + JURIS);
     add_actor(mobs + ZIGIS);
     add_actor(mobs + ROBIS);
+    if (wall_broken) {
+	update_tile(POS( 9, 9), TILE(2));
+	update_tile(POS(10, 9), -(TILE(3) | FLIP | LEFT));
+	update_tile(POS(11, 9), TILE(1));
+    }
 }
 
 static void setup_hallway(void) {
@@ -406,6 +411,7 @@ static const struct Room dungeon = {
 static const struct Bump corridor_bump[] = {
     MAKE_BUMP(POS(1, 6), -1, &change_room, &dungeon, POS(14, 6)),
     MAKE_BUMP(POS(13, 6), 1, &change_room, &courtyard, POS(2, 7)),
+    MAKE_BUMP(POS(10, 9), 16, &change_room, &sewers, POS(11, 2)),
 };
 
 static void setup_corridor(void);
