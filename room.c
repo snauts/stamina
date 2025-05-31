@@ -158,6 +158,7 @@ static void chancel_turn(void) {
     if (!crypt_open && pilgrims_in_place()) {
 	open_crypt_passage();
 	crypt_open = true;
+	swoosh(7, 5, -1);
     }
 }
 
