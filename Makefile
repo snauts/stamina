@@ -43,6 +43,7 @@ pcx:
 	@./pcx-dump -t rook.pcx >> data.h
 	@./pcx-dump -t king.pcx >> data.h
 	@./pcx-dump -t ent.pcx >> data.h
+	@./pcx-dump -t rat.pcx >> data.h
 
 	@./pcx-dump -l prison.pcx special.pcx bricks.pcx >> data.h
 	@./pcx-dump -l tunnel.pcx special.pcx bricks.pcx >> data.h

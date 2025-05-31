@@ -126,6 +126,7 @@ struct Mob *is_mob(byte pos);
 void shamble_king(struct Mob *mob);
 void shamble_arrow(struct Mob *mob);
 void shamble_beast(struct Mob *mob);
+void shamble_rat(struct Mob *mob);
 void shamble_ent(struct Mob *mob);
 void shamble_rook(struct Mob *mob);
 void shamble_bishop(struct Mob *mob);
@@ -196,6 +197,13 @@ enum {
 
 /* throne */
     FERDINAND,
+
+/* sewers */
+    REMY,
+    EMILE,
+    DJANGO,
+    VICTOR,
+    ANTON,
 
 /* last entry */
     TOTAL_MOBS,

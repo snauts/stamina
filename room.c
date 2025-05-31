@@ -352,6 +352,12 @@ static byte smash_wall(const void *ptr, byte pos) {
 }
 
 static void setup_sewer(void) {
+    decompress(MOB(1), rat);
+    add_actor(mobs + REMY);
+    add_actor(mobs + EMILE);
+    add_actor(mobs + DJANGO);
+    add_actor(mobs + VICTOR);
+    add_actor(mobs + ANTON);
     if (wall_broken) hole_in_sewer_wall();
 }
 
@@ -682,6 +688,7 @@ static const struct Room sewers = {
     .map = map_of_sewers,
     .bump = sewer_bump,
     .count = SIZE(sewer_bump),
+    .shamble = shamble_rat,
     .setup = setup_sewer,
 };
 

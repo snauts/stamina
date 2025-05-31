@@ -62,6 +62,13 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
 
     /* throne */
     { .pos = POS( 0, 0), .ink = 0x07, .img = IMG(1, 0, LEFT), .var = 0 },
+
+    /* sewers */
+    { .pos = POS( 4, 5), .ink = 0x06, .img = IMG(1, 0, RIGHT) },
+    { .pos = POS( 4, 7), .ink = 0x06, .img = IMG(1, 1, RIGHT) },
+    { .pos = POS( 6, 4), .ink = 0x06, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 8, 6), .ink = 0x06, .img = IMG(1, 1, LEFT) },
+    { .pos = POS( 7, 8), .ink = 0x06, .img = IMG(1, 0, LEFT) },
 };
 
 static struct Mob *actors[8];
@@ -747,4 +754,8 @@ void shamble_king(struct Mob *mob) {
 	king_move_choice(pos, *delta++);
     }
     walk_mob(mob, pick_choice());
+}
+
+void shamble_rat(struct Mob *mob) {
+    if (is_dead(mob)) return;
 }
