@@ -58,7 +58,10 @@ static byte break_door(const void *ptr, byte pos) {
 }
 
 static byte set_bonfire(const void *ptr, byte pos) {
-    if (respawn != ptr) {
+    if (cheesing > 0) {
+	show_message("Bonjour Mr. Morbier");
+    }
+    else if (respawn != ptr) {
 	respawn = ptr;
 	spawn_pos = pos;
 	update_tile(POS(8, 7), TILE(1));
