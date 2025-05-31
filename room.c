@@ -515,6 +515,8 @@ static const struct Room bailey = {
 
 /*** Cathedral ***/
 
+static const char pilgrim_msg[] = "Pilgrims must reach their destination";
+
 static const struct Bump cathedral_bump[] = {
     MAKE_BUMP(POS(1, 7),  -1, &change_room, &courtyard, POS(14, 7)),
     MAKE_BUMP(POS(1, 8),  -1, &change_room, &courtyard, POS(14, 7)),
@@ -523,6 +525,7 @@ static const struct Bump cathedral_bump[] = {
     MAKE_BUMP(POS(1, 11), -1, &change_room, &courtyard, POS(14, 7)),
     MAKE_BUMP(POS(7, 7), -16, &change_room, &chancel, POS(7, 11)),
     MAKE_BUMP(POS(8, 7), -16, &change_room, &chancel, POS(8, 11)),
+    MAKE_BUMP(POS(14, 9), -1, &bump_msg, &pilgrim_msg, true),
 };
 
 static const struct Room cathedral = {
