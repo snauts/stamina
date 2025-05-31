@@ -14,6 +14,7 @@ extern const byte bar[];
 extern const byte title[];
 extern const byte richard[];
 
+extern int8 cheesing;
 const void *respawn;
 byte spawn_pos;
 
@@ -441,8 +442,8 @@ void ending(const char **text, const byte *img) {
 }
 
 static void place_richard(byte pos) {
-    player.ink = 7;
     player.pos = pos;
+    player.ink = cheesing > 0 ? 6 : 7;
     update_image(&player, TILE(MOVING));
 }
 
@@ -612,6 +613,12 @@ byte load_room(const void *new_room, byte pos) {
 	player.pos = 0;
 	push_mob(mob, closest_free(pos));
     }
+
+    if (cheesing > 0) {
+	spawn_pos = pos;
+	respawn = new_room;
+    }
+
     place_richard(pos);
     return true;
 }

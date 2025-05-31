@@ -11,6 +11,8 @@ static byte door_broken;
 static byte wall_broken;
 static byte ground_hole;
 
+int8 cheesing;
+
 #define KING_PROGRESS mobs[FERDINAND].var
 
 enum { SOLDIER, HORSE, BISHOP, ROOK, QUEEN, ALL };
@@ -351,6 +353,28 @@ static byte smash_wall(const void *ptr, byte pos) {
     return true; ptr; pos;
 }
 
+static void clear_cheese(void) {
+    set_ink(POS(12,6), 1);
+    update_tile(POS(12,6), -TILE(17));
+}
+
+static byte get_cheese(const void *ptr, byte pos) {
+    ptr; pos;
+    if (cheesing == -1) {
+	show_message("Do you really want to cheese?");
+    }
+    else if (cheesing == 0) {
+	clear_cheese();
+	player.ink = 6;
+	draw_mob(&player);
+    }
+    else {
+	return false;
+    }
+    cheesing++;
+    return true;
+}
+
 static void setup_sewer(void) {
     decompress(MOB(1), rat);
     add_actor(mobs + REMY);
@@ -358,6 +382,7 @@ static void setup_sewer(void) {
     add_actor(mobs + DJANGO);
     add_actor(mobs + VICTOR);
     add_actor(mobs + ANTON);
+    if (cheesing > 0) clear_cheese();
     if (wall_broken) hole_in_sewer_wall();
 }
 
@@ -684,6 +709,10 @@ static const struct Room final = {
 static const struct Bump sewer_bump[] = {
     MAKE_BUMP(POS(11, 3), -16, &smash_wall, NULL, true),
     MAKE_BUMP(POS(11, 2), -16, &change_room, &corridor, POS(10, 9)),
+    MAKE_BUMP(POS(11, 6),   1, &get_cheese, NULL, true),
+    MAKE_BUMP(POS(13, 6),  -1, &get_cheese, NULL, true),
+    MAKE_BUMP(POS(12, 5),  16, &get_cheese, NULL, true),
+    MAKE_BUMP(POS(12, 7), -16, &get_cheese, NULL, true),
 };
 
 static const struct Room sewers = {
@@ -704,6 +733,7 @@ static void setup_courtyard(void) {
 }
 
 void startup_room(void) {
+    cheesing = -1;
     door_broken = false;
     wall_broken = false;
     ground_hole = false;

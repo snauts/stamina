@@ -109,15 +109,22 @@ static byte range(byte target) {
     return manhattan(target, player.pos);
 }
 
-static void set_tile_ink(byte pos, byte ink) {
-    byte *ptr = COLOUR(pos_to_ink(pos));
+static void set_ink_buffer(byte *ptr, byte ink) {
     *ptr = ink; ptr += 0x01;
     *ptr = ink; ptr += 0x1f;
     *ptr = ink; ptr += 0x01;
     *ptr = ink;
 }
 
-static void draw_mob(struct Mob *mob) {
+static void set_tile_ink(byte pos, byte ink) {
+    set_ink_buffer(COLOUR(pos_to_ink(pos)), ink);
+}
+
+void set_ink(byte pos, byte ink) {
+    set_ink_buffer(INK + pos_to_ink(pos) - 0x80, ink);
+}
+
+void draw_mob(struct Mob *mob) {
     if (mob->pos == POS(0, 0)) return;
     draw_tile(MOB(0), mob->pos, mob->img);
     set_tile_ink(mob->pos, mob->ink);
