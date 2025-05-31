@@ -9,6 +9,7 @@ extern byte *struck;
 
 static byte door_broken;
 static byte wall_broken;
+static byte ground_hole;
 
 #define KING_PROGRESS mobs[FERDINAND].var
 
@@ -133,6 +134,9 @@ static void setup_stables(void) {
     if (!beaten[HORSE]) {
 	add_actor(mobs + PERSIJS);
 	add_actor(mobs + MARKUSS);
+    }
+    if (ground_hole) {
+	update_tile(POS(9, 5), TILE(1));
     }
 }
 
@@ -351,6 +355,15 @@ static void setup_sewer(void) {
     if (wall_broken) hole_in_sewer_wall();
 }
 
+static byte fall_in_sewer(const void *ptr, byte pos) {
+    push_mob(&player, POS(9, 5));
+    game_idle(25);
+    update_tile(POS(9,5), ground_hole ? 0 : TILE(1));
+    ground_hole = true;
+    swoosh(26, 25, -1);
+    return change_room(ptr, pos);
+}
+
 /*** Prison ***/
 
 static const struct Bump prison_bump[] = {
@@ -553,6 +566,10 @@ static const struct Bump stables_bump[] = {
     MAKE_BUMP(POS(15, 6), 1, &change_room, &bailey, POS(1, 6)),
     MAKE_BUMP(POS(15, 7), 1, &change_room, &bailey, POS(1, 7)),
     MAKE_BUMP(POS(15, 8), 1, &change_room, &bailey, POS(1, 8)),
+    MAKE_BUMP(POS(10, 5),  -1, &fall_in_sewer, &sewers, POS(6, 6)),
+    MAKE_BUMP(POS( 8, 5),   1, &fall_in_sewer, &sewers, POS(6, 6)),
+    MAKE_BUMP(POS( 9, 6), -16, &fall_in_sewer, &sewers, POS(6, 6)),
+    MAKE_BUMP(POS( 9, 4),  16, &fall_in_sewer, &sewers, POS(6, 6)),
 };
 
 static const struct Room stables = {
@@ -679,6 +696,7 @@ static void setup_courtyard(void) {
 void startup_room(void) {
     door_broken = false;
     wall_broken = false;
+    ground_hole = false;
     henchman = mobs + JOE;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
