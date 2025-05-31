@@ -679,10 +679,10 @@ void strike_bosses(void) {
 }
 
 static byte free_around(byte pos) {
-    for (byte i = 0; i < SIZE(around); i++) {
-	if (is_occupied(pos + around[i])) return false;
+    for (byte i = 0; i < SIZE(all_direction); i++) {
+	if (is_occupied(pos + all_direction[i])) return false;
     }
-    return !is_occupied(pos);
+    return true;
 }
 
 byte free_spot(void) {
