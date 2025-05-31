@@ -111,6 +111,7 @@ void place_actors(void);
 void strike_bosses(void);
 byte is_occupied(byte pos);
 void hourglass(byte color);
+byte closest_free(byte dst);
 void restore_tile(byte pos);
 byte is_dead(struct Mob *mob);
 void add_actor(struct Mob *mob);

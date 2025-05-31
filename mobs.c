@@ -698,6 +698,19 @@ byte free_spot(void) {
     return choice;
 }
 
+byte closest_free(byte dst) {
+    byte choice = dst;
+    byte distance = 255;
+    for (byte pos = 32; pos < 192; pos++) {
+	byte len = manhattan(pos, dst);
+	if (len < distance && !is_occupied(pos)) {
+	    distance = len;
+	    choice = pos;
+	}
+    }
+    return choice;
+}
+
 static byte blockedness(byte pos) {
     byte value = 0;
     const int8 *delta = all_direction;

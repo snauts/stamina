@@ -606,14 +606,13 @@ byte load_room(const void *new_room, byte pos) {
     place_actors();
     show_message(room->msg);
 
-    if (is_mob(pos) == NULL) {
-	place_richard(pos);
+    struct Mob *mob = is_mob(pos);
+    if (mob != NULL) {
+	game_idle(20);
+	player.pos = 0;
+	push_mob(mob, closest_free(pos));
     }
-    else {
-	game_idle(50);
-	load_room(from, player.pos);
-	show_message("Path is blocked");
-    }
+    place_richard(pos);
     return true;
 }
 
