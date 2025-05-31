@@ -490,15 +490,21 @@ static byte should_rook_move(struct Mob *mob) {
     return (mob->var & 0x80);
 }
 
-static int8 rook_line(byte src) {
-    return check_line(slide(src, player.pos), src, player.pos);
+static int8 rook_line(byte src, byte dst) {
+    return check_line(slide(src, dst), src, dst);
 }
 
-static const int8 around[] = { 1, 16, -1, -16 };
+static const int8 around[] = { 1, 16, -1, -16, 0 };
+#define AROUND_COUNT (SIZE(around) - 1)
+
+void shamble_elephant(struct Mob *mob) {
+    line_of_sight = &rook_line;
+    shamble_direction(mob, around, 1);
+}
 
 static byte food(struct Mob *self, byte pos) {
     byte ink = self->ink;
-    for (byte i = 0; i < SIZE(around); i++) {
+    for (byte i = 0; i < AROUND_COUNT; i++) {
 	struct Mob *mob = is_mob(pos + around[i]);
 	if (mob && mob != self && mob->ink == ink) return true;
     }
@@ -519,12 +525,12 @@ static byte rook_move(struct Mob *mob, int8 dir) {
 	if (food(mob, pos)) return pos;
 	if (rook_range(pos)) continue;
 	dst = pos;
-    } while (!rook_line(dst));
+    } while (!rook_line(dst, player.pos));
     return dst;
 }
 
 static void rook_carousel(struct Mob *mob) {
-    for (byte i = 0; i < SIZE(around); i++) {
+    for (byte i = 0; i < AROUND_COUNT; i++) {
 	int8 dir = around[mob->var & 3];
 	byte pos = rook_move(mob, dir);
 	if (pos) {
@@ -542,7 +548,7 @@ static void rook_carousel(struct Mob *mob) {
 void shamble_rook(struct Mob *mob) {
     if (is_dead(mob)) return;
 
-    if (rook_line(mob->pos)) {
+    if (rook_line(mob->pos, player.pos)) {
 	long_attack(mob, 1);
     }
     else if (should_rook_move(mob)) {

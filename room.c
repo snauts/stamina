@@ -219,7 +219,7 @@ static const Action shamblers[] = {
     shamble_soldier,
     shamble_horse,
     shamble_bishop,
-    shamble_rook,
+    shamble_elephant,
     shamble_queen,
     shamble_king,
 };

@@ -132,6 +132,7 @@ void shamble_bishop(struct Mob *mob);
 void shamble_horse(struct Mob *mob);
 void shamble_queen(struct Mob *mob);
 void shamble_soldier(struct Mob *mob);
+void shamble_elephant(struct Mob *mob);
 
 #ifdef AY
 void stop_music(void);
