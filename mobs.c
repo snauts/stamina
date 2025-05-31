@@ -504,17 +504,16 @@ static int8 rook_line(byte src, byte dst) {
     return check_line(slide(src, dst), src, dst);
 }
 
-static const int8 around[] = { 1, 16, -1, -16, 0 };
-#define AROUND_COUNT (SIZE(around) - 1)
-
 void shamble_elephant(struct Mob *mob) {
     line_of_sight = &rook_line;
-    shamble_direction(mob, around, 1);
+    shamble_direction(mob, nearest, 1);
 }
+
+static const int8 around[] = { 1, 16, -1, -16 };
 
 static byte food(struct Mob *self, byte pos) {
     byte ink = self->ink;
-    for (byte i = 0; i < AROUND_COUNT; i++) {
+    for (byte i = 0; i < SIZE(around); i++) {
 	struct Mob *mob = is_mob(pos + around[i]);
 	if (mob && mob != self && mob->ink == ink) return true;
     }
@@ -540,7 +539,7 @@ static byte rook_move(struct Mob *mob, int8 dir) {
 }
 
 static void rook_carousel(struct Mob *mob) {
-    for (byte i = 0; i < AROUND_COUNT; i++) {
+    for (byte i = 0; i < SIZE(around); i++) {
 	int8 dir = around[mob->var & 3];
 	byte pos = rook_move(mob, dir);
 	if (pos) {
@@ -761,9 +760,8 @@ void shamble_king(struct Mob *mob) {
 
 static int8 a_star_rat(byte src) {
     reset_a_star(bishop_dir);
-    const int8 *ptr = around;
-    while (*ptr) {
-	add_a_star_target(player.pos + *ptr++);
+    for (byte i = 0; i < SIZE(around); i++) {
+	add_a_star_target(player.pos + around[i]);
     }
     return a_star(src);
 }
