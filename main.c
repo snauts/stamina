@@ -455,11 +455,20 @@ static byte invoke_bump(Caller fn, void *ptr, byte arg) {
     return fn(ptr, arg);
 }
 
+static byte should_activate(const struct Bump *bump, int8 delta) {
+    if (bump->delta == 0) {
+	return player.pos + delta == bump->pos;
+    }
+    else {
+	return player.pos == bump->pos && delta == bump->delta;
+    }
+}
+
 static byte activate_bumps(int8 delta) {
     const struct Bump *bump = room->bump;
     byte count = room->count;
     while (count-- > 0) {
-	if (player.pos == bump->pos && delta == bump->delta) {
+	if (should_activate(bump, delta)) {
 	    /*
 	     * there seems to be compiler bug:
 	     * bump->fn(bump->ptr, bump->arg)

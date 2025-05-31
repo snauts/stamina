@@ -603,10 +603,7 @@ static const struct Bump stables_bump[] = {
     MAKE_BUMP(POS(15, 6), 1, &change_room, &bailey, POS(1, 6)),
     MAKE_BUMP(POS(15, 7), 1, &change_room, &bailey, POS(1, 7)),
     MAKE_BUMP(POS(15, 8), 1, &change_room, &bailey, POS(1, 8)),
-    MAKE_BUMP(POS(10, 5),  -1, &fall_in_sewer, &sewers, POS(6, 6)),
-    MAKE_BUMP(POS( 8, 5),   1, &fall_in_sewer, &sewers, POS(6, 6)),
-    MAKE_BUMP(POS( 9, 6), -16, &fall_in_sewer, &sewers, POS(6, 6)),
-    MAKE_BUMP(POS( 9, 4),  16, &fall_in_sewer, &sewers, POS(6, 6)),
+    MAKE_BUMP(POS(9, 5),  0, &fall_in_sewer, &sewers, POS(6, 6)),
 };
 
 static const struct Room stables = {
@@ -712,10 +709,7 @@ static const struct Room final = {
 static const struct Bump sewer_bump[] = {
     MAKE_BUMP(POS(11, 3), -16, &smash_wall, NULL, true),
     MAKE_BUMP(POS(11, 2), -16, &change_room, &corridor, POS(10, 9)),
-    MAKE_BUMP(POS(11, 6),   1, &get_cheese, NULL, true),
-    MAKE_BUMP(POS(13, 6),  -1, &get_cheese, NULL, true),
-    MAKE_BUMP(POS(12, 5),  16, &get_cheese, NULL, true),
-    MAKE_BUMP(POS(12, 7), -16, &get_cheese, NULL, true),
+    MAKE_BUMP(POS(12, 6),   0, &get_cheese, NULL, true),
 };
 
 static const struct Room sewers = {
