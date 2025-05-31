@@ -7,6 +7,7 @@ extern const struct Room *room;
 extern byte spawn_pos;
 extern byte *struck;
 
+static byte crypt_open;
 static byte door_broken;
 static byte wall_broken;
 static byte ground_hole;
@@ -124,6 +125,17 @@ static void setup_rampart(void) {
     }
 }
 
+static void update_and_free_tile(byte pos, int8 change) {
+    update_tile(pos, change);
+    struct Mob *mob = is_mob(pos);
+    if (mob != NULL) push_mob(mob, closest_free(pos));
+}
+
+static void open_crypt_passage(void) {
+    update_and_free_tile(POS(7, 6), TILE(26));
+    update_and_free_tile(POS(8, 6), TILE(26) | LEFT);
+}
+
 static void setup_chancel(void) {
     setup_furniture(BISHOP);
     add_actor(mobs + WILLY);
@@ -131,6 +143,21 @@ static void setup_chancel(void) {
     if (!beaten[BISHOP]) {
 	add_actor(mobs + ISAAC);
 	add_actor(mobs + DAVID);
+    }
+    if (crypt_open) {
+	open_crypt_passage();
+    }
+}
+
+static byte pilgrims_in_place(void) {
+    return mobs[WILLY].pos == POS(6, 3) && mobs[TOMMY].pos == POS(9, 3);
+}
+
+static void chancel_turn(void) {
+    strike_bosses();
+    if (!crypt_open && pilgrims_in_place()) {
+	open_crypt_passage();
+	crypt_open = true;
     }
 }
 
@@ -594,7 +621,7 @@ static const struct Room chancel = {
     .count = SIZE(chancel_bump),
     .setup = setup_chancel,
     .shamble = shamble_bishop,
-    .turn = strike_bosses,
+    .turn = chancel_turn,
 };
 
 /*** Stables ***/
@@ -731,6 +758,7 @@ static void setup_courtyard(void) {
 
 void startup_room(void) {
     cheesing = -1;
+    crypt_open = false;
     door_broken = false;
     wall_broken = false;
     ground_hole = false;
