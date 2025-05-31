@@ -68,7 +68,7 @@ static const struct Mob mobs_reset[TOTAL_MOBS] = {
     { .pos = POS( 4, 7), .ink = 0x06, .img = IMG(1, 1, RIGHT) },
     { .pos = POS( 6, 4), .ink = 0x06, .img = IMG(1, 0, LEFT) },
     { .pos = POS( 8, 6), .ink = 0x06, .img = IMG(1, 1, LEFT) },
-    { .pos = POS( 7, 8), .ink = 0x06, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 6, 8), .ink = 0x06, .img = IMG(1, 0, LEFT) },
 };
 
 static struct Mob *actors[8];
@@ -301,18 +301,20 @@ static void walk_mob(struct Mob *mob, int8 delta) {
     }
 }
 
-void shamble_beast(struct Mob *mob) {
+static void shamble_simple(struct Mob *mob, int8 delta) {
     if (is_dead(mob)) return;
     animate_mob_shamble(mob);
 
-    byte src = mob->pos;
-    byte dst = player.pos;
-    if (range(src) == 1) {
+    if (range(mob->pos) == 1) {
 	animate_attack(mob, &player);
     }
     else {
-	walk_mob(mob, a_star_move(nearest, src, dst));
+	walk_mob(mob, delta);
     }
+}
+
+void shamble_beast(struct Mob *mob) {
+    shamble_simple(mob, a_star_move(nearest, mob->pos, player.pos));
 }
 
 static byte is_other(struct Mob *self) {
@@ -486,10 +488,11 @@ static int8 bishop_line(byte src, byte dst) {
     return distance_x(src, dst) == distance_y(src, dst);
 }
 
+static const int8 bishop_dir[] = { 15, 17, -15, -17, 0 };
+
 void shamble_bishop(struct Mob *mob) {
-    static const int8 dir[] = { 15, 17, -15, -17, 0 };
     line_of_sight = &bishop_line;
-    shamble_direction(mob, dir, 2);
+    shamble_direction(mob, bishop_dir, 2);
 }
 
 static byte should_rook_move(struct Mob *mob) {
@@ -756,6 +759,15 @@ void shamble_king(struct Mob *mob) {
     walk_mob(mob, pick_choice());
 }
 
+static int8 a_star_rat(byte src) {
+    reset_a_star(bishop_dir);
+    const int8 *ptr = around;
+    while (*ptr) {
+	add_a_star_target(player.pos + *ptr++);
+    }
+    return a_star(src);
+}
+
 void shamble_rat(struct Mob *mob) {
-    if (is_dead(mob)) return;
+    shamble_simple(mob, a_star_rat(mob->pos));
 }
