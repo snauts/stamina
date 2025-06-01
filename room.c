@@ -11,8 +11,8 @@ static byte crypt_open;
 static byte door_broken;
 static byte wall_broken;
 static byte ground_hole;
-static byte grog_goblet;
 
+int8 grog_goblet;
 int8 cheesing;
 
 #define KING_PROGRESS mobs[FERDINAND].var

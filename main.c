@@ -14,6 +14,7 @@ extern const byte bar[];
 extern const byte title[];
 extern const byte richard[];
 
+extern int8 grog_goblet;
 extern int8 cheesing;
 const void *respawn;
 byte spawn_pos;
@@ -428,10 +429,24 @@ static void you_died(void) {
     reload();
 }
 
+static void achievement_status(byte y, byte state) {
+    put_str(state ? "complete" : "not done", 208, y);
+    memset(COLOUR((y << 2) + 24), state ? 4 : 2, 8);
+}
+
+static void show_achievements(void) {
+    memset(COLOUR(0x200), 5, 0x100);
+    put_str("Sniff cheese, but don't eat it:", 8, 128);
+    achievement_status(128, cheesing == 0);
+    put_str("Acquire goblet of grog:", 8, 144);
+    achievement_status(144, grog_goblet);
+}
+
 void ending(const char **text, const byte *img) {
     byte y = 48;
     clear_screen();
     show_block(img, 32, 72);
+    show_achievements();
     while (*text) {
 	put_str(*text, 8, y);
 	text++;
