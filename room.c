@@ -399,7 +399,7 @@ static void clear_cheese(void) {
 static byte get_cheese(const void *ptr, byte pos) {
     ptr; pos;
     if (cheesing == -1) {
-	show_message("Do you really want to cheese?");
+	show_message("Sniff, sniff - do you really want to cheese?");
     }
     else if (cheesing == 0) {
 	clear_cheese();
