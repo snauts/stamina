@@ -11,6 +11,7 @@ static byte crypt_open;
 static byte door_broken;
 static byte wall_broken;
 static byte ground_hole;
+static byte grog_goblet;
 
 int8 cheesing;
 
@@ -433,6 +434,25 @@ static byte fall_in_sewer(const void *ptr, byte pos) {
     return change_room(ptr, pos);
 }
 
+static void clear_goblet(void) {
+    set_ink(POS(6, 9), 1);
+    update_tile(POS(6, 9), -TILE(19));
+}
+
+static byte take_goblet(const void *ptr, byte pos) {
+    if (!grog_goblet) {
+	show_message("Glug, glug - goblet full of grog");
+	grog_goblet = true;
+	clear_goblet();
+	return true;
+    }
+    return false; ptr; pos;
+}
+
+static void setup_crypt(void) {
+    if (grog_goblet) clear_goblet();
+}
+
 /*** Prison ***/
 
 static const struct Bump prison_bump[] = {
@@ -763,6 +783,7 @@ static const struct Room sewers = {
 static const struct Bump crypt_bump[] = {
     MAKE_BUMP(POS(7, 4), -16, &change_room, &chancel, POS(7, 5)),
     MAKE_BUMP(POS(8, 4), -16, &change_room, &chancel, POS(8, 5)),
+    MAKE_BUMP(POS(6, 9),   0, &take_goblet, NULL, true),
 };
 
 static const struct Room crypt = {
@@ -770,6 +791,7 @@ static const struct Room crypt = {
     .map = map_of_crypt,
     .bump = crypt_bump,
     .count = SIZE(crypt_bump),
+    .setup = setup_crypt,
 };
 
 static void switch_to_final_room(void) {
@@ -786,6 +808,7 @@ void startup_room(void) {
     door_broken = false;
     wall_broken = false;
     ground_hole = false;
+    grog_goblet = false;
     henchman = mobs + JOE;
     memset(beaten, 0, ALL);
     spawn_pos = POS(6, 6);
