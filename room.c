@@ -441,7 +441,7 @@ static void clear_goblet(void) {
 
 static byte take_goblet(const void *ptr, byte pos) {
     if (!grog_goblet) {
-	show_message("Glug, glug - goblet full of grog");
+	show_message("Glug, glug - goblet was full of grog");
 	grog_goblet = true;
 	clear_goblet();
 	return true;
