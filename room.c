@@ -162,6 +162,13 @@ static void chancel_turn(void) {
     }
 }
 
+static byte climb_crypt(const void *room, byte pos) {
+    if (crypt_open) {
+	change_room(room, pos);
+    }
+    return crypt_open;
+}
+
 static void setup_stables(void) {
     setup_furniture(HORSE);
     if (!beaten[HORSE]) {
@@ -613,6 +620,8 @@ static const struct Room rampart = {
 static const struct Bump chancel_bump[] = {
     MAKE_BUMP(POS(7, 11), 16, &change_room, &cathedral, POS(7, 7)),
     MAKE_BUMP(POS(8, 11), 16, &change_room, &cathedral, POS(8, 7)),
+    MAKE_BUMP(POS(7, 5),  16, &climb_crypt, &crypt, POS(7, 4)),
+    MAKE_BUMP(POS(8, 5),  16, &climb_crypt, &crypt, POS(8, 4)),
 };
 
 static const struct Room chancel = {
@@ -747,6 +756,20 @@ static const struct Room sewers = {
     .count = SIZE(sewer_bump),
     .shamble = shamble_rat,
     .setup = setup_sewer,
+};
+
+/*** Sewers ***/
+
+static const struct Bump crypt_bump[] = {
+    MAKE_BUMP(POS(7, 4), -16, &change_room, &chancel, POS(7, 5)),
+    MAKE_BUMP(POS(8, 4), -16, &change_room, &chancel, POS(8, 5)),
+};
+
+static const struct Room crypt = {
+    .msg = "Cryptic Crypt",
+    .map = map_of_crypt,
+    .bump = crypt_bump,
+    .count = SIZE(crypt_bump),
 };
 
 static void switch_to_final_room(void) {
