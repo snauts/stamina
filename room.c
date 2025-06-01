@@ -12,6 +12,7 @@ static byte door_broken;
 static byte wall_broken;
 static byte ground_hole;
 
+int8 queen_vices;
 int8 grog_goblet;
 int8 cheesing;
 
@@ -181,15 +182,43 @@ static void setup_stables(void) {
     }
 }
 
+static void update_queens_table(byte amount) {
+    update_tile(POS(4, 8), TILE(amount));
+}
+
 static void setup_bedroom(void) {
     setup_furniture(QUEEN);
     add_actor(mobs + CHAIR1);
     add_actor(mobs + CHAIR2);
     add_actor(mobs + CHAIR3);
     add_actor(mobs + CHAIR4);
+    update_queens_table(queen_vices);
     if (!beaten[QUEEN]) {
 	add_actor(mobs + JEZEBEL);
     }
+}
+
+static void reload_bedroom(void);
+
+static byte indulge(const void *ptr, byte pos) {
+    if (queen_vices < 2) {
+	update_queens_table(1);
+	swoosh(10, 10, 10);
+	queen_vices++;
+
+	if (queen_vices == 1) {
+	    show_message("Looks like queen does all kinds of lines");
+	}
+	else {
+	    reload_bedroom();
+	    reload_bedroom();
+	    reload_bedroom();
+	}
+    }
+    else {
+	show_message("Hooked already?");
+    }
+    return true; ptr; pos;
 }
 
 static void setup_training(void) {
@@ -693,11 +722,9 @@ static const struct Room training = {
 
 /*** Bedroom ***/
 
-static const char queen_line[] = "Looks like queen does all kinds of lines";
-
 static const struct Bump bedroom_bump[] = {
     MAKE_BUMP(POS(12, 7), 1, &change_room, &hallway, POS(5, 7)),
-    MAKE_BUMP(POS(5, 8), -1, &bump_msg, &queen_line, true),
+    MAKE_BUMP(POS(5, 8), -1, &indulge, NULL, true),
 };
 
 static const struct Room bedroom = {
@@ -798,12 +825,17 @@ static void switch_to_final_room(void) {
     room = &final;
 }
 
+static void reload_bedroom(void) {
+    load_room(&bedroom, player.pos);
+}
+
 static void setup_courtyard(void) {
     if (respawn != &courtyard) update_tile(POS(8, 7), -TILE(1));
 }
 
 void startup_room(void) {
     cheesing = -1;
+    queen_vices = 0;
     crypt_open = false;
     door_broken = false;
     wall_broken = false;

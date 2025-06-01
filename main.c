@@ -14,6 +14,7 @@ extern const byte bar[];
 extern const byte title[];
 extern const byte richard[];
 
+extern int8 queen_vices;
 extern int8 grog_goblet;
 extern int8 cheesing;
 const void *respawn;
@@ -436,10 +437,12 @@ static void achievement_status(byte y, byte state) {
 
 static void show_achievements(void) {
     memset(COLOUR(0x200), 5, 0x100);
-    put_str("Sniff cheese, but don't eat it:", 8, 128);
-    achievement_status(128, cheesing == 0);
-    put_str("Acquire goblet of grog:", 8, 144);
-    achievement_status(144, grog_goblet);
+    put_str("Get aquainted with queen's vices:", 8, 128);
+    achievement_status(128, queen_vices);
+    put_str("Sniff cheese, but don't eat it:", 8, 144);
+    achievement_status(144, cheesing == 0);
+    put_str("Acquire goblet of grog:", 8, 160);
+    achievement_status(160, grog_goblet);
 }
 
 void ending(const char **text, const byte *img) {
