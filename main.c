@@ -473,12 +473,16 @@ static byte should_activate(const struct Bump *bump, int8 delta) {
     }
 }
 
+static byte invoke(Caller fn, const Data *data) {
+    return fn(data);
+}
+
 static byte activate_bumps(int8 delta) {
     const struct Bump *bump = room->bump;
     byte count = room->count;
     while (count-- > 0) {
 	if (should_activate(bump, delta)) {
-	    if (bump->fn(&bump->data)) return true;
+	    if (invoke(bump->fn, &bump->data)) return true;
 	}
 	bump++;
     }
