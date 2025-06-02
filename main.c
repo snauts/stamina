@@ -30,11 +30,6 @@ byte spawn_pos;
 #define	CTRL_LEFT	0x02
 #define	CTRL_RIGHT	0x01
 
-byte bump_msg(const void *text, byte value) {
-    show_message(text);
-    return value;
-}
-
 static void interrupt(void) __naked {
     __asm__("di");
     __asm__("push af");
@@ -469,10 +464,6 @@ byte is_walkable(byte place) {
     return place >= 32 && place < 192 && LEVEL[place] == TILE(1);
 }
 
-static byte invoke_bump(Caller fn, void *ptr, byte arg) {
-    return fn(ptr, arg);
-}
-
 static byte should_activate(const struct Bump *bump, int8 delta) {
     if (bump->delta == 0) {
 	return player.pos + delta == bump->pos;
@@ -487,12 +478,7 @@ static byte activate_bumps(int8 delta) {
     byte count = room->count;
     while (count-- > 0) {
 	if (should_activate(bump, delta)) {
-	    /*
-	     * there seems to be compiler bug:
-	     * bump->fn(bump->ptr, bump->arg)
-	     * fails to pass bump->ptr correctly
-	     */
-	    if (invoke_bump(bump->fn, bump->ptr, bump->arg)) return true;
+	    if (bump->fn(&bump->data)) return true;
 	}
 	bump++;
     }

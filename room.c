@@ -24,11 +24,16 @@ static const void* const lieutenants[] = {
 };
 static byte beaten[ALL];
 
-#define MAKE_BUMP(from, dir, action, data, param) \
-    { .pos = from, .delta = dir, .fn = action, .ptr = data, .arg = param }
+#define MAKE_BUMP(from, dir, call, p, a) \
+    { .pos = from, .delta = dir, .fn = call, .data = { .ptr = p, .arg = a } }
 
-static byte change_room(const void *new_room, byte pos) {
-    return consume_stamina(MOVE_STAMINA) && load_room(new_room, pos);
+static byte change_room(const Data *data) {
+    return consume_stamina(MOVE_STAMINA) && load_room(data->ptr, data->arg);
+}
+
+static byte bump_msg(const Data *data) {
+    show_message(data->ptr);
+    return true;
 }
 
 static void replenish_stamina_msg(void) {
@@ -45,9 +50,9 @@ static void thud_sound_and_msg(const char *msg) {
     swoosh(3, 3, -1);
 }
 
-static byte break_door(const void *ptr, byte pos) {
+static byte break_door(const Data *data) {
     if (door_broken) {
-	return change_room(ptr, pos);
+	return change_room(data);
     }
     else if (consume_stamina(FULL_STAMINA)) {
 	thud_sound_and_msg("You break down the door");
@@ -60,13 +65,13 @@ static byte break_door(const void *ptr, byte pos) {
     return true;
 }
 
-static byte set_bonfire(const void *ptr, byte pos) {
+static byte set_bonfire(const Data *data) {
     if (cheesing > 0) {
 	show_message("Bonjour Mr. Morbier");
     }
-    else if (respawn != ptr) {
-	respawn = ptr;
-	spawn_pos = pos;
+    else if (respawn != data->ptr) {
+	respawn = data->ptr;
+	spawn_pos = data->arg;
 	update_tile(POS(8, 7), TILE(1));
 	show_message("Central fire of awakening");
 	swoosh(60, 20, 5);
@@ -164,9 +169,9 @@ static void chancel_turn(void) {
     }
 }
 
-static byte climb_crypt(const void *room, byte pos) {
+static byte climb_crypt(const Data *data) {
     if (crypt_open) {
-	change_room(room, pos);
+	change_room(data);
     }
     return crypt_open;
 }
@@ -200,7 +205,7 @@ static void setup_bedroom(void) {
 
 static void reload_bedroom(void);
 
-static byte indulge(const void *ptr, byte pos) {
+static byte indulge(const Data *data) {
     if (queen_vices < 2) {
 	update_queens_table(1);
 	swoosh(10, 10, 10);
@@ -218,7 +223,7 @@ static byte indulge(const void *ptr, byte pos) {
     else {
 	show_message("Hooked already?");
     }
-    return true; ptr; pos;
+    return true; data;
 }
 
 static void setup_training(void) {
@@ -248,9 +253,9 @@ static void open_seal(void) {
 }
 
 static byte total_beaten;
-static byte sealed_room(const void *new_room, byte pos) {
+static byte sealed_room(const Data *data) {
     if (total_beaten == ALL) {
-	return change_room(new_room, pos);
+	return change_room(data);
     }
     else {
 	show_message("Alas, curse holds this door locked");
@@ -330,7 +335,7 @@ static void add_henchman(byte pos) {
     lightning_strike(pos);
 }
 
-static byte king_cutscene(const void *ptr, byte pos) {
+static byte king_cutscene(const Data *data) {
     if (KING_PROGRESS < SIZE(king_dialogue)) {
 	show_message(king_dialogue[KING_PROGRESS]);
 	if (++KING_PROGRESS == SIZE(king_dialogue)) {
@@ -339,7 +344,7 @@ static byte king_cutscene(const void *ptr, byte pos) {
 	}
 	return true;
     }
-    return false; ptr; pos;
+    return false; data;
 }
 
 static void next_henchman(void) {
@@ -395,8 +400,8 @@ static const char * const leave[] = {
     NULL,
 };
 
-static byte end_game(const void *ptr, byte done) {
-    ending(ptr, done ? ascension : leaving);
+static byte end_game(const Data *data) {
+    ending(data->ptr, data->arg ? ascension : leaving);
     return true;
 }
 
@@ -406,7 +411,7 @@ static void hole_in_sewer_wall(void) {
     update_tile(POS(12, 2), TILE(2));
 }
 
-static byte smash_wall(const void *ptr, byte pos) {
+static byte smash_wall(const Data *data) {
     if (wall_broken) {
 	return false;
     }
@@ -418,7 +423,7 @@ static byte smash_wall(const void *ptr, byte pos) {
 	hole_in_sewer_wall();
 	wall_broken = true;
     }
-    return true; ptr; pos;
+    return true; data;
 }
 
 static void clear_cheese(void) {
@@ -426,8 +431,7 @@ static void clear_cheese(void) {
     update_tile(POS(12,6), -TILE(17));
 }
 
-static byte get_cheese(const void *ptr, byte pos) {
-    ptr; pos;
+static byte get_cheese(const Data *data) {
     if (cheesing == -1) {
 	show_message("Sniff, sniff - do you really want to cheese?");
     }
@@ -440,7 +444,7 @@ static byte get_cheese(const void *ptr, byte pos) {
 	return false;
     }
     cheesing++;
-    return true;
+    return true; data;
 }
 
 static void setup_sewer(void) {
@@ -454,13 +458,13 @@ static void setup_sewer(void) {
     if (wall_broken) hole_in_sewer_wall();
 }
 
-static byte fall_in_sewer(const void *ptr, byte pos) {
+static byte fall_in_sewer(const Data *data) {
     push_mob(&player, POS(9, 5));
     game_idle(25);
     update_tile(POS(9,5), ground_hole ? 0 : TILE(1));
     ground_hole = true;
     swoosh(26, 25, -1);
-    return change_room(ptr, pos);
+    return change_room(data);
 }
 
 static void clear_goblet(void) {
@@ -468,7 +472,7 @@ static void clear_goblet(void) {
     update_tile(POS(6, 9), -TILE(19));
 }
 
-static byte take_goblet(const void *ptr, byte pos) {
+static byte take_goblet(const Data *data) {
     if (!grog_goblet) {
 	show_message("Glug, glug - goblet was full of grog");
 	BYTE(0x450b) = 0x18;
@@ -479,7 +483,7 @@ static byte take_goblet(const void *ptr, byte pos) {
 	clear_goblet();
 	return true;
     }
-    return false; ptr; pos;
+    return false; data;
 }
 
 static void setup_crypt(void) {

@@ -54,15 +54,19 @@ struct Mob {
     byte var;
 };
 
-typedef byte(*Caller)(const void *, byte);
+typedef struct {
+    void *ptr;
+    byte arg;
+} Data;
+
 typedef void(*Action)(struct Mob *);
+typedef byte(*Caller)(const Data *);
 
 struct Bump {
     byte pos;
     int8 delta;
     Caller fn;
-    void *ptr;
-    byte arg;
+    Data data;
 };
 
 struct Room {
@@ -85,7 +89,6 @@ void show_message(const char *msg);
 void swoosh(int8 f, int8 n, int8 s);
 void update_tile(byte pos, int8 change);
 byte load_room(const void *ptr, byte pos);
-byte bump_msg(const void *text, byte ignore);
 void draw_tile(byte *ptr, byte pos, byte id);
 void *decompress(byte *dst, const byte *src);
 void ending(const char **text, const byte *img);
