@@ -315,16 +315,18 @@ static void shamble_throne(struct Mob *mob) {
     shamblers[current_henchman()](mob);
 }
 
+static struct Mob *add_defender(byte i) {
+    decompress(MOB(i + 1), lieutenants[i]);
+    return add_actor(defenders[i]);
+}
+
 static struct Mob *henchman;
 static void add_henchman(byte pos) {
     byte i = current_henchman();
 
-    henchman = add_actor(defenders[i]);
+    henchman = add_defender(i);
+    henchman->img = SET(i + 1) | (X(player.pos) < X(pos) ? LEFT : 0);
     henchman->pos = pos;
-
-    byte set = i + 1;
-    decompress(MOB(set), lieutenants[i]);
-    henchman->img = SET(set) | (X(player.pos) < X(pos) ? LEFT : 0);
 
     lightning_strike(pos);
 }
@@ -371,9 +373,7 @@ static void setup_throne(void) {
     if (done == ALL) king_leaves_throne();
 
     for (int8 i = 0; i <= done; i++) {
-	byte set = i + 1;
-	add_actor(defenders[i]);
-	decompress(MOB(set), lieutenants[i]);
+	add_defender(i);
     }
 }
 
