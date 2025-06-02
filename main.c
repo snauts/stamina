@@ -437,7 +437,7 @@ static void achievement_status(byte y, byte state) {
 
 static void show_achievements(void) {
     memset(COLOUR(0x200), 5, 0x100);
-    put_str("Get aquainted with queen's vices:", 8, 128);
+    put_str("Get acquainted with queen's vices:", 8, 128);
     achievement_status(128, queen_vices);
     put_str("Sniff cheese, but don't eat it:", 8, 144);
     achievement_status(144, cheesing == 0);
