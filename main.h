@@ -33,7 +33,7 @@ typedef unsigned short word;
 #define  FLIP			2
 #define  BOTH			3
 #define EMPTY		(LEVEL + 0xc0)
-#define MOB(n)		(EMPTY + FRAME(64 + 8 * n))
+#define MOB(n)		(EMPTY + FRAME(64 + 8 * (n)))
 #define  MOVING			0
 #define  STANCE			1
 #define  ATTACK			2
