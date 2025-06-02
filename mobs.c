@@ -10,9 +10,9 @@ struct Mob player, mobs[TOTAL_MOBS];
 
 static const struct Mob mobs_reset[TOTAL_MOBS] = {
     /* dungeon */
-    { .pos = POS(10, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
-    { .pos = POS(10, 6), .ink = 0x02, .img = IMG(1, 1, LEFT) },
-    { .pos = POS(10, 4), .ink = 0x02, .img = IMG(1, 0, LEFT) },
+    { .pos = POS(11, 8), .ink = 0x02, .img = IMG(1, 0, LEFT) },
+    { .pos = POS( 7, 6), .ink = 0x02, .img = IMG(1, 1, LEFT) },
+    { .pos = POS(11, 4), .ink = 0x02, .img = IMG(1, 0, LEFT) },
 
     /* corridor */
     { .pos = POS(7, 4), .ink = 0x02, .img = IMG(1, 1, LEFT) },
