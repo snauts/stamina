@@ -308,7 +308,7 @@ static void walk_mob(struct Mob *mob, int8 delta) {
     }
 }
 
-static void shamble_simple(struct Mob *mob, int8 delta) {
+static void shamble_simple(struct Mob *mob, int8 (*delta)(struct Mob *mob)) {
     if (is_dead(mob)) return;
     animate_mob_shamble(mob);
 
@@ -316,12 +316,16 @@ static void shamble_simple(struct Mob *mob, int8 delta) {
 	animate_attack(mob, &player);
     }
     else {
-	walk_mob(mob, delta);
+	walk_mob(mob, delta(mob));
     }
 }
 
+static int8 beast_path(struct Mob *mob) {
+    return a_star_move(nearest, mob->pos, player.pos);
+}
+
 void shamble_beast(struct Mob *mob) {
-    shamble_simple(mob, a_star_move(nearest, mob->pos, player.pos));
+    shamble_simple(mob, &beast_path);
 }
 
 static byte is_other(struct Mob *self) {
@@ -765,14 +769,14 @@ void shamble_king(struct Mob *mob) {
     walk_mob(mob, pick_choice());
 }
 
-static int8 a_star_rat(byte src) {
+static int8 rat_path(struct Mob *mob) {
     reset_a_star(bishop_dir);
     for (byte i = 0; i < SIZE(around); i++) {
 	add_a_star_target(player.pos + around[i]);
     }
-    return a_star(src);
+    return a_star(mob->pos);
 }
 
 void shamble_rat(struct Mob *mob) {
-    shamble_simple(mob, a_star_rat(mob->pos));
+    shamble_simple(mob, &rat_path);
 }
