@@ -514,8 +514,12 @@ static byte move_corpse(struct Mob *mob, int8 delta) {
     return mob == NULL || (is_dead(mob) && push_corpse(mob, delta));
 }
 
+static byte consume_kill(void) {
+    return consume_stamina(grog_goblet ? GROG_STAMINA : KILL_STAMINA);
+}
+
 static byte should_attack(struct Mob *mob) {
-    return mob != NULL && !is_dead(mob) && consume_stamina(KILL_STAMINA);
+    return mob != NULL && !is_dead(mob) && consume_kill();
 }
 
 static byte should_move(struct Mob *mob, byte target, int8 delta) {

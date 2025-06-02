@@ -45,6 +45,7 @@ typedef unsigned short word;
 #define MOVE_STAMINA	2
 #define FULL_STAMINA	48
 #define KILL_STAMINA	36
+#define GROG_STAMINA	12
 
 struct Mob {
     byte pos;
