@@ -85,16 +85,16 @@ static void setup_prison(void) {
 
 static void setup_dungeon(void) {
     decompress(MOB(1), beast);
-    add_actor(mobs + BARRY);
-    add_actor(mobs + LARRY);
-    add_actor(mobs + HARRY);
+    add_actor(BARRY);
+    add_actor(LARRY);
+    add_actor(HARRY);
 }
 
 static void setup_corridor(void) {
     decompress(MOB(1), beast);
-    add_actor(mobs + JURIS);
-    add_actor(mobs + ZIGIS);
-    add_actor(mobs + ROBIS);
+    add_actor(JURIS);
+    add_actor(ZIGIS);
+    add_actor(ROBIS);
     if (wall_broken) {
 	update_tile(POS( 9, 9), TILE(2));
 	update_tile(POS(10, 9), -(TILE(3) | FLIP | LEFT));
@@ -104,16 +104,16 @@ static void setup_corridor(void) {
 
 static void setup_hallway(void) {
     decompress(MOB(1), arrow);
-    add_actor(mobs + ARROW1);
-    add_actor(mobs + ARROW2);
+    add_actor(ARROW1);
+    add_actor(ARROW2);
 }
 
 static void setup_bailey(void) {
     decompress(MOB(1), ent);
-    add_actor(mobs + SKINBARK);
-    add_actor(mobs + LEAFLOCK);
-    add_actor(mobs + BREGALAD);
-    add_actor(mobs + BUSHKOPF);
+    add_actor(SKINBARK);
+    add_actor(LEAFLOCK);
+    add_actor(BREGALAD);
+    add_actor(BUSHKOPF);
 }
 
 static void setup_furniture(byte i) {
@@ -124,11 +124,11 @@ static void setup_furniture(byte i) {
 
 static void setup_rampart(void) {
     setup_furniture(ROOK);
-    add_actor(mobs + PILE1);
-    add_actor(mobs + PILE2);
+    add_actor(PILE1);
+    add_actor(PILE2);
     if (!beaten[ROOK]) {
-	add_actor(mobs + JAMES);
-	add_actor(mobs + OSKAR);
+	add_actor(JAMES);
+	add_actor(OSKAR);
     }
 }
 
@@ -145,11 +145,11 @@ static void open_crypt_passage(void) {
 
 static void setup_chancel(void) {
     setup_furniture(BISHOP);
-    add_actor(mobs + WILLY);
-    add_actor(mobs + TOMMY);
+    add_actor(WILLY);
+    add_actor(TOMMY);
     if (!beaten[BISHOP]) {
-	add_actor(mobs + ISAAC);
-	add_actor(mobs + DAVID);
+	add_actor(ISAAC);
+	add_actor(DAVID);
     }
     if (crypt_open) {
 	open_crypt_passage();
@@ -179,8 +179,8 @@ static byte climb_crypt(const Data *data) {
 static void setup_stables(void) {
     setup_furniture(HORSE);
     if (!beaten[HORSE]) {
-	add_actor(mobs + PERSIJS);
-	add_actor(mobs + MARKUSS);
+	add_actor(PERSIJS);
+	add_actor(MARKUSS);
     }
     if (ground_hole) {
 	update_tile(POS(9, 5), TILE(1));
@@ -193,13 +193,13 @@ static void update_queens_table(byte amount) {
 
 static void setup_bedroom(void) {
     setup_furniture(QUEEN);
-    add_actor(mobs + CHAIR1);
-    add_actor(mobs + CHAIR2);
-    add_actor(mobs + CHAIR3);
-    add_actor(mobs + CHAIR4);
+    add_actor(CHAIR1);
+    add_actor(CHAIR2);
+    add_actor(CHAIR3);
+    add_actor(CHAIR4);
     update_queens_table(queen_vices);
     if (!beaten[QUEEN]) {
-	add_actor(mobs + JEZEBEL);
+	add_actor(JEZEBEL);
     }
 }
 
@@ -229,13 +229,13 @@ static byte indulge(const Data *data) {
 static void setup_training(void) {
     setup_furniture(SOLDIER);
     decompress(MOB(3), arrow);
-    add_actor(mobs + DUMMY1);
-    add_actor(mobs + DUMMY2);
+    add_actor(DUMMY1);
+    add_actor(DUMMY2);
     if (!beaten[SOLDIER]) {
-	add_actor(mobs + JOE);
-	add_actor(mobs + BOB);
-	add_actor(mobs + SID);
-	add_actor(mobs + UDO);
+	add_actor(JOE);
+	add_actor(BOB);
+	add_actor(SID);
+	add_actor(UDO);
     }
 }
 
@@ -303,13 +303,8 @@ static const Action shamblers[] = {
     shamble_king,
 };
 
-static struct Mob * const defenders[] = {
-    mobs + JOE,
-    mobs + PERSIJS,
-    mobs + ISAAC,
-    mobs + OSKAR,
-    mobs + JEZEBEL,
-    mobs + FERDINAND,
+static const byte defenders[] = {
+    JOE, PERSIJS, ISAAC, OSKAR, JEZEBEL, FERDINAND,
 };
 
 static int8 current_henchman(void) {
@@ -324,13 +319,12 @@ static struct Mob *henchman;
 static void add_henchman(byte pos) {
     byte i = current_henchman();
 
-    henchman = defenders[i];
+    henchman = add_actor(defenders[i]);
     henchman->pos = pos;
 
     byte set = i + 1;
     decompress(MOB(set), lieutenants[i]);
     henchman->img = SET(set) | (X(player.pos) < X(pos) ? LEFT : 0);
-    add_actor(henchman);
 
     lightning_strike(pos);
 }
@@ -449,11 +443,11 @@ static byte get_cheese(const Data *data) {
 
 static void setup_sewer(void) {
     decompress(MOB(1), rat);
-    add_actor(mobs + REMY);
-    add_actor(mobs + EMILE);
-    add_actor(mobs + DJANGO);
-    add_actor(mobs + VICTOR);
-    add_actor(mobs + ANTON);
+    add_actor(REMY);
+    add_actor(EMILE);
+    add_actor(DJANGO);
+    add_actor(VICTOR);
+    add_actor(ANTON);
     if (cheesing > 0) clear_cheese();
     if (wall_broken) hole_in_sewer_wall();
 }

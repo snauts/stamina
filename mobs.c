@@ -142,10 +142,12 @@ struct Mob **last(void) {
     return ptr;
 }
 
-void add_actor(struct Mob *mob) {
+struct Mob *add_actor(byte index) {
+    struct Mob *mob = mobs + index;
     struct Mob **ptr = last();
     ptr[0] = mob;
     ptr[1] = NULL;
+    return mob;
 }
 
 void place_actors(void) {
