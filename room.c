@@ -215,9 +215,7 @@ static byte indulge(const Data *data) {
 	    show_message("Looks like queen does all kinds of lines");
 	}
 	else {
-	    reload_bedroom();
-	    reload_bedroom();
-	    reload_bedroom();
+	    blur_vision();
 	}
     }
     else {

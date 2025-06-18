@@ -81,6 +81,7 @@ struct Room {
 
 extern struct Mob player;
 
+void blur_vision(void);
 void game_idle(byte ticks);
 void call(void (*fn)(void));
 byte is_walkable(byte place);

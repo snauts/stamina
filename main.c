@@ -599,6 +599,34 @@ static void fade_out_attributes(void) {
     }
 }
 
+static void skew_line(byte *ptr) __naked {
+    __asm__("ld a, #0x20"); ptr;
+    __asm__("_loop_line:");
+    __asm__("ld c, (hl)");
+    __asm__("rlc c"); // hairy[4]
+    __asm__("ld (hl), c");
+    __asm__("inc hl");
+    __asm__("dec a");
+    __asm__("ret Z");
+    __asm__("jr _loop_line");
+}
+
+static void skew_screen(byte y) {
+    for (; y < 192; y += 2) {
+	skew_line(map_y[y]);
+    }
+}
+
+void blur_vision(void) {
+    byte y = 32;
+    for (byte i = 0; i < 64; i++) {
+	byte *hairy = (void *) &skew_line;
+	hairy[4] = y & 1 ? 0x09 : 0x01; // swap rlc vs rrc
+	skew_screen(y);
+	y = y ^ 1;
+    }
+}
+
 byte load_room(const void *new_room, byte pos) {
     /* clear previous */
     const void *from = room;
