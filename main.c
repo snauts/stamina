@@ -508,8 +508,12 @@ static byte consume_kill(void) {
     return consume_stamina(grog_goblet ? GROG_STAMINA : KILL_STAMINA);
 }
 
+static byte alive_mob(struct Mob *mob) {
+    return mob != NULL && !is_dead(mob);
+}
+
 static byte should_attack(struct Mob *mob) {
-    return mob != NULL && !is_dead(mob) && consume_kill();
+    return alive_mob(mob) && consume_kill();
 }
 
 static byte should_move(struct Mob *mob, byte target, int8 delta) {
@@ -532,7 +536,7 @@ static void roll_richard(int8 delta) {
 	move_mob(&player, target);
 	shamble_mobs();
     }
-    else if (stamina == 0) {
+    else if (stamina == 0 || alive_mob(mob)) {
 	show_message("You feel exausted");
 	swoosh(2, 2, 2);
     }
