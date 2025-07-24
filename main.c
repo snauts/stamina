@@ -522,6 +522,11 @@ static byte should_move(struct Mob *mob, byte target, int8 delta) {
 	&& consume_stamina(MOVE_STAMINA);
 }
 
+static void warning(const char *str) {
+    show_message(str);
+    swoosh(2, 2, 2);
+}
+
 static void roll_richard(int8 delta) {
     mob_direction(&player, delta);
     if (activate_bumps(delta)) return;
@@ -536,9 +541,11 @@ static void roll_richard(int8 delta) {
 	move_mob(&player, target);
 	shamble_mobs();
     }
-    else if (stamina == 0 || alive_mob(mob)) {
-	show_message("You feel exausted");
-	swoosh(2, 2, 2);
+    else if (stamina == 0) {
+	warning("You feel exausted");
+    }
+    else if (alive_mob(mob)) {
+	warning("Not enough stamina");
     }
 }
 
