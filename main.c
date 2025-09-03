@@ -298,12 +298,13 @@ static void wait_1_or_2(void) {
 }
 
 static void show_title(void) {
+    stop_music();
     put_str("Have", 12, 0);
     memset(COLOUR(0x00), 4, 0x20);
     show_block(title, 8, 40);
     put_str("STAMINA?", 184, 48);
     memset(COLOUR(0xc0), 4, 0x240);
-    put_str("Game by Snauts", 0, 184);
+    put_str("Game by Snauts / Music by hazard_pht", 24, 184);
     put_str("1 - QAOP+M", 81, 104);
     put_str("2 - Joystick", 80, 120);
     wait_1_or_2();
@@ -683,6 +684,12 @@ byte load_room(const void *new_room, byte pos) {
     return true;
 }
 
+#ifdef AY
+static void game_music(void) {
+    __asm__(".incbin \"music.pt3\"");
+}
+#endif
+
 static void start_game(void) {
     in_setup = false;
     has_message = NULL;
@@ -695,6 +702,8 @@ static void start_game(void) {
     hourglass(0x0);
     startup_room();
     reload();
+
+    select_music(&game_music);
 
     game_loop();
 }

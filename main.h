@@ -3,7 +3,7 @@ typedef signed short int16;
 typedef unsigned char byte;
 typedef unsigned short word;
 
-// #define AY
+#define AY
 
 #define false		0
 #define true		1
@@ -148,6 +148,9 @@ void start_music(void);
 void resume_music(void);
 void silence_music(void);
 void select_music(void *ptr);
+#else
+#define stop_music()
+#define select_music(x)
 #endif
 
 enum {
