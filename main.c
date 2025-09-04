@@ -217,8 +217,7 @@ static void put_str(const char *msg, byte x, byte y) {
 	    x = x + 4;
 	}
 	else {
-	    byte lead = leading(symbol);
-	    if (lead <= x) x -= lead;
+	    if (x > 0) x -= leading(symbol);
 	    put_char(symbol, x, y);
 	    x += trailing(symbol);
 	}
