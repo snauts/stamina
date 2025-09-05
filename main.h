@@ -4,7 +4,6 @@ typedef unsigned char byte;
 typedef unsigned short word;
 
 #define AY
-#define PENTAGON
 
 #define false		0
 #define true		1
