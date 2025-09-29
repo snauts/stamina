@@ -710,8 +710,8 @@ static void start_game(void) {
 void reset(void) {
     SETUP_STACK();
     setup_system();
-    clear_screen();
     precalculate();
+    clear_screen();
     show_title();
     clear_screen();
     start_game();
